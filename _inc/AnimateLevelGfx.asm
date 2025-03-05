@@ -15,7 +15,7 @@ AnimateLevelGfx:
 		move.w	AniArt_Index(pc,d0.w),d0
 		jmp	AniArt_Index(pc,d0.w)
 
-	.ispaused:
+.ispaused:
 		rts
 
 ; ===========================================================================
@@ -42,7 +42,7 @@ AniArt_GHZ_Waterfall:
 		beq.s	.isframe0
 		lea	$100(a1),a1
 
-	.isframe0:
+.isframe0:
 		locVRAM ArtTile_GHZ_Waterfall*tile_size
 		move.w	#8-1,d1
 		bra.w	LoadTiles
@@ -60,7 +60,7 @@ AniArt_GHZ_Bigflower:
 		beq.s	.isframe0
 		lea	$200(a1),a1
 
-	.isframe0:
+.isframe0:
 		locVRAM ArtTile_GHZ_Big_Flower_1*tile_size
 		move.w	#16-1,d1
 		bra.w	LoadTiles
@@ -79,7 +79,7 @@ AniArt_GHZ_Smallflower:
 		bne.s	.isframe1
 		move.b	#$7F,(v_lani2_time).w
 
-	.isframe1:
+.isframe1:
 		lsl.w	#7,d0
 		move.w	d0,d1
 		add.w	d0,d0
@@ -113,7 +113,7 @@ AniArt_MZ_Lava:
 		bne.s	.frame01or2
 		moveq	#0,d0
 
-	.frame01or2:
+.frame01or2:
 		move.b	d0,(v_lani0_frame).w
 		mulu.w	#$100,d0
 		adda.w	d0,a1
@@ -138,7 +138,7 @@ AniArt_MZ_Magma:
 		move.b	(v_oscillate+$A).w,d3
 		move.w	#4-1,d2
 
-	.loop:
+.loop:
 		move.w	d3,d0
 		add.w	d0,d0
 		andi.w	#$1E,d0

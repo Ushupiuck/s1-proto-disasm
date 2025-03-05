@@ -3,29 +3,29 @@
 ; ---------------------------------------------------------------------------
 ArtLoadCues:
 
-ptr_PLC_Main:           dc.w PLC_Main-ArtLoadCues
-ptr_PLC_Main2:          dc.w PLC_Main2-ArtLoadCues
-ptr_PLC_Explode:        dc.w PLC_Explode-ArtLoadCues
-ptr_PLC_GameOver:       dc.w PLC_GameOver-ArtLoadCues
+ptr_PLC_Main:		dc.w PLC_Main-ArtLoadCues
+ptr_PLC_Main2:		dc.w PLC_Main2-ArtLoadCues
+ptr_PLC_Explode:	dc.w PLC_Explode-ArtLoadCues
+ptr_PLC_GameOver:	dc.w PLC_GameOver-ArtLoadCues
 PLC_Levels:
 ptr_PLC_GHZ:		dc.w PLC_GHZ-ArtLoadCues
 ptr_PLC_GHZ2:		dc.w PLC_GHZ2-ArtLoadCues
-ptr_PLC_LZ:		dc.w PLC_LZ-ArtLoadCues
+ptr_PLC_LZ:			dc.w PLC_LZ-ArtLoadCues
 ptr_PLC_LZ2:		dc.w PLC_LZ2-ArtLoadCues
-ptr_PLC_MZ:		dc.w PLC_MZ-ArtLoadCues
+ptr_PLC_MZ:			dc.w PLC_MZ-ArtLoadCues
 ptr_PLC_MZ2:		dc.w PLC_MZ2-ArtLoadCues
 ptr_PLC_SLZ:		dc.w PLC_SLZ-ArtLoadCues
 ptr_PLC_SLZ2:		dc.w PLC_SLZ2-ArtLoadCues
-ptr_PLC_SZ:		dc.w PLC_SZ-ArtLoadCues
+ptr_PLC_SZ:			dc.w PLC_SZ-ArtLoadCues
 ptr_PLC_SZ2:		dc.w PLC_SZ2-ArtLoadCues
 ptr_PLC_CWZ:		dc.w PLC_CWZ-ArtLoadCues
 ptr_PLC_CWZ2:		dc.w PLC_CWZ2-ArtLoadCues
 
-ptr_PLC_TitleCard:      dc.w PLC_TitleCard-ArtLoadCues
-ptr_PLC_Boss:           dc.w PLC_Boss-ArtLoadCues
-ptr_PLC_Signpost:       dc.w PLC_Signpost-ArtLoadCues
-ptr_PLC_Warp:           dc.w PLC_Warp-ArtLoadCues
-ptr_PLC_SpecialStage:   dc.w PLC_SpecialStage-ArtLoadCues
+ptr_PLC_TitleCard:	dc.w PLC_TitleCard-ArtLoadCues
+ptr_PLC_Boss:		dc.w PLC_Boss-ArtLoadCues
+ptr_PLC_Signpost:	dc.w PLC_Signpost-ArtLoadCues
+ptr_PLC_Warp:		dc.w PLC_Warp-ArtLoadCues
+ptr_PLC_SpecialStage:	dc.w PLC_SpecialStage-ArtLoadCues
 PLC_Animals:
 ptr_PLC_GHZAnimals:	dc.w PLC_GHZAnimals-ArtLoadCues
 ptr_PLC_LZAnimals:	dc.w PLC_LZAnimals-ArtLoadCues
@@ -48,7 +48,7 @@ PLC_Main:	dc.w ((PLC_Mainend-PLC_Main-2)/6)-1
 		plcm    Nem_Lives, $FA80
 		plcm    Nem_Rings, $F640
 		plcm    byte_2E6C8, $F2E0
-	PLC_Mainend:
+PLC_Mainend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - standard block 2
 ; ---------------------------------------------------------------------------
@@ -56,19 +56,19 @@ PLC_Main2:	dc.w ((PLC_Main2end-PLC_Main2-2)/6)-1
 		plcm    Nem_Monitors, $D000
 		plcm    Nem_Shield, $A820
 		plcm    Nem_Stars, $AB80
-	PLC_Main2end:
+PLC_Main2end:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - explosion
 ; ---------------------------------------------------------------------------
 PLC_Explode:	dc.w ((PLC_Explodeend-PLC_Explode-2)/6)-1
 		plcm    ArtExplosions, $B400
-	PLC_Explodeend:
+PLC_Explodeend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - game/time	over
 ; ---------------------------------------------------------------------------
 PLC_GameOver:	dc.w ((PLC_GameOverend-PLC_GameOver-2)/6)-1
 		plcm    ArtGameOver, $B000
-	PLC_GameOverend:
+PLC_GameOverend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Green Hill
 ; ---------------------------------------------------------------------------
@@ -93,7 +93,7 @@ PLC_GHZ2:	dc.w ((PLC_GHZ2end-PLC_GHZ2-2)/6)-1
 		plcm    byte_27698, $7540
 		plcm    ArtSmashWall, $A1E0
 		plcm    ArtWall, $6980
-	PLC_GHZ2end:
+PLC_GHZ2end:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Labyrinth
 ; ---------------------------------------------------------------------------
@@ -102,7 +102,7 @@ PLC_LZ:		dc.w ((PLC_LZ2-PLC_LZ-2)/6)-1
 
 PLC_LZ2:	dc.w ((PLC_LZ2end-PLC_LZ2-2)/6)-1
 		plcm    Nem_Jaws, $99C0
-	PLC_LZ2end:
+PLC_LZ2end:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Marble
 ; ---------------------------------------------------------------------------
@@ -124,7 +124,7 @@ PLC_MZ2:	dc.w ((PLC_MZ2end-PLC_MZ2-2)/6)-1
 		plcm    ArtSpringHoriz, $A460
 		plcm    ArtSpringVerti, $A660
 		plcm    byte_28E6E, $5700
-	PLC_MZ2end:
+PLC_MZ2end:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Star Light
 ; ---------------------------------------------------------------------------
@@ -146,7 +146,7 @@ PLC_SLZ2:	dc.w ((PLC_SLZ2end-PLC_SLZ2-2)/6)-1
 		plcm    ArtFan, ArtTile_SLZ_Fan*tile_size
 		plcm    byte_2953C, ArtTile_SLZ_Pylon*tile_size
 		plcm    byte_2961E, ArtTile_SLZ_Swing*tile_size
-	PLC_SLZ2end:
+PLC_SLZ2end:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Sparkling
 ; ---------------------------------------------------------------------------
@@ -165,7 +165,7 @@ PLC_SZ2:	dc.w ((PLC_SZ2end-PLC_SZ2-2)/6)-1
 		plcm    ArtSpikes, $A360
 		plcm    ArtSpringHoriz, $A460
 		plcm    ArtSpringVerti, $A660
-	PLC_SZ2end:
+PLC_SZ2end:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Clock Work
 ; ---------------------------------------------------------------------------
@@ -174,13 +174,13 @@ PLC_CWZ:	dc.w ((PLC_CWZ2-PLC_CWZ-2)/6)-1
 
 PLC_CWZ2:	dc.w ((PLC_CWZ2end-PLC_CWZ2-2)/6)-1
 		plcm    Nem_Jaws, $99C0
-	PLC_CWZ2end:
+PLC_CWZ2end:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - title card
 ; ---------------------------------------------------------------------------
 PLC_TitleCard:	dc.w ((PLC_TitleCardend-PLC_TitleCard-2)/6)-1
 		plcm    Nem_TitleCard, $B000
-	PLC_TitleCardend:
+PLC_TitleCardend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - act 3 boss
 ; ---------------------------------------------------------------------------
@@ -188,26 +188,26 @@ PLC_Boss:	dc.w ((PLC_Bossend-PLC_Boss-2)/6)-1
 		plcm    byte_60000, $8000
 		plcm    byte_60864, $8D80
 		plcm    byte_60BB0, $93A0
-	PLC_Bossend:
+PLC_Bossend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - act 1/2 signpost
 ; ---------------------------------------------------------------------------
 PLC_Signpost:	dc.w ((PLC_Signpostend-PLC_Signpost-2)/6)-1
 		plcm    ArtSignPost, $D000
-	PLC_Signpostend:
+PLC_Signpostend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - special stage warp effect
 ; ---------------------------------------------------------------------------
 PLC_Warp:	dc.w ((PLC_Warpend-PLC_Warp-2)/6)-1
 		plcm    Nem_Flash, $A820
-	PLC_Warpend:
+PLC_Warpend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - special stage
 ; ---------------------------------------------------------------------------
 PLC_SpecialStage:	dc.w ((PLC_SpeStageend-PLC_SpecialStage-2)/6)-1
-		plcm    byte_64A7C, 0
-		plcm    ArtSpecialAnimals, $A20
-		plcm    ArtSpecialBlocks, $2840
+		plcm    Nem_SSBgCloud, 0
+		plcm    Nem_SSBgFish, $A20
+		plcm    Nem_SSWalls, $2840
 		plcm    ArtBumper, $4760
 		plcm    ArtSpecialGoal, $4A20
 		plcm    ArtSpecialUpDown, $4C60
@@ -217,7 +217,7 @@ PLC_SpecialStage:	dc.w ((PLC_SpeStageend-PLC_SpecialStage-2)/6)-1
 		plcm    byte_65432, $8E00
 		plcm    ArtSpecialSkull, $9E00
 		plcm    ArtSpecialU, $AE00
-	PLC_SpeStageend:
+PLC_SpeStageend:
 		plcm    ArtSpecialEmerald, 0
 		plcm    ArtSpecialZone1, 0
 		plcm    ArtSpecialZone2, 0
@@ -231,51 +231,51 @@ PLC_SpecialStage:	dc.w ((PLC_SpeStageend-PLC_SpecialStage-2)/6)-1
 PLC_GHZAnimals:	dc.w ((PLC_GHZAnimalsend-PLC_GHZAnimals-2)/6)-1
 		plcm    ArtAnimalPocky, $B000
 		plcm    ArtAnimalCucky, $B240
-	PLC_GHZAnimalsend:
+PLC_GHZAnimalsend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - LZ animals
 ; ---------------------------------------------------------------------------
 PLC_LZAnimals:	dc.w ((PLC_LZAnimalsend-PLC_LZAnimals-2)/6)-1
 		plcm    ArtAnimalPecky, $B000
 		plcm    ArtAnimalRocky, $B240
-	PLC_LZAnimalsend:
+PLC_LZAnimalsend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - MZ animals
 ; ---------------------------------------------------------------------------
 PLC_MZAnimals:	dc.w ((PLC_MZAnimalsend-PLC_MZAnimals-2)/6)-1
 		plcm    ArtAnimalPicky, $B000
 		plcm    ArtAnimalFlicky, $B240
-	PLC_MZAnimalsend:
+PLC_MZAnimalsend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - SLZ animals
 ; ---------------------------------------------------------------------------
 PLC_SLZAnimals:	dc.w ((PLC_SLZAnimalsend-PLC_SLZAnimals-2)/6)-1
 		plcm    ArtAnimalRicky, $B000
 		plcm    ArtAnimalRocky, $B240
-	PLC_SLZAnimalsend:
+PLC_SLZAnimalsend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - SZ animals
 ; ---------------------------------------------------------------------------
 PLC_SZAnimals:	dc.w ((PLC_SZAnimalsend-PLC_SZAnimals-2)/6)-1
 		plcm    ArtAnimalPicky, $B000
 		plcm    ArtAnimalCucky, $B240
-	PLC_SZAnimalsend:
+PLC_SZAnimalsend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - CWZ animals
 ; ---------------------------------------------------------------------------
 PLC_CWZAnimals:	dc.w ((PLC_CWZAnimalsend-PLC_CWZAnimals-2)/6)-1
 		plcm    ArtAnimalPocky, $B000
 		plcm    ArtAnimalFlicky, $B240
-	PLC_CWZAnimalsend:
-	        even
+PLC_CWZAnimalsend:
+		even
                 
 ; ---------------------------------------------------------------------------
 ; Pattern load cue IDs
 ; ---------------------------------------------------------------------------
 plcid_Main:		= (ptr_PLC_Main-ArtLoadCues)/2 ; 0
-plcid_Main2:		= (ptr_PLC_Main2-ArtLoadCues)/2 ; 1
-plcid_Explode:		= (ptr_PLC_Explode-ArtLoadCues)/2 ; 2
-plcid_GameOver:		= (ptr_PLC_GameOver-ArtLoadCues)/2 ; 3
+plcid_Main2:	= (ptr_PLC_Main2-ArtLoadCues)/2 ; 1
+plcid_Explode:	= (ptr_PLC_Explode-ArtLoadCues)/2 ; 2
+plcid_GameOver:	= (ptr_PLC_GameOver-ArtLoadCues)/2 ; 3
 plcid_GHZ:		= (ptr_PLC_GHZ-ArtLoadCues)/2	; 4
 plcid_GHZ2:		= (ptr_PLC_GHZ2-ArtLoadCues)/2 ; 5
 plcid_LZ:		= (ptr_PLC_LZ-ArtLoadCues)/2	; 6

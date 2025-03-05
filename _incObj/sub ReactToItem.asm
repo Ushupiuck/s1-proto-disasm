@@ -229,7 +229,7 @@ loc_FD18:
 
 loc_FD48:
 		move.w	#0,obInertia(a0)
-		move.b	#$1A,obAnim(a0)
+		move.b	#id_Hurt,obAnim(a0)
 		move.w	#600,objoff_30(a0)
 		move.w	#sfx_Death,d0
 		cmpi.b	#id_Spikes,obID(a2)
@@ -256,7 +256,7 @@ loc_FD78:
 		move.w	#0,obVelX(a0)
 		move.w	#0,obInertia(a0)
 		move.w	obY(a0),objoff_38(a0)
-		move.b	#$18,obAnim(a0)
+		move.b	#id_Death,obAnim(a0)
 		move.w	#sfx_Death,d0
 		cmpi.b	#id_Spikes,obID(a2)
 		bne.s	loc_FDBA

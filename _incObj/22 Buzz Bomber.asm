@@ -38,7 +38,7 @@ loc_78F6:
 		btst	#1,objoff_34(a0)
 		bne.s	loc_7928
 		addq.b	#2,ob2ndRout(a0)
-		move.w	#$7F,objoff_32(a0)
+		move.w	#127,objoff_32(a0)
 		move.w	#$400,obVelX(a0)
 		move.b	#1,obAnim(a0)
 		btst	#0,obStatus(a0)
@@ -67,10 +67,10 @@ loc_7928:
 loc_7964:
 		add.w	d0,obX(a1)
 		move.b	obStatus(a0),obStatus(a1)
-		move.w	#$E,objoff_32(a1)
+		move.w	#14,objoff_32(a1)
 		move.l	a0,objoff_3C(a1)
 		move.b	#1,objoff_34(a0)
-		move.w	#$3B,objoff_32(a0)
+		move.w	#59,objoff_32(a0)
 		move.b	#2,obAnim(a0)
 
 locret_798A:
@@ -94,14 +94,14 @@ loc_79A8:
 		tst.b	obRender(a0)
 		bpl.s	locret_79E4
 		move.b	#2,objoff_34(a0)
-		move.w	#$1D,objoff_32(a0)
+		move.w	#29,objoff_32(a0)
 		bra.s	loc_79D4
 ; ---------------------------------------------------------------------------
 
 loc_79C2:
 		move.b	#0,objoff_34(a0)
 		bchg	#0,obStatus(a0)
-		move.w	#$3B,objoff_32(a0)
+		move.w	#59,objoff_32(a0)
 
 loc_79D4:
 		subq.b	#2,ob2ndRout(a0)

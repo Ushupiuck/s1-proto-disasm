@@ -139,30 +139,31 @@ loc_A822:
 ; ===========================================================================
 ; Level Order
 ; ===========================================================================
-word_A826:	dc.w $001				; GHZ2
-		dc.w $002				; GHZ3
-		dc.w $200				; MZ1
-		dc.w $000				; Sega Screen
-		dc.w $101				; LZ2
-		dc.w $102				; LZ3
-		dc.w $200				; MZ1
-		dc.w $000				; Sega Screen
-		dc.w $201				; MZ2
-		dc.w $202				; MZ3
-		dc.w $400				; SZ1
-		dc.w $000				; Sega Screen
-		dc.w $000				; Sega Screen
-		dc.w $302				; SLZ3
-		dc.w $200				; MZ1
-		dc.w $000				; Sega Screen
-		dc.w $300				; SLZ1
-		dc.w $402				; SZ3
-		dc.w $500				; CWZ1
-		dc.w $000				; Sega Screen
-		dc.w $501				; CWZ2
-		dc.w $502				; CWZ3
-		dc.w $000				; Sega Screen
-		dc.w $000				; Sega Screen
+word_A826:
+		dc.w id_GHZ<<8+1	; GHZ2
+		dc.w id_GHZ<<8+2	; GHZ3
+		dc.w id_MZ<<8+0	; MZ1
+		dc.w id_Sega	; Sega Screen
+		dc.w id_LZ<<8+1	; LZ2
+		dc.w id_LZ<<8+2	; LZ3
+		dc.w id_MZ<<8+0	; MZ1
+		dc.w id_Sega	; Sega Screen
+		dc.w id_MZ<<8+1	; MZ2
+		dc.w id_MZ<<8+2	; MZ3
+		dc.w id_SZ<<8+0	; SZ1
+		dc.w id_Sega	; Sega Screen
+		dc.w id_Sega	; Sega Screen
+		dc.w id_SLZ<<8+2	; SLZ3
+		dc.w id_MZ<<8+0	; MZ1
+		dc.w id_Sega	; Sega Screen
+		dc.w id_SLZ<<8+0	; SLZ1
+		dc.w id_SZ<<8+2	; SZ3
+		dc.w id_CWZ<<8+0	; CWZ1
+		dc.w id_Sega	; Sega Screen
+		dc.w id_CWZ<<8+1	; CWZ2
+		dc.w id_CWZ<<8+2	; CWZ3
+		dc.w id_Sega	; Sega Screen
+		dc.w id_Sega	; Sega Screen
 
 word_A856:	dc.w 4, $124, $BC
 		dc.b 2, 0

@@ -168,13 +168,13 @@ cFM6				EQU $06	; Only in S3/S&K/S3D, overrides DAC
 ; ---------------------------------------------------------------------------
 ; Conversion macros and functions
 
-conv0To256  function n,((n==0)<<8)|n
-s2TempotoS1 function n,(((768-n)>>1)/(256-n))&$FF
-s2TempotoS3 function n,($100-((n==0)|n))&$FF
-s1TempotoS2 function n,((((conv0To256(n)-1)<<8)+(conv0To256(n)>>1))/conv0To256(n))&$FF
-s1TempotoS3 function n,s2TempotoS3(s1TempotoS2(n))
-s3TempotoS1 function n,s2TempotoS1(s2TempotoS3(n))
-s3TempotoS2 function n,s2TempotoS3(n)
+conv0To256	function n,((n==0)<<8)|n
+s2TempotoS1	function n,(((768-n)>>1)/(256-n))&$FF
+s2TempotoS3	function n,($100-((n==0)|n))&$FF
+s1TempotoS2	function n,((((conv0To256(n)-1)<<8)+(conv0To256(n)>>1))/conv0To256(n))&$FF
+s1TempotoS3	function n,s2TempotoS3(s1TempotoS2(n))
+s3TempotoS1	function n,s2TempotoS1(s2TempotoS3(n))
+s3TempotoS2	function n,s2TempotoS3(n)
 
 convertMainTempoMod macro mod
 	if ((SourceDriver>=3)&&(SonicDriverVer>=3))||(SonicDriverVer==SourceDriver)
@@ -877,7 +877,7 @@ smpsVcTotalLevel macro op1,op2,op3,op4
 	set vcTL3,op3
 	set vcTL4,op4
 	dc.b	(vcUnusedBits<<6)+(vcFeedback<<3)+vcAlgorithm
-;   0     1     2     3     4     5     6     7
+;	0	1	2	3	4	5	6	7
 ;%1000,%1000,%1000,%1000,%1010,%1110,%1110,%1111
 	if SourceSMPS2ASM==0
 		set vcTLMask4,((vcAlgorithm==7)<<7)
@@ -907,19 +907,19 @@ smpsVcTotalLevel macro op1,op2,op3,op4
 	endif
 
 	if SonicDriverVer==2
-		dc.b	(vcDT4<<4)+vcCF4       ,(vcDT2<<4)+vcCF2       ,(vcDT3<<4)+vcCF3       ,(vcDT1<<4)+vcCF1
-		dc.b	(vcRS4<<6)+vcAR4       ,(vcRS2<<6)+vcAR2       ,(vcRS3<<6)+vcAR3       ,(vcRS1<<6)+vcAR1
+		dc.b	(vcDT4<<4)+vcCF4	,(vcDT2<<4)+vcCF2		,(vcDT3<<4)+vcCF3		,(vcDT1<<4)+vcCF1
+		dc.b	(vcRS4<<6)+vcAR4	,(vcRS2<<6)+vcAR2		,(vcRS3<<6)+vcAR3		,(vcRS1<<6)+vcAR1
 		dc.b	vcAM4|vcD1R4|vcD1R4Unk ,vcAM2|vcD1R2|vcD1R2Unk ,vcAM3|vcD1R3|vcD1R3Unk ,vcAM1|vcD1R1|vcD1R1Unk
-		dc.b	vcD2R4                 ,vcD2R2                 ,vcD2R3                 ,vcD2R1
-		dc.b	(vcDL4<<4)+vcRR4       ,(vcDL2<<4)+vcRR2       ,(vcDL3<<4)+vcRR3       ,(vcDL1<<4)+vcRR1
-		dc.b	vcTL4|vcTLMask4        ,vcTL2|vcTLMask2        ,vcTL3|vcTLMask3        ,vcTL1|vcTLMask1
+		dc.b	vcD2R4				,vcD2R2				,vcD2R3					,vcD2R1
+		dc.b	(vcDL4<<4)+vcRR4	,(vcDL2<<4)+vcRR2		,(vcDL3<<4)+vcRR3		,(vcDL1<<4)+vcRR1
+		dc.b	vcTL4|vcTLMask4	,vcTL2|vcTLMask2        ,vcTL3|vcTLMask3		,vcTL1|vcTLMask1
 	else
-		dc.b	(vcDT4<<4)+vcCF4       ,(vcDT3<<4)+vcCF3       ,(vcDT2<<4)+vcCF2       ,(vcDT1<<4)+vcCF1
-		dc.b	(vcRS4<<6)+vcAR4       ,(vcRS3<<6)+vcAR3       ,(vcRS2<<6)+vcAR2       ,(vcRS1<<6)+vcAR1
+		dc.b	(vcDT4<<4)+vcCF4	,(vcDT3<<4)+vcCF3		,(vcDT2<<4)+vcCF2		,(vcDT1<<4)+vcCF1
+		dc.b	(vcRS4<<6)+vcAR4	,(vcRS3<<6)+vcAR3		,(vcRS2<<6)+vcAR2		,(vcRS1<<6)+vcAR1
 		dc.b	vcAM4|vcD1R4|vcD1R4Unk ,vcAM3|vcD1R3|vcD1R3Unk ,vcAM2|vcD1R2|vcD1R2Unk ,vcAM1|vcD1R1|vcD1R1Unk
-		dc.b	vcD2R4                 ,vcD2R3                 ,vcD2R2                 ,vcD2R1
-		dc.b	(vcDL4<<4)+vcRR4       ,(vcDL3<<4)+vcRR3       ,(vcDL2<<4)+vcRR2       ,(vcDL1<<4)+vcRR1
-		dc.b	vcTL4|vcTLMask4        ,vcTL3|vcTLMask3        ,vcTL2|vcTLMask2        ,vcTL1|vcTLMask1
+		dc.b	vcD2R4				,vcD2R3					,vcD2R2				,vcD2R1
+		dc.b	(vcDL4<<4)+vcRR4	,(vcDL3<<4)+vcRR3		,(vcDL2<<4)+vcRR2		,(vcDL1<<4)+vcRR1
+		dc.b	vcTL4|vcTLMask4		,vcTL3|vcTLMask3		,vcTL2|vcTLMask2		,vcTL1|vcTLMask1
 	endif
 	endm
 

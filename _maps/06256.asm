@@ -1,4 +1,8 @@
-off_6256:	dc.w byte_625E-off_6256, byte_62AF-off_6256, byte_6300-off_6256, byte_637E-off_6256
+off_6256:	
+		dc.w byte_625E-off_6256
+		dc.w byte_62AF-off_6256
+		dc.w byte_6300-off_6256
+		dc.w byte_637E-off_6256
 byte_625E:	dc.b $10
 		dc.b $C8, $E, 0, $60, $10
 		dc.b $D0, $D, 0, $6C, $F0

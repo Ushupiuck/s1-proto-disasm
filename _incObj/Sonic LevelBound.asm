@@ -16,7 +16,7 @@ Sonic_LevelBound:
 		cmp.w	d1,d0
 		bls.s	Sonic_BoundSides
 		move.w	(v_limitbtm2).w,d0
-		addi.w	#$E0,d0
+		addi.w	#224,d0
 		cmp.w	obY(a0),d0
 		bcs.w	loc_FD78
 		rts

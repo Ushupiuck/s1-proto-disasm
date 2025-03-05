@@ -49,7 +49,7 @@ ObjSpikedBalls_MakeChain:
 		addq.b	#1,objoff_29(a0)
 		move.w	a1,d5
 		subi.w	#v_objspace,d5
-		lsr.w	#6,d5
+		lsr.w	#object_size_bits,d5
 		andi.w	#$7F,d5
 		move.b	d5,(a2)+
 		move.b	#4,obRoutine(a1)
@@ -67,7 +67,7 @@ ObjSpikedBalls_MakeChain:
 loc_DD5E:
 		move.w	a0,d5
 		subi.w	#v_objspace,d5
-		lsr.w	#6,d5
+		lsr.w	#object_size_bits,d5
 		andi.w	#$7F,d5
 		move.b	d5,(a2)+
 
@@ -90,7 +90,7 @@ ObjSpikedBalls_MoveStub:
 ObjSpikedBalls_MoveLoop:
 		moveq	#0,d4
 		move.b	(a2)+,d4
-		lsl.w	#6,d4
+		lsl.w	#object_size_bits,d4
 		addi.l	#v_objspace&$FFFFFF,d4
 		movea.l	d4,a1
 		moveq	#0,d4
@@ -121,7 +121,7 @@ ObjSpikedBalls_Delete:
 ObjSpikedBalls_DeleteLoop:
 		moveq	#0,d0
 		move.b	(a2)+,d0
-		lsl.w	#6,d0
+		lsl.w	#object_size_bits,d0
 		addi.l	#v_objspace&$FFFFFF,d0
 		movea.l	d0,a1
 		bsr.w	ObjectDeleteA1

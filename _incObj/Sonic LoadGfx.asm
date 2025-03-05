@@ -30,7 +30,7 @@ Sonic_DynReadEntry:
 loc_F730:
 		movem.l	(a1)+,d2-d6/a4-a6
 		movem.l	d2-d6/a4-a6,(a3)
-		lea	$20(a3),a3
+		lea	tile_size(a3),a3
 		dbf	d0,loc_F730
 
 loc_F740:

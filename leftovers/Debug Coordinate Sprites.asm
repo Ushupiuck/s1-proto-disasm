@@ -1,6 +1,3 @@
-;
-;
-;
 ; sub_2ED0:
 Debug_Coord_Sprites:
 		lea	(Debug_Coords_XY_Index).l,a0
@@ -31,10 +28,7 @@ Debug_Coords_XY_Index:
 		dc.w $170, $98
 Debug_Coords_XY_Index_End:
 		even
-
-;
-;
-;
+; ---------------------------------------------------------------------------
 ; sub_2F24:
 Debug_Coord_B_Sprites:
 		lea	(Debug_Coords_B_XY_Index).l,a0

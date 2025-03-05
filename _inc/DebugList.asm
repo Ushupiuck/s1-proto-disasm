@@ -1,6 +1,6 @@
 DebugLists:
-                dc.w .GHZ-DebugLists
-                dc.w .LZ-DebugLists
+		dc.w .GHZ-DebugLists
+		dc.w .LZ-DebugLists
 		dc.w .MZ-DebugLists
 		dc.w .SLZ-DebugLists
 		dc.w .SZ-DebugLists
@@ -29,7 +29,7 @@ dbug:	macro map,object,subtype,frame,vram
 	dbug	Map_Newt,	id_Newtron,	0,	0,	$249B
 	dbug	Map_Edge,	id_EdgeWalls,	0,	0,	$434C
 	dbug	Map_GBall,	id_GBall,	0,	0,	$43AA
-	.GHZend:
+.GHZend:
 
 .LZ:
 	dc.w (.LZend-.LZ-2)/8
@@ -38,7 +38,7 @@ dbug:	macro map,object,subtype,frame,vram
 	dbug 	MapRing,	id_Rings,	0,	0,	$27B2
 	dbug	MapMonitor,	id_Monitor,	0,	0,	$680
 	dbug	Map_Crab,	id_Crabmeat,	0,	0,	$400
-	.LZend:
+.LZend:
 
 .MZ:
 	dc.w (.MZend-.MZ-2)/8
@@ -61,7 +61,7 @@ dbug:	macro map,object,subtype,frame,vram
 	dbug	Map_CFlo,	id_CollapseFloor,	0,	0,	$62B8
 	dbug	Map_LTag,	id_LavaTag,	0,	0,	$8680
 	dbug	Map_Bas,	id_Basaran,	0,	0,	$24B8
-	.MZend:
+.MZend:
 
 .SLZ:
 	dc.w (.SLZend-.SLZ-2)/8
@@ -80,7 +80,7 @@ dbug:	macro map,object,subtype,frame,vram
 	dbug	Map_Fire,	id_LavaMaker,	0,	0,	$345
 	dbug	Map_Crab,	id_Crabmeat,	0,	0,	$400
 	dbug	Map_Buzz,	id_BuzzBomber,	0,	0,	$444
-	.SLZend:
+.SLZend:
 
 .SZ:
 	dc.w (.SZend-.SZ-2)/8
@@ -99,7 +99,7 @@ dbug:	macro map,object,subtype,frame,vram
 	dbug	Map_Plat_SZ,	id_BasicPlatform,	0,	0,	$4000
 	dbug	Map_FBlock,	id_FloatingBlock,	0,	0,	$4000
 	dbug	MapSwitch,	id_Button,	0,	0,	$513
-	.SZend:
+.SZend:
 
 .CWZ:
 	dc.w (.CWZend-.CWZ-2)/8
@@ -108,11 +108,11 @@ dbug:	macro map,object,subtype,frame,vram
 	dbug 	MapRing,	id_Rings,	0,	0,	$27B2
 	dbug	MapMonitor,	id_Monitor,	0,	0,	$680
 	dbug	Map_Crab,	id_Crabmeat,	0,	0,	$400
-	.CWZend:
+.CWZend:
 
 ;.DebugUnk:
 ;		mappings	object		subtype	frame	VRAM setting
 	dbug 	MapBallhog,	id_BallHog,	0,	0,	$2400
 	dbug	Map_Jaws,	id_Jaws,	0,	0,	$47B
 	dbug	Map_Burro,	id_Burrobot,	0,	0,	$247B
-;	.DebugUnkend:
+;.DebugUnkend:

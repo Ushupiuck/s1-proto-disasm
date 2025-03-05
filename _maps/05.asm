@@ -1,4 +1,5 @@
-Map05:		dc.w byte_4D8E-Map05
+Map05:
+		dc.w byte_4D8E-Map05
 		dc.w byte_4D94-Map05
 		dc.w byte_4D9A-Map05
 		dc.w byte_4DA0-Map05

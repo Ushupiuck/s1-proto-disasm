@@ -33,5 +33,5 @@ Map_Pri_internal:
 		dc.b 0,	$E, $20, $61, $F0
 .unusedthing2:	dc.b 1
 		dc.b $F0, 7, $20, $6D, $F8
-.blank:		dc.b 0
+.blank:	dc.b 0
 		even

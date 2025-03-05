@@ -1,5 +1,6 @@
-Map2A:		dc.w byte_6A30-Map2A, byte_6A45-Map2A
-
+Map2A:
+		dc.w byte_6A30-Map2A
+		dc.w byte_6A45-Map2A
 byte_6A30:	dc.b 4
 		dc.b $F0, 8, 0, $EA, $F4
 		dc.b $F8, 8, $10, $EA, $F4

@@ -166,7 +166,7 @@ loc_A0CC:
 ; ---------------------------------------------------------------------------
 
 sub_A0E2:
-		cmpi.w	#id_MZ*$100+1,(v_zone).w
+		cmpi.w	#id_MZ<<8+1,(v_zone).w
 		bne.s	loc_A108
 		move.w	#$FFE0,d2
 		cmpi.w	#$DD0,obX(a0)
@@ -179,7 +179,7 @@ sub_A0E2:
 ; ---------------------------------------------------------------------------
 
 loc_A108:
-		cmpi.w	#id_MZ*$100+2,(v_zone).w
+		cmpi.w	#id_MZ<<8+2,(v_zone).w
 		bne.s	locret_A124
 		move.w	#$20,d2
 		cmpi.w	#$560,obX(a0)

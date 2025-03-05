@@ -232,7 +232,6 @@ ObjSwingPtfm_Delete:
 		bsr.w	DeleteObject
 		rts
 ; ---------------------------------------------------------------------------
-; Attributes: thunk
 
 j_DisplaySprite:
 		bra.w	DisplaySprite

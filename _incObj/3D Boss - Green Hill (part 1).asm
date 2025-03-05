@@ -111,5 +111,5 @@ locret_B136:
 
 loc_B138:
 		move.b	#8,ob2ndRout(a0)
-		move.w	#$B3,objoff_3C(a0)
+		move.w	#179,objoff_3C(a0)
 		rts

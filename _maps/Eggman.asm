@@ -13,7 +13,7 @@ Map_Eggman_internal:
 		dc.w .flame1-Map_Eggman_internal
 		dc.w .flame2-Map_Eggman_internal
 		dc.w .blank-Map_Eggman_internal
-.ship:		dc.b 6
+.ship:	dc.b 6
 		dc.b $EC, 1, 0,	$A, $E4
 		dc.b $EC, 5, 0,	$C, $C
 		dc.b $FC, $E, $20, $10,	$E4
@@ -51,5 +51,5 @@ Map_Eggman_internal:
 		dc.b 4,	5, 0, $2D, $22
 .flame2:	dc.b 1
 		dc.b 4,	5, 0, $31, $22
-.blank:		dc.b 0
+.blank:	dc.b 0
 		even

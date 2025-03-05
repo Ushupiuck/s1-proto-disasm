@@ -22,8 +22,8 @@ Go_SoundIndex:		dc.l SoundIndex
 Go_Modulation:		dc.l ModulationIndex
 ; off_74010:
 Go_PSGIndex:		dc.l PSG_Index
-			dc.l $A0
-			dc.l UpdateMusic
+		dc.l $A0
+		dc.l UpdateMusic
 Go_SpeedUpIndex:	dc.l SpeedUpIndex
 
 ; ---------------------------------------------------------------------------
@@ -33,25 +33,26 @@ PSG_Index:
 		dc.l PSG1, PSG2, PSG3
 		dc.l PSG4, PSG6, PSG5
 		dc.l PSG7, PSG8, PSG9
-PSG1:		binclude "sound/psg/psg1.bin"
-PSG2:		binclude "sound/psg/psg2.bin"
-PSG3:		binclude "sound/psg/psg3.bin"
-PSG4:		binclude "sound/psg/psg4.bin"
-PSG5:		binclude "sound/psg/psg5.bin"
-PSG6:		binclude "sound/psg/psg6.bin"
-PSG7:		binclude "sound/psg/psg7.bin"
-PSG8:		binclude "sound/psg/psg8.bin"
-PSG9:		binclude "sound/psg/psg9.bin"
+PSG1:	binclude "sound/psg/psg1.bin"
+PSG2:	binclude "sound/psg/psg2.bin"
+PSG3:	binclude "sound/psg/psg3.bin"
+PSG4:	binclude "sound/psg/psg4.bin"
+PSG5:	binclude "sound/psg/psg5.bin"
+PSG6:	binclude "sound/psg/psg6.bin"
+PSG7:	binclude "sound/psg/psg7.bin"
+PSG8:	binclude "sound/psg/psg8.bin"
+PSG9:	binclude "sound/psg/psg9.bin"
 
 ModulationIndex:
 		dc.b $D, 1, 7, 4
-                dc.b 1, 1, 1, 4
-                dc.b 2, 1, 2, 4
-                dc.b 8, 1, 6, 4
+		dc.b 1, 1, 1, 4
+		dc.b 2, 1, 2, 4
+		dc.b 8, 1, 6, 4
 ; ---------------------------------------------------------------------------
 ; New tempos for songs during speed shoes
 ; ---------------------------------------------------------------------------
-SpeedUpIndex:	dc.b 7					; GHZ
+SpeedUpIndex:
+		dc.b 7					; GHZ
 		dc.b $72				; LZ
 		dc.b $73				; MZ
 		dc.b $26				; SLZ
@@ -1822,19 +1823,19 @@ PSGSilenceAll:
 ; Here is what Sonic 3's version of this table looks like:
 ;	dc.w $3FF, $3FF, $3FF, $3FF, $3FF, $3FF, $3FF, $3FF, $3FF, $3F7, $3BE, $388
 ;	dc.w $356, $326, $2F9, $2CE, $2A5, $280, $25C, $23A, $21A, $1FB, $1DF, $1C4
-;	dc.w $1AB, $193, $17D, $167, $153, $140, $12E, $11D, $10D,  $FE,  $EF,  $E2
-;	dc.w  $D6,  $C9,  $BE,  $B4,  $A9,  $A0,  $97,  $8F,  $87,  $7F,  $78,  $71
-;	dc.w  $6B,  $65,  $5F,  $5A,  $55,  $50,  $4B,  $47,  $43,  $40,  $3C,  $39
-;	dc.w  $36,  $33,  $30,  $2D,  $2B,  $28,  $26,  $24,  $22,  $20,  $1F,  $1D
-;	dc.w  $1B,  $1A,  $18,  $17,  $16,  $15,  $13,  $12,  $11,  $10,    0,    0
+;	dc.w $1AB, $193, $17D, $167, $153, $140, $12E, $11D, $10D,	$FE,  $EF,	$E2
+;	dc.w  $D6,	$C9,  $BE,	$B4,  $A9,	$A0,  $97,	$8F,  $87,	$7F,  $78,	$71
+;	dc.w  $6B,	$65,  $5F,	$5A,  $55,	$50,  $4B,	$47,  $43,	$40,  $3C,	$39
+;	dc.w  $36,	$33,  $30,	$2D,  $2B,	$28,  $26,	$24,  $22,	$20,  $1F,	$1D
+;	dc.w  $1B,	$1A,  $18,	$17,  $16,	$15,  $13,	$12,  $11,	$10,	0,    0
 ; ---------------------------------------------------------------------------
 PSGFrequencies:
 		dc.w $356, $326, $2F9, $2CE, $2A5, $280, $25C, $23A, $21A, $1FB, $1DF, $1C4
-		dc.w $1AB, $193, $17D, $167, $153, $140, $12E, $11D, $10D,  $FE,  $EF,  $E2
-		dc.w  $D6,  $C9,  $BE,  $B4,  $A9,  $A0,  $97,  $8F,  $87,  $7F,  $78,  $71
-		dc.w  $6B,  $65,  $5F,  $5A,  $55,  $50,  $4B,  $47,  $43,  $40,  $3C,  $39
-		dc.w  $36,  $33,  $30,  $2D,  $2B,  $28,  $26,  $24,  $22,  $20,  $1F,  $1D
-		dc.w  $1B,  $1A,  $18,  $17,  $16,  $15,  $13,  $12,  $11,    0
+		dc.w $1AB, $193, $17D, $167, $153, $140, $12E, $11D, $10D,	$FE,  $EF,	$E2
+		dc.w  $D6,	$C9,  $BE,	$B4,  $A9,	$A0,  $97,	$8F,  $87,	$7F,  $78,	$71
+		dc.w  $6B,	$65,  $5F,	$5A,  $55,	$50,  $4B,	$47,  $43,	$40,  $3C,	$39
+		dc.w  $36,	$33,  $30,	$2D,  $2B,	$28,  $26,	$24,  $22,	$20,  $1F,	$1D
+		dc.w  $1B,	$1A,  $18,	$17,  $16,	$15,  $13,	$12,  $11,	0
 ; ---------------------------------------------------------------------------
 
 CoordFlag:
@@ -1848,27 +1849,27 @@ CoordFlag:
 ; ---------------------------------------------------------------------------
 		bra.w	cfE1_Detune			; E1
 ; ---------------------------------------------------------------------------
-		bra.w	cfE2_SetComm			; E2
+		bra.w	cfE2_SetComm		; E2
 ; ---------------------------------------------------------------------------
-		bra.w	cfE3_GlobalMod			; E3
+		bra.w	cfE3_GlobalMod		; E3
 ; ---------------------------------------------------------------------------
-		bra.w	cfFadeInToPrevious		; E4
+		bra.w	cfFadeInToPrevious	; E4
 ; ---------------------------------------------------------------------------
-		bra.w	cfChangePFMVolume		; E5
+		bra.w	cfChangePFMVolume	; E5
 ; ---------------------------------------------------------------------------
-		bra.w	cfChangeFMVolume		; E6
+		bra.w	cfChangeFMVolume	; E6
 ; ---------------------------------------------------------------------------
 		bra.w	cfHoldNote			; E7
 ; ---------------------------------------------------------------------------
-		bra.w	cfNoteTimeout			; E8
+		bra.w	cfNoteTimeout		; E8
 ; ---------------------------------------------------------------------------
 		bra.w	cfSetLFO			; E9
 ; ---------------------------------------------------------------------------
 		bra.w	cfSetTempo			; EA
 ; ---------------------------------------------------------------------------
-		bra.w	cfSetSoundqueue			; EB
+		bra.w	cfSetSoundqueue		; EB
 ; ---------------------------------------------------------------------------
-		bra.w	cfChangePSGVolume		; EC
+		bra.w	cfChangePSGVolume	; EC
 ; ---------------------------------------------------------------------------
 		bra.w	cfClearPush			; ED
 ; ---------------------------------------------------------------------------
@@ -1876,35 +1877,35 @@ CoordFlag:
 ; ---------------------------------------------------------------------------
 		bra.w	cfSetVoice			; EF
 ; ---------------------------------------------------------------------------
-		bra.w	cfModulation			; F0
+		bra.w	cfModulation		; F0
 ; ---------------------------------------------------------------------------
-		bra.w	cfEnableModulation		; F1
+		bra.w	cfEnableModulation	; F1
 ; ---------------------------------------------------------------------------
 		bra.w	cfStopTrack			; F2
 ; ---------------------------------------------------------------------------
-		bra.w	cfSetPSGNoise			; F3
+		bra.w	cfSetPSGNoise		; F3
 ; ---------------------------------------------------------------------------
-		bra.w	cfDisableModulation		; F4
+		bra.w	cfDisableModulation	; F4
 ; ---------------------------------------------------------------------------
-		bra.w	cfSetPSGTone			; F5
+		bra.w	cfSetPSGTone		; F5
 ; ---------------------------------------------------------------------------
 		bra.w	cfJumpTo			; F6
 ; ---------------------------------------------------------------------------
-		bra.w	cfRepeatAtPos			; F7
+		bra.w	cfRepeatAtPos		; F7
 ; ---------------------------------------------------------------------------
-		bra.w	cfJumpToGosub			; F8
+		bra.w	cfJumpToGosub		; F8
 ; ---------------------------------------------------------------------------
-		bra.w	cfJumpReturn			; F9
+		bra.w	cfJumpReturn		; F9
 ; ---------------------------------------------------------------------------
-		bra.w	cfSetTempoDivider		; FA
+		bra.w	cfSetTempoDivider	; FA
 ; ---------------------------------------------------------------------------
-		bra.w	cfChangeTransposition		; FB
+		bra.w	cfChangeTransposition	; FB
 ; ---------------------------------------------------------------------------
-		bra.w	cfSetTempoDividerAll		; FC
+		bra.w	cfSetTempoDividerAll	; FC
 ; ---------------------------------------------------------------------------
-		bra.w	cfStopSpecialFM4		; FD
+		bra.w	cfStopSpecialFM4	; FD
 ; ---------------------------------------------------------------------------
-		bra.w	cfFE_SpcFM3Mode			; FE
+		bra.w	cfFE_SpcFM3Mode		; FE
 ; ---------------------------------------------------------------------------
 		moveq	#0,d0				; FF
 		move.b	(a4)+,d0
@@ -1945,21 +1946,21 @@ cfE2_SetComm:
 ; ---------------------------------------------------------------------------
 
 cfE3_GlobalMod:
-		movea.l	(Go_Modulation).l,a0		; Get global modulation index
-		moveq	#0,d0				; Clear high bit of d0
-		move.b	(a4)+,d0			; Move first byte into d0
-		subq.b	#1,d0				; Subtract 1 from d0
-		lsl.w	#2,d0				; Multiply by 4
-		adda.w	d0,a0				; Add d0 to the modulation index
+		movea.l	(Go_Modulation).l,a0	; Get global modulation index
+		moveq	#0,d0	; Clear high bit of d0
+		move.b	(a4)+,d0	; Move first byte into d0
+		subq.b	#1,d0	; Subtract 1 from d0
+		lsl.w	#2,d0	; Multiply by 4
+		adda.w	d0,a0	; Add d0 to the modulation index
 		bset	#3,SMPS_Track.PlaybackControl(a5)	; Enable modulation
 		move.l	a0,SMPS_Track.ModulationPtr(a5)	; Save pointer to modulation data
 		move.b	(a0)+,SMPS_Track.ModulationWait(a5)	; Modulation delay
 		move.b	(a0)+,SMPS_Track.ModulationSpeed(a5)	; Modulation speed
 		move.b	(a0)+,SMPS_Track.ModulationDelta(a5)	; Modulation delta
-		move.b	(a0)+,d0			; Modulation steps...
-		lsr.b	#1,d0				; ... divided by 2...
+		move.b	(a0)+,d0	; Modulation steps...
+		lsr.b	#1,d0	; ... divided by 2...
 		move.b	d0,SMPS_Track.ModulationSteps(a5)	; ... before being stored
-		clr.w	SMPS_Track.ModulationVal(a5)		; Total accumulated modulation frequency change
+		clr.w	SMPS_Track.ModulationVal(a5)	; Total accumulated modulation frequency change
 		rts
 ; ---------------------------------------------------------------------------
 

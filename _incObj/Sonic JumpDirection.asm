@@ -39,7 +39,7 @@ loc_ED96:
 		subq.w	#2,(v_lookshift).w
 
 loc_ED9A:
-		cmpi.w	#$FC00,obVelY(a0)
+		cmpi.w	#-$400,obVelY(a0)
 		bcs.s	locret_EDC8
 		move.w	obVelX(a0),d0
 		move.w	d0,d1

@@ -12,9 +12,9 @@ Signpost:
 		rts
 ; ---------------------------------------------------------------------------
 off_C726:	dc.w loc_C72E-off_C726
-                dc.w loc_C752-off_C726
-                dc.w loc_C77C-off_C726
-                dc.w loc_C814-off_C726
+		dc.w loc_C752-off_C726
+		dc.w loc_C77C-off_C726
+		dc.w loc_C814-off_C726
 ; ---------------------------------------------------------------------------
 
 loc_C72E:
@@ -140,14 +140,14 @@ TimeBonuses:	dc.w 5000
 		dc.w 200
 		dc.w 100
 		dc.w 100
-                dc.w 100
-                dc.w 100
-                dc.w 50
-                dc.w 50
-                dc.w 50
-                dc.w 50
-                dc.w 10
-                dc.w 10
-                dc.w 10
-                dc.w 10
+		dc.w 100
+		dc.w 100
+		dc.w 50
+		dc.w 50
+		dc.w 50
+		dc.w 50
+		dc.w 10
+		dc.w 10
+		dc.w 10
+		dc.w 10
 		dc.w 0

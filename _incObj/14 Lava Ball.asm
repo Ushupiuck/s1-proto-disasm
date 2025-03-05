@@ -132,7 +132,6 @@ locret_C3CA:
 locret_C3CC:
 		rts
 ; ---------------------------------------------------------------------------
-; Attributes: thunk
 
 j_DeleteObject:
 		bra.w	DeleteObject

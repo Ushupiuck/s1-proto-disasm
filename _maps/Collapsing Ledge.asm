@@ -6,7 +6,7 @@ Map_Ledge_internal:
 		dc.w .right-Map_Ledge_internal
 		dc.w .leftsmash-Map_Ledge_internal
 		dc.w .rightsmash-Map_Ledge_internal
-.left:		dc.b $10
+.left:	dc.b $10
 		dc.b $C8, $E, 0, $57, $10		; ledge facing left
 		dc.b $D0, $D, 0, $63, $F0
 		dc.b $E0, $D, 0, $6B, $10
@@ -23,7 +23,7 @@ Map_Ledge_internal:
 		dc.b 0,	5, 0, $B3, $D0
 		dc.b $10, $D, 0, $AB, $10
 		dc.b $10, 5, 0,	$B7, 0
-.right:		dc.b $10
+.right:	dc.b $10
 		dc.b $C8, $E, 0, $57, $10		; ledge facing right
 		dc.b $D0, $D, 0, $63, $F0
 		dc.b $E0, $D, 0, $6B, $10

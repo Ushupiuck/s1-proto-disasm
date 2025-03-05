@@ -15,7 +15,6 @@
 
 
 KosDec:
-
 		subq.l	#2,sp				; make space for 2 bytes on the stack
 		move.b	(a0)+,1(sp)
 		move.b	(a0)+,(sp)
@@ -31,7 +30,7 @@ Kos_Loop:
 		move.w	(sp),d5
 		moveq	#$F,d4
 
-	.chkbit:
+.chkbit:
 		move	d6,ccr				; was the bit set?
 		bcc.s	Kos_RLE				; if not, branch
 
@@ -49,7 +48,7 @@ Kos_RLE:
 		move.w	(sp),d5
 		moveq	#$F,d4
 
-	.chkbit:
+.chkbit:
 		move	d6,ccr				; was the bit set?
 		bcs.s	Kos_SeparateRLE			; if yes, branch
 
@@ -60,7 +59,7 @@ Kos_RLE:
 		move.w	(sp),d5
 		moveq	#$F,d4
 
-	.loop1:
+.loop1:
 		roxl.w	#1,d3				; get high repeat count bit
 		lsr.w	#1,d5
 		dbf	d4,.loop2
@@ -69,7 +68,7 @@ Kos_RLE:
 		move.w	(sp),d5
 		moveq	#$F,d4
 
-	.loop2:
+.loop2:
 		roxl.w	#1,d3				; get low repeat count bit
 		addq.w	#1,d3				; increment repeat count
 		moveq	#-1,d2

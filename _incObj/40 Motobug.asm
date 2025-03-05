@@ -92,7 +92,7 @@ locret_B9BE:
 
 loc_B9C0:
 		subq.b	#2,ob2ndRout(a0)
-		move.w	#$3B,objoff_30(a0)
+		move.w	#59,objoff_30(a0)
 		move.w	#0,obVelX(a0)
 		move.b	#0,obAnim(a0)
 		rts

@@ -43,7 +43,7 @@ Bridge_MakeLog:
 		move.w	d2,objoff_3C(a0)
 		move.w	a0,d5
 		subi.w	#v_objspace,d5
-		lsr.w	#6,d5
+		lsr.w	#object_size_bits,d5
 		andi.w	#$7F,d5
 		move.b	d5,(a2)+
 		addq.b	#1,obSubtype(a0)
@@ -51,7 +51,7 @@ Bridge_MakeLog:
 loc_4EE6:
 		move.w	a1,d5
 		subi.w	#v_objspace,d5
-		lsr.w	#6,d5
+		lsr.w	#object_size_bits,d5
 		andi.w	#$7F,d5
 		move.b	d5,(a2)+
 		move.b	#$A,obRoutine(a1)

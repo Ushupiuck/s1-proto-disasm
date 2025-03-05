@@ -41,7 +41,7 @@ loc_BB04:
 loc_BB16:
 		btst	#1,d0
 		beq.s	loc_BB22
-		bset	#5,2(a0)
+		bset	#5,obGfx(a0)
 
 loc_BB22:
 		andi.w	#$F,d0

@@ -58,7 +58,7 @@ loc_DFE6:
 		; The line below is the root cause of the issue, as it does not limit the table to be 0.
 		; What's the most strange part about this (in my opinion) is that this bug technically still persists in the
 		; final game, but the issue never actually got fixed.
-                ; Perhaps they were planning on different types of platforms? Who knows! 
+		; Perhaps they were planning on different types of platforms? Who knows! 
 		andi.w	#$1E,d0
 		lea	Elev_Var1(pc,d0.w),a2
 		move.b	(a2)+,obActWid(a0)

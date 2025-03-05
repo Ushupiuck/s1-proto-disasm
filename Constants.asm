@@ -4,6 +4,9 @@ vram_fg:	equ $C000	; plane A (foreground namespace)
 vram_special:	equ $D000	; plane A (foreground namespace)
 vram_bg:	equ $E000	; plane B (background namespace)
 vram_sonic:	equ $F000	; Sonic graphics
+vram_unk1:	equ $F200
+vram_unk2:	equ $F400
+vram_unk3:	equ $F600
 vram_sprites:	equ $F800	; sprite table
 vram_hscroll:	equ $FC00	; horizontal scroll table
 tile_size:	equ 8*8/2
@@ -33,20 +36,20 @@ cBlue:		equ $E00					; colour blue
 cGreen:		equ $0E0					; colour green
 cRed:		equ $00E					; colour red
 cYellow:	equ cGreen+cRed				; colour yellow
-cAqua:		equ cGreen+cBlue				; colour aqua
+cAqua:		equ cGreen+cBlue			; colour aqua
 cMagenta:	equ cBlue+cRed				; colour magenta
 
 ; Joypad input
-btnStart:	equ %10000000				; Start button	($80)
-btnA:		equ %01000000				; A		($40)
-btnC:		equ %00100000				; C		($20)
-btnB:		equ %00010000				; B		($10)
-btnR:		equ %00001000				; Right		($08)
-btnL:		equ %00000100				; Left		($04)
-btnDn:		equ %00000010				; Down		($02)
-btnUp:		equ %00000001				; Up		($01)
-btnDir:		equ %00001111				; Any direction	($0F)
-btnABC:		equ %01110000				; A, B or C	($70)
+btnStart:	equ %10000000				; Start button ($80)
+btnA:		equ %01000000				; A	($40)
+btnC:		equ %00100000				; C ($20)
+btnB:		equ %00010000				; B ($10)
+btnR:		equ %00001000				; Right ($08)
+btnL:		equ %00000100				; Left ($04)
+btnDn:		equ %00000010				; Down ($02)
+btnUp:		equ %00000001				; Up ($01)
+btnDir:		equ %00001111				; Any direction ($0F)
+btnABC:		equ %01110000				; A, B or C ($70)
 bitStart:	equ 7
 bitA:		equ 6
 bitC:		equ 5
@@ -58,13 +61,13 @@ bitUp:		equ 0
 
 ; Object variables
 obj STRUCT DOTS
-ID:		ds.b 1		; id of object (this is put here for readability, this actually makes routines slower by 4 cycles)
+ID:			ds.b 1		; id of object (this is put here for readability, this actually makes routines slower by 4 cycles)
 Render:		ds.b 1		; bitfield for x/y flip, display mode
 Gfx:		ds.w 1		; palette line & VRAM setting (2 bytes)
 Map:		ds.l 1		; mappings address (4 bytes)
-X:		ds.w 1		; x-axis position (2-4 bytes)
+X:			ds.w 1		; x-axis position (2-4 bytes)
 ScreenY:	ds.w 1		; y-axis position for screen-fixed items (2 bytes)
-Y:		ds.w 1		; y-axis position (2-4 bytes)
+Y:			ds.w 1		; y-axis position (2-4 bytes)
 ScreenX:	ds.w 1		; x-axis position for screen-fixed items (2 bytes)
 VelX:		ds.w 1		; x-axis velocity (2 bytes)
 VelY:		ds.w 1		; y-axis velocity (2 bytes)
@@ -84,10 +87,10 @@ ColProp:	ds.b 1		; collision extra property
 Status:		ds.b 1		; orientation or mode
 RespawnNo:	ds.b 1		; respawn list index number
 Routine:	ds.b 1		; routine number
-2ndRout:			; secondary routine number
+2ndRout:				; secondary routine number
 Solid:		ds.b 1		; solid status flag
 Angle:		ds.b 1		; angle
-		ds.b 1		; unused
+			ds.b 1		; unused
 Subtype:	ds.b 1		; object subtype
 Off_29		ds.b 1
 Off_2A		ds.b 1
@@ -195,7 +198,7 @@ afBack:		equ $FE					; go back (specified number) bytes
 afChange:	equ $FD					; run specified animation
 afRoutine:	equ $FC					; increment routine counter
 afReset:	equ $FB					; reset animation and 2nd object routine counter
-af2ndRoutine:	equ $FA					; increment 2nd routine counter
+af2ndRoutine:	equ $FA				; increment 2nd routine counter
 
 ; ---------------------------------------------------------------------------
 
@@ -340,22 +343,22 @@ flg__Last:	equ ((ptr_flgend-Sound_ExIndex-4)/4)+flg__First
 ; Tile VRAM Locations
 
 ; Shared
-ArtTile_GHZ_MZ_Swing:		equ $380
+ArtTile_GHZ_MZ_Swing:	equ $380
 ArtTile_MZ_SYZ_Caterkiller:	equ $4FF
 ArtTile_GHZ_SLZ_Smashable_Wall:	equ $50F
 
 ; Green Hill Zone
-ArtTile_GHZ_Flower_4:		equ ArtTile_Level+$340
-ArtTile_GHZ_Edge_Wall:		equ $34C
+ArtTile_GHZ_Flower_4:	equ ArtTile_Level+$340
+ArtTile_GHZ_Edge_Wall:	equ $34C
 ArtTile_GHZ_Flower_Stalk:	equ ArtTile_Level+$358
 ArtTile_GHZ_Big_Flower_1:	equ ArtTile_Level+$35C
 ArtTile_GHZ_Small_Flower:	equ ArtTile_Level+$36C
-ArtTile_GHZ_Waterfall:		equ ArtTile_Level+$378
-ArtTile_GHZ_Flower_3:		equ ArtTile_Level+$380
+ArtTile_GHZ_Waterfall:	equ ArtTile_Level+$378
+ArtTile_GHZ_Flower_3:	equ ArtTile_Level+$380
 ArtTile_GHZ_Bridge:		equ $38E
 ArtTile_GHZ_Big_Flower_2:	equ ArtTile_Level+$390
-ArtTile_GHZ_Spike_Pole:		equ $398
-ArtTile_GHZ_Giant_Ball:		equ $3AA
+ArtTile_GHZ_Spike_Pole:	equ $398
+ArtTile_GHZ_Giant_Ball:	equ $3AA
 ArtTile_GHZ_Purple_Rock:	equ $3D0
 
 ; Marble Zone
@@ -365,7 +368,7 @@ ArtTile_MZ_Animated_Lava:	equ ArtTile_Level+$2E2
 ArtTile_MZ_Saturns:		equ ArtTile_Level+$2EA
 ArtTile_MZ_Torch:		equ ArtTile_Level+$2F2
 ArtTile_MZ_Spike_Stomper:	equ $300
-ArtTile_MZ_Fireball:		equ $345
+ArtTile_MZ_Fireball:	equ $345
 ArtTile_MZ_Glass_Pillar:	equ $38E
 ArtTile_MZ_Lava:		equ $3A8
 
@@ -384,12 +387,12 @@ ArtTile_LZ_Moving_Block:	equ $3BC
 ArtTile_LZ_Door:		equ $3C4
 ArtTile_LZ_Harpoon:		equ $3CC
 ArtTile_LZ_Pole:		equ $3DE
-ArtTile_LZ_Push_Block:		equ $3DE
+ArtTile_LZ_Push_Block:	equ $3DE
 ArtTile_LZ_Blocks:		equ $3E6
 ArtTile_LZ_Conveyor_Belt:	equ $3F6
 ArtTile_LZ_Sonic_Drowning:	equ $440
 ArtTile_LZ_Rising_Platform:	equ ArtTile_LZ_Blocks+$69
-ArtTile_LZ_Orbinaut:		equ $467
+ArtTile_LZ_Orbinaut:	equ $467
 ArtTile_LZ_Cork:		equ ArtTile_LZ_Blocks+$11A
 
 ; Star Light Zone
@@ -409,7 +412,7 @@ ArtTile_SBZ_Moving_Block_Short:	equ $2C0
 ArtTile_SBZ_Door:		equ $2E8
 ArtTile_SBZ_Girder:		equ $2F0
 ArtTile_SBZ_Disc:		equ $344
-ArtTile_SBZ_Junction:		equ $348
+ArtTile_SBZ_Junction:	equ $348
 ArtTile_SBZ_Swing:		equ $391
 ArtTile_SBZ_Saw:		equ $3B5
 ArtTile_SBZ_Flamethrower:	equ $3D9
@@ -420,7 +423,7 @@ ArtTile_SBZ_Smoke_Puff_2:	equ ArtTile_Level+$454
 ArtTile_SBZ_Moving_Block_Long:	equ $460
 ArtTile_SBZ_Horizontal_Door:	equ $46F
 ArtTile_SBZ_Electric_Orb:	equ $47E
-ArtTile_SBZ_Trap_Door:		equ $492
+ArtTile_SBZ_Trap_Door:	equ $492
 ArtTile_SBZ_Vanishing_Block:	equ $4C3
 ArtTile_SBZ_Spinning_Platform:	equ $4DF
 
@@ -430,7 +433,7 @@ ArtTile_Ball_Hog:		equ $302
 ArtTile_Bomb:			equ $400
 ArtTile_Crabmeat:		equ $400
 ArtTile_Missile_Disolve:	equ $41C ; Unused
-ArtTile_Buzz_Bomber:		equ $444
+ArtTile_Buzz_Bomber:	equ $444
 ArtTile_Chopper:		equ $47B
 ArtTile_Yadrin:			equ $47B
 ArtTile_Jaws:			equ $486
@@ -444,7 +447,7 @@ ArtTile_Spikes:			equ $51B
 ArtTile_Spring_Horizontal:	equ $523
 ArtTile_Spring_Vertical:	equ $533
 ArtTile_Shield:			equ $541
-ArtTile_Invincibility:		equ $55C
+ArtTile_Invincibility:	equ $55C
 ArtTile_Game_Over:		equ $55E
 ArtTile_Title_Card:		equ $580
 ArtTile_Animal_1:		equ $580
@@ -456,21 +459,21 @@ ArtTile_Sonic:			equ $780
 ArtTile_Points:			equ $797
 ArtTile_Lamppost:		equ $7A0
 ArtTile_Ring:			equ $7B2
-ArtTile_Lives_Counter:		equ $7D4
+ArtTile_Lives_Counter:	equ $7D4
 
 ; Eggman
 ArtTile_Eggman:			equ $400
-ArtTile_Eggman_Weapons:		equ $46C
-ArtTile_Eggman_Button:		equ $4A4
+ArtTile_Eggman_Weapons:	equ $46C
+ArtTile_Eggman_Button:	equ $4A4
 ArtTile_Eggman_Spikeball:	equ $518
 ArtTile_Eggman_Trap_Floor:	equ $518
-ArtTile_Eggman_Exhaust:		equ ArtTile_Eggman+$12A
+ArtTile_Eggman_Exhaust:	equ ArtTile_Eggman+$12A
 
 ; End of Level
 ArtTile_Giant_Ring:		equ $400
 ArtTile_Giant_Ring_Flash:	equ $462
-ArtTile_Prison_Capsule:		equ $49D
-ArtTile_Hidden_Points:		equ $4B6
+ArtTile_Prison_Capsule:	equ $49D
+ArtTile_Hidden_Points:	equ $4B6
 ArtTile_Warp:			equ $541
 ArtTile_Mini_Sonic:		equ $551
 ArtTile_Bonuses:		equ $570
@@ -481,7 +484,7 @@ ArtTile_Sega_Tiles:		equ $000
 
 ; Title Screen
 ArtTile_Title_Foreground:	equ $200
-ArtTile_Title_Sonic:		equ $300
+ArtTile_Title_Sonic:	equ $300
 ArtTile_Level_Select_Font:	equ $680
 
 ; Special Stage
@@ -494,11 +497,11 @@ ArtTile_SS_Goal:		equ $251
 ArtTile_SS_Up_Down:		equ $263
 ArtTile_SS_R_Block:		equ $2F0
 ArtTile_SS_Plane_2:		equ $300
-ArtTile_SS_Extra_Life:		equ $370
+ArtTile_SS_Extra_Life:	equ $370
 ArtTile_SS_Emerald_Sparkle:	equ $3F0
 ArtTile_SS_Plane_3:		equ $400
 ArtTile_SS_Red_White_Block:	equ $470
-ArtTile_SS_Ghost_Block:		equ $4F0
+ArtTile_SS_Ghost_Block:	equ $4F0
 ArtTile_SS_Plane_4:		equ $500
 ArtTile_SS_W_Block:		equ $570
 ArtTile_SS_Glass:		equ $5F0

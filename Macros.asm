@@ -95,15 +95,15 @@ clearRAM:	macro startAddress,endAddress
 copyTilemap:	macro source,destination,width,height
 		lea	(source).l,a1
 		locVRAM	destination,d0
-		moveq	#width,d1
-		moveq	#height,d2
+		moveq	#(width)-1,d1
+		moveq	#(height)-1,d2
 		bsr.w	TilemapToVRAM
 		endm
 
 copyUncTilemap:	macro destination,width,height
-		move.l	#$40000000+((destination&$3FFF)<<16)+((destination&$C000)>>14),d0
-		moveq	#width,d1
-		moveq	#height,d2
+		move.l	#$40000000+(((destination)&$3FFF)<<16)+(((destination)&$C000)>>14),d0
+		moveq	#(width)-1,d1
+		moveq	#(height)-1,d2
 		bsr.w	TilemapToVRAM
 		endm
 		

@@ -1,6 +1,6 @@
-MapTitleSonic:	dc.w byte_6CA8-MapTitleSonic, byte_6CDB-MapTitleSonic, byte_6D27-MapTitleSonic
+MapTitleSonic:
+		dc.w byte_6CA8-MapTitleSonic, byte_6CDB-MapTitleSonic, byte_6D27-MapTitleSonic
 		dc.w byte_6D7D-MapTitleSonic, byte_6DBF-MapTitleSonic, byte_6DF7-MapTitleSonic, byte_6E57-MapTitleSonic, byte_6EC1-MapTitleSonic
-
 byte_6CA8:	dc.b $A
 		dc.b 8, 8, 0, 0, 8
 		dc.b $10, $F, 0, 3, 8
@@ -12,7 +12,6 @@ byte_6CA8:	dc.b $A
 		dc.b $48, 0, 0, $49, $38
 		dc.b $58, $C, 0, $4A, 8
 		dc.b $58, 0, 0, $4E, $28
-
 byte_6CDB:	dc.b $F
 		dc.b $48, $E, 1, $BD, $20
 		dc.b $38, 5, 1, $C9, $38
@@ -29,7 +28,6 @@ byte_6CDB:	dc.b $F
 		dc.b $48, $E, 0, $8F, $10
 		dc.b $48, 9, 0, $9B, $30
 		dc.b $58, 4, 0, $A1, $30
-
 byte_6D27:	dc.b $11
 		dc.b $38, $E, 1, $BD, $28
 		dc.b $28, 5, 1, $C9, $40
@@ -48,7 +46,6 @@ byte_6D27:	dc.b $11
 		dc.b $48, $E, 0, $8F, $10
 		dc.b $48, 9, 0, $9B, $30
 		dc.b $58, 4, 0, $A1, $30
-
 byte_6D7D:	dc.b $D
 		dc.b $10, $F, 0, $A3, 8
 		dc.b 8, 8, 0, $B3, $28
@@ -63,7 +60,6 @@ byte_6D7D:	dc.b $D
 		dc.b $50, 1, 0, $F1, 8
 		dc.b $50, 4, 0, $F3, $28
 		dc.b $58, 0, 0, $F5, $28
-
 byte_6DBF:	dc.b $B
 		dc.b 8, $F, 0, $F6, $10
 		dc.b 8, $B, 1, 6, $30
@@ -76,7 +72,6 @@ byte_6DBF:	dc.b $B
 		dc.b $40, 4, 1, $44, $40
 		dc.b $48, 0, 1, $46, $40
 		dc.b $58, 8, 1, $47, $18
-
 byte_6DF7:	dc.b $13
 		dc.b $28, $E, 1, $E4, $38
 		dc.b $18, 5, 1, $F0, $48
@@ -97,7 +92,6 @@ byte_6DF7:	dc.b $13
 		dc.b $50, $D, 1, $9A, 8
 		dc.b $50, $C, 1, $A2, $28
 		dc.b $58, 8, 1, $A6, $28
-
 byte_6E57:	dc.b $15
 		dc.b $28, $E, 1, $E4, $38
 		dc.b $18, 5, 1, $F0, $48
@@ -120,7 +114,6 @@ byte_6E57:	dc.b $15
 		dc.b $50, $D, 1, $9A, 8
 		dc.b $50, $C, 1, $A2, $28
 		dc.b $58, 8, 1, $A6, $28
-
 byte_6EC1:	dc.b $16
 		dc.b $18, 4, 1, $F9, $38
 		dc.b $20, 0, 1, $FB, $38
@@ -144,3 +137,4 @@ byte_6EC1:	dc.b $16
 		dc.b $50, $D, 1, $9A, 8
 		dc.b $50, $C, 1, $A2, $28
 		dc.b $58, 8, 1, $A6, $28
+		even
