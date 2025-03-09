@@ -159,7 +159,7 @@ loc_258:
 loc_264:
 		move.l	d0,-(a6)
 		dbf	d6,loc_264
-		move.l	#$81048F02,(a4)
+		move.l	#($8100+%00000100)<<16|$8F00+%00000010,(a4)
 		move.l	#$C0000000,(a4)
 		moveq	#bytesToLcnt(v_palette_end-v_palette),d3
 
@@ -192,36 +192,33 @@ SetupValues:	dc.l $8000				; VDP register start number
 		dc.l vdp_data_port			; VDP data
 		dc.l vdp_control_port			; VDP control
 
-		; VDP register values, $8000-$9700 (for initialization)
-		dc.b 4
-		dc.b $14
-		dc.b $30
-		dc.b $3C
-		dc.b 7
-		dc.b $6C
-		dc.b 0
-		dc.b 0
-		dc.b 0
-		dc.b 0
-		dc.b $FF
-		dc.b 0
-		dc.b $81
-		dc.b $37
-		dc.b 0
-		dc.b 1
-		dc.b 1
-		dc.b 0
-		dc.b 0
-		dc.b $FF
-		dc.b $FF
-		dc.b 0
-		dc.b 0
-		dc.b $80
-		even
+		dc.b 4			; VDP $80 - 8-colour mode
+		dc.b $14		; VDP $81 - Megadrive mode, DMA enable
+		dc.b (vram_fg>>10)	; VDP $82 - foreground nametable address
+		dc.b ($F000>>10)	; VDP $83 - window nametable address
+		dc.b (vram_bg>>13)	; VDP $84 - background nametable address
+		dc.b ($D800>>9)		; VDP $85 - sprite table address
+		dc.b 0			; VDP $86 - unused
+		dc.b 0			; VDP $87 - background colour
+		dc.b 0			; VDP $88 - unused
+		dc.b 0			; VDP $89 - unused
+		dc.b 255		; VDP $8A - HBlank register
+		dc.b 0			; VDP $8B - full screen scroll
+		dc.b $81		; VDP $8C - 40 cell display
+		dc.b ($DC00>>10)	; VDP $8D - hscroll table address
+		dc.b 0			; VDP $8E - unused
+		dc.b 1			; VDP $8F - VDP increment
+		dc.b 1			; VDP $90 - 64 cell hscroll size
+		dc.b 0			; VDP $91 - window h position
+		dc.b 0			; VDP $92 - window v position
+		dc.w $FFFF		; VDP $93/94 - DMA length
+		dc.w 0			; VDP $95/96 - DMA source
+		dc.b $80		; VDP $97 - DMA fill VRAM
 
-		; Z80 initalization
+; Z80 initalization
 	save
-	cpu z80
+	cpu z80	; use Z80 cpu
+	listing purecode	; add to listing file
 		xor	a
 		ld	bc,1FD7h
 		ld	de,29h
@@ -299,7 +296,7 @@ loc_376:
 		dbf	d6,loc_376
 		bsr.w	VDPSetupGame
 		bsr.w	SoundDriverLoad
-		bsr.w	padInit
+		bsr.w	InitJoypads
 		move.b	#id_Sega,(v_gamemode).w
 
 ScreensLoop:
@@ -720,7 +717,7 @@ HBlank2:
 		rte
 ; ---------------------------------------------------------------------------
 
-padInit:
+InitJoypads:
 		stopZ80
 		waitZ80
 		moveq	#$40,d0
@@ -1560,7 +1557,7 @@ loc_25D8:
 		move.w	#0,(v_zone).w
 		bsr.w	LoadLevelBounds
 		bsr.w	DeformLayers
-		locVRAM 0
+		locVRAM ArtTile_Level*tile_size
 		lea	(Nem_GHZ_1st).l,a0
 		bsr.w	NemDec
 		lea	(Blk16_GHZ).l,a0
@@ -1585,7 +1582,7 @@ loc_25D8:
 		move.b	#bgm_Title,d0
 		bsr.w	PlaySound_Special
 		move.b	#0,(f_debugmode).w
-		move.w	#376,(v_demolength).w		; run title screen for 376 frames
+		move.w	#376,(v_demolength).w	; run title screen for 376 frames
 		move.b	#id_TitleSonic,(v_objslot1).w	; load big sonic object
 		move.b	#id_PSBTM,(v_objslot2).w	; load press start button text
 		move.b	#id_PSBTM,(v_objslot3).w	; load object which hides sonic
@@ -1606,11 +1603,11 @@ loc_26AE:
 		bsr.w	PalCycTitle
 		bsr.w	RunPLC
 		move.w	(v_objslot0+obX).w,d0
-		addq.w	#2,d0				; set object scroll right speed
+		addq.w	#2,d0	; set object scroll right speed
 		move.w	d0,(v_objslot0+obX).w	; move sonic to the right
-		cmpi.w	#$1C00,d0			; has object passed $1C00?
-		bcs.s	loc_26E4			; if not, branch
-		move.b	#id_Sega,(v_gamemode).w		; go to Sega Screen
+		cmpi.w	#$1C00,d0	; has object passed $1C00?
+		bcs.s	loc_26E4	; if not, branch
+		move.b	#id_Sega,(v_gamemode).w	; go to Sega Screen
 		rts
 ; ---------------------------------------------------------------------------
 
@@ -1960,7 +1957,7 @@ loc_2C0A:
 		move.w	#$8400+(vram_bg>>13),(a6)
 		move.w	#$8500+(vram_sprites>>9),(a6)
 		move.w	#0,(word_FFFFE8).w
-		move.w	#$8A00+$AF,(v_hbla_hreg).w
+		move.w	#$8A00+175,(v_hbla_hreg).w
 		move.w	#$8000+%00000100,(a6)
 		move.w	#$8700+%00100000,(a6)
 
@@ -2335,8 +2332,8 @@ DebugPosLoadArt:
 		rts
 ; ---------------------------------------------------------------------------
 ;1bppConvert:
-		moveq	#0,d0				; this code converts palette indices from 1 to 6
-		move.b	(a0)+,d0			; for example, $11 will be turned into $66
+		moveq	#0,d0	; this code converts palette indices from 1 to 6
+		move.b	(a0)+,d0	; for example, $11 will be turned into $66
 		ror.w	#1,d0
 		lsr.b	#3,d0
 		rol.w	#1,d0
@@ -2451,7 +2448,7 @@ GM_Special:
 		lea	(vdp_control_port).l,a6
 		move.w	#$8B00+%00000011,(a6)
 		move.w	#$8000+%00000100,(a6)
-		move.w	#$8A00+$AF,(v_hbla_hreg).w
+		move.w	#$8A00+175,(v_hbla_hreg).w
 		move.w	#$9000+%00010001,(a6)
 		bsr.w	SS_PalCycle
 		clr.w	(v_ssangle).w
@@ -2763,7 +2760,6 @@ byte_3A9A:	dc.b 8, 2, 4, $FF, 2, 3, 8, $FF, 4, 2, 2, 3, 8, $FD, 4
 		dc.b 2, 2, 3, 2, $FF
 		even
 ; ---------------------------------------------------------------------------
-
 		include "_inc/LevelSizeLoad & BgScrollSpeed.asm"
 		include "_inc/DeformLayers.asm"
 ; ---------------------------------------------------------------------------
