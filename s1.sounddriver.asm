@@ -44,22 +44,22 @@ PSG8:	binclude "sound/psg/psg8.bin"
 PSG9:	binclude "sound/psg/psg9.bin"
 
 ModulationIndex:
-		dc.b $D, 1, 7, 4
-		dc.b 1, 1, 1, 4
-		dc.b 2, 1, 2, 4
-		dc.b 8, 1, 6, 4
+		dc.b $D, 1, 7, 4	; 1
+		dc.b 1, 1, 1, 4	; 2
+		dc.b 2, 1, 2, 4	; 3
+		dc.b 8, 1, 6, 4	; 4
 ; ---------------------------------------------------------------------------
 ; New tempos for songs during speed shoes
 ; ---------------------------------------------------------------------------
 SpeedUpIndex:
-		dc.b 7					; GHZ
-		dc.b $72				; LZ
-		dc.b $73				; MZ
-		dc.b $26				; SLZ
-		dc.b $15				; SYZ
-		dc.b 8					; SBZ
-		dc.b $FF				; Invincibility
-		dc.b 5					; Extra Life
+		dc.b 7		; GHZ
+		dc.b $72	; LZ
+		dc.b $73	; MZ
+		dc.b $26	; SLZ
+		dc.b $15	; SYZ
+		dc.b 8		; SBZ
+		dc.b $FF	; Invincibility
+		dc.b 5		; Extra Life
 		even
 		; All songs after will use their music index pointer instead
 
@@ -83,7 +83,7 @@ ptr_mus8D:	dc.l Music8D
 ptr_mus8E:	dc.l Music8E
 ptr_mus8F:	dc.l Music8F
 ptr_mus90:	dc.l Music90
-ptr_mus91:	dc.l Music91				; Note the lack of a pointer for music $92
+ptr_mus91:	dc.l Music91	; Note the lack of a pointer for music $92
 ptr_musend:
 ; ---------------------------------------------------------------------------
 ; Priority of sound. New music or SFX must have a priority higher than or equal
@@ -270,10 +270,10 @@ DACUpdateTrack:
 ; ---------------------------------------------------------------------------
 
 .timpanipitch:	dc.b dpcmLoopCounter(8250)
-		dc.b dpcmLoopCounter(7500)
-		dc.b dpcmLoopCounter(6350)
+		dc.b dpcmLoopCounter(7600)
+		dc.b dpcmLoopCounter(6400)
 		dc.b dpcmLoopCounter(6250)
-		; the values below are invalid and will play at a very slow rate.
+		; the values below are invalid and will play at a very slow rate
 		dc.b $FF
 		dc.b $FF
 		dc.b $FF
@@ -584,11 +584,8 @@ locret_745AE:
 FM_Pan_Table:	dc.l pan_1_data
 		dc.l pan_2_data
 		dc.l pan_3_data
-
 pan_1_data:	dc.b $40, $80
-
 pan_2_data:	dc.b $40, $C0, $80
-
 pan_3_data:	dc.b $C0, $80, $C0, $40
 		even
 ; ---------------------------------------------------------------------------
@@ -981,7 +978,7 @@ dPlaySnd_SFX:
 		add.l	a3,d0
 		move.l	d0,SMPS_RAM.v_lfo_voice_ptr(a6)
 		move.b	(a1)+,d5
-		; DANGER! there is a missing 'moveq	#0,d7' here, without which SFXes whose
+		; Bug: There is a missing 'moveq	#0,d7' here, without which SFXes whose
 		; index entry is above $3F will cause a crash. This was fixed in Ristar's driver.
 		move.b	(a1)+,d7
 		subq.b	#1,d7
@@ -1082,7 +1079,7 @@ dPlaySnd_SpecSFX:
 		add.l	a3,d0				; Relative pointer
 		move.l	d0,SMPS_RAM.v_special_voice_ptr(a6)	; Store voice pointer
 		move.b	(a1)+,d5			; Dividing timing
-		; DANGER! there is a missing 'moveq	#0,d7' here, without which special SFXes whose
+		; Bug: There is a missing 'moveq	#0,d7' here, without which special SFXes whose
 		; index entry is above $3F will cause a crash. This instance was not fixed in Ristar's driver.
 		move.b	(a1)+,d7			; Number of tracks (FM + PSG)
 		subq.b	#1,d7
@@ -1186,9 +1183,9 @@ StopSFX:
 		bne.s	.getfmpointer			; Branch if not
 		tst.b	SMPS_RAM.v_spcsfx_fm4_track+SMPS_Track.PlaybackControl(a6) ; Is special SFX playing?
 		bpl.s	.getfmpointer			; Branch if not
-		; DANGER! there is a missing 'movea.l	a5,a3' here, without which the
+		; Bug: There is a missing 'movea.l	a5,a3' here, without which the
 		; code is broken. It is dangerous to do a fade out when a GHZ waterfall
-		; is playing its sound!
+		; is playing its sound
 		lea	SMPS_RAM.v_spcsfx_fm4_track(a6),a5
 		movea.l	SMPS_RAM.v_special_voice_ptr(a6),a1	; Get special voice pointer
 		bra.s	.gotfmpointer
@@ -1205,6 +1202,7 @@ StopSFX:
 .gotfmpointer:
 		bclr	#2,SMPS_Track.PlaybackControl(a5)	; Clear 'SFX is overriding' bit
 		bset	#1,SMPS_Track.PlaybackControl(a5)	; Set 'track at rest' bit
+		; Bug: The high bit is not cleared here
 		move.b	SMPS_Track.VoiceIndex(a5),d0		; Current voice
 		jsr	SetVoice(pc)
 		movea.l	a3,a5
@@ -1393,7 +1391,7 @@ StopAllSound:
 		moveq	#0,d1
 		jsr	WriteFMI(pc)
 		movea.l	a6,a0
-		; DANGER! This should be clearing all variables and track data, but misses the last $10 bytes of v_spcsfx_psg3_Track.
+		; Bug: This should be clearing all variables and track data, but misses the last $10 bytes of v_spcsfx_psg3_Track.
 		move.w	#bytesToLcnt(SMPS_RAM.v_1up_ram_copy-$10),d0 ; Clear $390 bytes: all variables and most track data
 
 .clearramloop:
@@ -1407,7 +1405,7 @@ StopAllSound:
 InitMusicPlayback:
 		movea.l	a6,a0
 		; Save several values
-		; DANGER! v_soundqueue0 is not saved!
+		; Bug: v_soundqueue0 is not saved
 		_move.b	SMPS_RAM.v_sndprio(a6),d1
 		move.b	SMPS_RAM.f_1up_playing(a6),d2
 		move.b	SMPS_RAM.f_speedup(a6),d3
@@ -1419,13 +1417,13 @@ InitMusicPlayback:
 		dbf	d0,.clearramloop
 
 		; Restore the values saved above
-		; DANGER! Like above, v_soundqueue0 is not restored either!
+		; Bug: Like above, v_soundqueue0 is not restored either
 		_move.b	d1,SMPS_RAM.v_sndprio(a6)
 		move.b	d2,SMPS_RAM.f_1up_playing(a6)
 		move.b	d3,SMPS_RAM.f_speedup(a6)
 		move.b	d4,SMPS_RAM.v_fadein_counter(a6)
 		move.b	#$80,SMPS_RAM.v_sound_id(a6)
-		; DANGER! This is missing the FM channels!
+		; Bug: This is missing the FM channels
 		bra.w	PSGSilenceAll
 ; ---------------------------------------------------------------------------
 
@@ -1488,6 +1486,7 @@ DoFadeIn:
 		tst.b	SMPS_Track.PlaybackControl(a5)	; Is track playing?
 		bpl.s	.nextpsg			; Branch if not
 		subq.b	#1,SMPS_Track.Volume(a5)	; Reduce volume attenuation
+		; Bug: SMPS_Track.Volume is not moved to d6 here, resulting in crackling and loud sounds when fading in
 		jsr	SetPSGVolume(pc)
 
 .nextpsg:
@@ -2338,6 +2337,7 @@ cfStopTrack:
 .voice:
 		bclr	#2,SMPS_Track.PlaybackControl(a5)
 		bset	#1,SMPS_Track.PlaybackControl(a5)
+		; Bug: The high bit is not cleared here
 		move.b	SMPS_Track.VoiceIndex(a5),d0
 		jsr	SetVoice(pc)
 
@@ -2477,6 +2477,7 @@ cfStopSpecialFM4:
 		movea.l	SMPS_RAM.v_voice_ptr(a6),a1		; Voice pointer
 		bclr	#2,SMPS_Track.PlaybackControl(a5)	; Clear 'SFX is overriding' bit
 		bset	#1,SMPS_Track.PlaybackControl(a5)	; Set 'track at rest' bit
+		; Bug: The high bit is not cleared here
 		move.b	SMPS_Track.VoiceIndex(a5),d0		; Current voice
 		jsr	SetVoice(pc)
 		movea.l	a3,a5

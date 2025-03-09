@@ -25,7 +25,7 @@ Mus91_Credits_FM1:
 	smpsPan				panCenter, $00
 	smpsNoteFill		$00
 	smpsSetvoice		$03
-	dc.b	$E3, $01
+	smpsGlobalMod		$01
 	smpsAlterPitch		$E8
 	smpsCall			Mus91_Credits_Call09
 	smpsAlterPitch		$0C
@@ -430,7 +430,7 @@ Mus91_Credits_FM4:
 	smpsAlterVol		$02
 	smpsDetune			$00
 	smpsSetvoice		$12
-	dc.b	$E3, $02
+	smpsGlobalMod		$02
 	dc.b	nD6, $02, nRst, $04, nD6, $08, nD6, $03, nRst, nD6, nRst, nC6, nRst, nA6, nRst, nF6, nRst, $07, nBb5, $02, nRst, $04
 	dc.b	nBb5, $08, nBb5, $03, nRst, nBb5, nRst, nA5, $03, nRst, $13, nA5, $0E, nCs6, $0C, nE6, nCs7, $0A, nD7, $02
 	smpsPan				panCenter,$00
@@ -527,7 +527,7 @@ Mus91_Credits_FM5:
 	dc.b	nRst, $07, nD4, $01, smpsNoAttack, nCs4, $04, nRst, $03
 	smpsChanTempoDiv	$02
 	smpsDetune			$02
-	dc.b	$E3, $03
+	smpsGlobalMod		$03
 	smpsSetvoice		$12
 	dc.b	nD6, $02, nRst, $04, nD6, $08, nD6, $03, nRst, nD6, nRst, nC6, nRst, nA6, nRst
 	dc.b	nF6, nRst, $07, nBb5, $02, nRst, $04, nBb5, $08, nBb5, $03, nRst, nBb5, nRst, nA5, $03

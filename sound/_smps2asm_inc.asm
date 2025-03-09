@@ -394,14 +394,15 @@ smpsNop macro val
 		dc.b	$E2,val
 	endif
 	endm
+	
+; E3xx - Global Modulation (Specific to Sonic 1 Prototype)
+smpsGlobalMod macro val
+	dc.b	$E3,val
+	endm
 
 ; Return (used after smpsCall)
 smpsReturn macro val
-;	if SonicDriverVer>=3
 		dc.b	$F9
-;	else
-;		dc.b	$E3
-;	endif
 	endm
 
 ; Fade in previous song (ie. 1-Up)

@@ -77,7 +77,8 @@ Mus82_LZ_FM3:
 
 Mus82_LZ_Jump07:
 	dc.b	nRst, $30, nRst, $30, nRst, $30, nRst, $30, nRst, $30, nRst, $30, nRst
-	dc.b	$30, nRst, $30, nRst, $30, nRst, $30, $E3, $02
+	dc.b	$30, nRst, $30, nRst, $30, nRst, $30
+	smpsGlobalMod		$02
 	dc.b	nE6, $30, smpsNoAttack, $18, nF6, $0C, nG6, $0C, nC6
 	dc.b	$30, nRst, $30, nE6, $30, smpsNoAttack, $18, nF6, $0C, nG6, $0C, nC6, $18, nD6, $18, nE6, $18, nG6, $18
 	smpsJump			Mus82_LZ_Jump07
@@ -94,7 +95,8 @@ Mus82_LZ_FM4:
 
 Mus82_LZ_Jump08:
 	dc.b	nRst, $30, nRst, $30, nRst, $30, nRst, $30, nRst, $30, nRst, $30, nRst
-	dc.b	$30, nRst, $30, nRst, $30, nRst, $30, $E3, $03
+	dc.b	$30, nRst, $30, nRst, $30, nRst, $30
+	smpsGlobalMod		$03
 	dc.b	nE6, $30, smpsNoAttack, $18, nF6, $0C, nG6, $0C, nC6
 	dc.b	$30, nRst, $30, nE6, $30, smpsNoAttack, $18, nF6, $0C, nG6, $0C, nC6, $18, nD6, $18, nE6, $18, nG6, $18
 	smpsJump			Mus82_LZ_Jump08

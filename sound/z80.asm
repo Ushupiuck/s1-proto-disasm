@@ -135,7 +135,7 @@ zPlayPCMLoop:
 
 loc_B8:
 		bit	7,(hl)	; 12
-		jr	nz,loc_B8	; 12/7
+		jr	nz,loc_B8	; 12
 		ld	(hl),2Ah	; 10
 		inc	hl	; 6
 		xor	a	; 4
@@ -144,7 +144,7 @@ loc_B8:
 		dec	hl	; 6
 
 loc_C5:
-		djnz	$	; 13/8
+		djnz	$	; 8
 		exx	; 4
 		ld	a,(de)	; 7
 		and	0Fh	; 7
@@ -160,7 +160,7 @@ loc_C5:
 
 loc_DA:
 		bit	7,(hl)	; 12
-		jr	nz,loc_DA	; 12/7
+		jr	nz,loc_DA	; 12
 		ld	(hl),2Ah	; 10
 		inc	hl	; 6
 		xor	a	; 4
@@ -169,10 +169,10 @@ loc_DA:
 		dec	hl	; 6
 
 loc_E7:
-		djnz	$	; 13/8
+		djnz	$	; 8
 		exx	; 4
 		bit	7,(iy+5)	; 20
-		jr	nz,loc_F5	; 12/7
+		jr	nz,loc_F5	; 12
 		bit	7,(hl)	; 12
 		jp	nz,loc_31	; 10
 
@@ -182,7 +182,7 @@ loc_F5:
 		ld	a,c	; 4
 		or	b	; 4
 		jp	nz,zPlayPCMLoop	; 10
-							; 425 cycles in total
+							; 420 cycles in total
 		ld	a,(zUnk_1FFE)
 		or	a
 		jp	z,loc_153

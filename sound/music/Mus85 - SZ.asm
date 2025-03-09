@@ -20,7 +20,7 @@ Mus85_SZ_FM1:
 	dc.b	nRst, $2E, nE6, $02
 
 Mus85_SZ_FM1_Loop:
-	dc.b	$E3, $04
+	smpsGlobalMod		$04
 	dc.b	nRst, $04, nE6, $08, nC6, $02, nRst, $04
 	dc.b	nA5, $02, nRst, $04, nE6, $0A, nC6, $02, nRst, $0C, nRst, $2E
 	dc.b	nFs6, $02, nRst, $04, nFs6, $08, nD6, $02, nRst, $04, nB5, $02
@@ -139,14 +139,13 @@ Mus85_SZ_FM4:
 
 Mus85_SZ_FM4_Loop:
 	smpsSetvoice		$02
-	dc.b	$E3, $02
+	smpsGlobalMod		$02
 	dc.b	nE6, $24, nF6, $06, nG6, $06, nE6, $24, nC6, $06, nD6, $06, nE6, $24
 	dc.b	nF6, $06, nG6, $06
 	dc.b	nA6, $30
 	dc.b	nE6, $24, nF6, $06, nG6, $06, nE6, $24, nC6, $06, nD6, $06, nE6, $24
 	dc.b	nF6, $06, nG6, $06
-	dc.b	nCs7, $03, nRst, nCs7, nRst, nCs7, nRst, nCs7, nRst, nCs7, $03, nRst
-	dc.b	$13
+	dc.b	nCs7, $03, nRst, nCs7, nRst, nCs7, nRst, nCs7, nRst, nCs7, $03, nRst, $13
 	smpsAlterVol		$FC
 	dc.b	nD6, $02
 	dc.b	nRst, $04, nD6, $08, nD6, $03, nRst, nD6, nRst, nC6, nRst, nA6
@@ -181,7 +180,7 @@ Mus85_SZ_FM5:
 
 Mus85_SZ_FM5_Loop:
 	smpsSetvoice		$02
-	dc.b	$E3, $03
+	smpsGlobalMod		$03
 	smpsAlterNote		$02
 	dc.b	nE6, $24, nF6, $06, nG6, $06, nE6, $24, nC6, $06, nD6, $06, nE6, $24
 	dc.b	nF6, $06, nG6, $06

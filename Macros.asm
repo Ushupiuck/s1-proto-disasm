@@ -201,4 +201,4 @@ make_art_tile function addr,pal,pri,((pri&1)<<15)|((pal&3)<<13)|addr
 ; ---------------------------------------------------------------------------
 
 pcmLoopCounter function sampleRate,baseCycles, 1+(53693175/15/(sampleRate)-(baseCycles)+(13/2))/13
-dpcmLoopCounter function sampleRate, pcmLoopCounter(sampleRate,425/2) ; 425 is the number of cycles zPlayPCMLoop takes.
+dpcmLoopCounter function sampleRate, pcmLoopCounter(sampleRate,420/2) ; 420 is the number of cycles zPlayPCMLoop takes.

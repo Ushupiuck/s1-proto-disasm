@@ -35,7 +35,7 @@ Mus81_GHZ_Loop0E:
 
 Mus81_GHZ_Jump04:
 	smpsSetvoice		$06
-	dc.b	$E3, $01
+	smpsGlobalMod		$01
 	smpsAlterPitch		$F4
 	smpsCall			Mus81_GHZ_Call07
 	smpsAlterPitch		$0C

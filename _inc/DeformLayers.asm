@@ -177,7 +177,7 @@ Deform_SLZ:
 		lsr.w	#3,d0
 		lea	(a2,d0.w),a2
 		lea	(v_hscrolltablebuffer).w,a1
-		move.w	#$E,d1
+		move.w	#224/16+1-1,d1
 		move.w	(v_screenposx).w,d0
 		neg.w	d0
 		swap	d0
@@ -304,11 +304,11 @@ ScrollHoriz:
 		move.w	(v_screenposx).w,d4
 		bsr.s	sub_40E8
 		move.w	(v_screenposx).w,d0
-		andi.w	#$10,d0
+		andi.w	#16,d0
 		move.b	(v_fg_xblock).w,d1
 		eor.b	d1,d0
 		bne.s	locret_40E6
-		eori.b	#$10,(v_fg_xblock).w
+		eori.b	#16,(v_fg_xblock).w
 		move.w	(v_screenposx).w,d0
 		sub.w	d4,d0
 		bpl.s	loc_40E0
@@ -326,9 +326,9 @@ locret_40E6:
 sub_40E8:
 		move.w	(v_player+obX).w,d0
 		sub.w	(v_screenposx).w,d0
-		subi.w	#$90,d0
+		subi.w	#320/2-16,d0
 		bcs.s	loc_412C
-		subi.w	#$10,d0
+		subi.w	#16,d0
 		bcc.s	loc_4102
 		clr.w	(v_scrshiftx).w
 		rts
@@ -376,17 +376,17 @@ ScrollVertical:
 		moveq	#0,d1
 		move.w	(v_player+obY).w,d0
 		sub.w	(v_screenposy).w,d0
-		btst	#2,(v_objspace+obStatus).w
+		btst	#2,(v_player+obStatus).w
 		beq.s	loc_4160
 		subq.w	#5,d0
 
 loc_4160:
 		btst	#1,(v_player+obStatus).w
 		beq.s	loc_4180
-		addi.w	#$20,d0
+		addi.w	#32,d0
 		sub.w	(v_lookshift).w,d0
 		bcs.s	loc_41BE
-		subi.w	#$40,d0
+		subi.w	#64,d0
 		bcc.s	loc_41BE
 		tst.b	(f_bgscrollvert).w
 		bne.s	loc_41D0
@@ -407,6 +407,15 @@ loc_418C:
 loc_4192:
 		cmpi.w	#$60,(v_lookshift).w
 		bne.s	loc_41AC
+		; Bug: The camera delays when rolling down or up a slope very quickly
+		; Uncomment the lines below to apply the final's fix
+;		move.w	(v_player+obInertia).w,d1
+;		bpl.s	loc_666C
+;		neg.w	d1
+
+;loc_666C:
+;		cmpi.w	#$800,d1
+;		bhs.s	loc_41BE
 		move.w	#$600,d1
 		cmpi.w	#6,d0
 		bgt.s	loc_4200
@@ -426,9 +435,9 @@ loc_41AC:
 
 loc_41BE:
 		move.w	#$1000,d1
-		cmpi.w	#$10,d0
+		cmpi.w	#16,d0
 		bgt.s	loc_4200
-		cmpi.w	#-$10,d0
+		cmpi.w	#-16,d0
 		blt.s	loc_41E8
 		bra.s	loc_41D6
 ; ---------------------------------------------------------------------------
@@ -480,11 +489,11 @@ loc_4214:
 		move.w	d3,(v_scrshifty).w
 		move.l	d1,(v_screenposy).w
 		move.w	(v_screenposy).w,d0
-		andi.w	#$10,d0
+		andi.w	#16,d0
 		move.b	(v_fg_yblock).w,d1
 		eor.b	d1,d0
 		bne.s	locret_4256
-		eori.b	#$10,(v_fg_yblock).w
+		eori.b	#16,(v_fg_yblock).w
 		move.w	(v_screenposy).w,d0
 		sub.w	d4,d0
 		bpl.s	loc_4250
@@ -518,7 +527,7 @@ loc_426E:
 
 loc_4276:
 		move.w	(v_limittop2).w,d0
-		addi.w	#$20,d0
+		addi.w	#32,d0
 		moveq	#1,d1
 		sub.w	(v_screenposy).w,d0
 		beq.s	loc_4290
@@ -541,11 +550,11 @@ sub_4298:
 		move.l	d0,(v_bgscreenposx).w
 		move.l	d0,d1
 		swap	d1
-		andi.w	#$10,d1
+		andi.w	#16,d1
 		move.b	(v_bg1_xblock).w,d3
 		eor.b	d3,d1
 		bne.s	loc_42CC
-		eori.b	#$10,(v_bg1_xblock).w
+		eori.b	#16,(v_bg1_xblock).w
 		sub.l	d2,d0
 		bpl.s	loc_42C6
 		bset	#2,(v_bg1_scroll_flags).w
@@ -562,11 +571,11 @@ loc_42CC:
 		move.l	d0,(v_bgscreenposy).w
 		move.l	d0,d1
 		swap	d1
-		andi.w	#$10,d1
+		andi.w	#16,d1
 		move.b	(v_bg1_yblock).w,d2
 		eor.b	d2,d1
 		bne.s	locret_4300
-		eori.b	#$10,(v_bg1_yblock).w
+		eori.b	#16,(v_bg1_yblock).w
 		sub.l	d3,d0
 		bpl.s	loc_42FA
 		bset	#0,(v_bg1_scroll_flags).w
@@ -591,11 +600,11 @@ ScrollBlock2:
 		move.l	d0,(v_bgscreenposy).w
 		move.l	d0,d1
 		swap	d1
-		andi.w	#$10,d1
+		andi.w	#16,d1
 		move.b	(v_bg1_yblock).w,d2
 		eor.b	d2,d1
 		bne.s	locret_4342
-		eori.b	#$10,(v_bg1_yblock).w
+		eori.b	#16,(v_bg1_yblock).w
 		sub.l	d3,d0
 		bpl.s	loc_433C
 		bset	#0,(v_bg1_scroll_flags).w
@@ -613,11 +622,11 @@ ScrollBlock3:
 		move.w	(v_bgscreenposy).w,d3
 		move.w	d0,(v_bgscreenposy).w
 		move.w	d0,d1
-		andi.w	#$10,d1
+		andi.w	#16,d1
 		move.b	(v_bg1_yblock).w,d2
 		eor.b	d2,d1
 		bne.s	locret_4372
-		eori.b	#$10,(v_bg1_yblock).w
+		eori.b	#16,(v_bg1_yblock).w
 		sub.w	d3,d0
 		bpl.s	loc_436C
 		bset	#0,(v_bg1_scroll_flags).w
@@ -639,11 +648,11 @@ sub_4374:
 		asl.l	#7,d0
 		add.l	d0,(v_bg2screenposx).w
 		move.w	(v_bg2screenposx).w,d0
-		andi.w	#$10,d0
+		andi.w	#16,d0
 		move.b	(v_bg2_xblock).w,d1
 		eor.b	d1,d0
 		bne.s	locret_43B4
-		eori.b	#$10,(v_bg2_xblock).w
+		eori.b	#16,(v_bg2_xblock).w
 		move.w	(v_bg2screenposx).w,d0
 		sub.w	d2,d0
 		bpl.s	loc_43AE
