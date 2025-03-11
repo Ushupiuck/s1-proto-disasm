@@ -3378,8 +3378,8 @@ locret_48B8:
 ; ---------------------------------------------------------------------------
 
 LevelLayoutLoad:
-		; This is bugged, the size is too large!
-		; To fix this, change bytesToWcnt to bytesToLcnt.
+		; Bug: This clears too much data
+		; To fix this, change bytesToWcnt to bytesToLcnt
 		lea	(v_lvllayout).w,a3
 		move.w	#bytesToWcnt(v_lvllayout_end-v_lvllayout),d1
 		moveq	#0,d0
@@ -3420,16 +3420,15 @@ loc_4904:
 		dbf	d2,loc_4900
 		rts
 ; ---------------------------------------------------------------------------
-
 		include "_inc/DynamicLevelEvents.asm"
 
 		include "_incObj/02.asm"
-Map_02:		include "_maps/02.asm"
+Map_02:	include "_maps/02.asm"
 
 		include "_incObj/03.asm"
 		include "_incObj/04.asm"
 		include "_incObj/05.asm"
-Map_05:		include "_maps/05.asm"
+Map_05:	include "_maps/05.asm"
 
 		include "_incObj/06.asm"
 		include "_incObj/07.asm"
@@ -3443,7 +3442,7 @@ PtfmBridge:
 		move.w	d1,d2
 		addq.w	#8,d1
 		add.w	d2,d2
-		lea	(v_objspace).w,a1
+		lea	(v_player).w,a1
 		tst.w	obVelY(a1)
 		bmi.w	locret_5048
 		move.w	obX(a1),d0
@@ -3456,7 +3455,7 @@ PtfmBridge:
 ; ---------------------------------------------------------------------------
 
 PtfmNormal:
-		lea	(v_objspace).w,a1
+		lea	(v_player).w,a1
 		tst.w	obVelY(a1)
 		bmi.w	locret_5048
 		move.w	obX(a1),d0
@@ -3529,7 +3528,7 @@ locret_5048:
 ; ---------------------------------------------------------------------------
 
 PtfmSloped:
-		lea	(v_objspace).w,a1
+		lea	(v_player).w,a1
 		tst.w	obVelY(a1)
 		bmi.w	locret_5048
 		move.w	obX(a1),d0
@@ -3554,7 +3553,7 @@ loc_5074:
 ; ---------------------------------------------------------------------------
 
 PtfmNormalHeight:
-		lea	(v_objspace).w,a1
+		lea	(v_player).w,a1
 		tst.w	obVelY(a1)
 		bmi.w	locret_5048
 		move.w	obX(a1),d0
@@ -3576,7 +3575,7 @@ PtfmCheckExit:
 
 PtfmCheckExit2:
 		add.w	d2,d2
-		lea	(v_objspace).w,a1
+		lea	(v_player).w,a1
 		btst	#1,obStatus(a1)
 		bne.s	loc_510A
 		move.w	obX(a1),d0
@@ -3679,7 +3678,7 @@ CFlo_Data3:	dc.b $16, $1E, $1A, $12, 6, $E, $A, 2
 ; ---------------------------------------------------------------------------
 
 sub_61E0:
-		lea	(v_objspace).w,a1
+		lea	(v_player).w,a1
 		btst	#3,obStatus(a1)
 		beq.s	locret_6224
 		move.w	obX(a1),d0
@@ -4334,7 +4333,7 @@ loc_8A00:
 		move.l	a1,(v_opl_data+$C).w
 		lea	(v_objstate).w,a2
 		move.w	#$101,(a2)+
-		; Bug: The last 2 bytes of v_objstate are not accounted for.
+		; Bug: The last 2 bytes of v_objstate are not accounted for
 		move.w	#bytesToWcnt(v_objstate_end-v_objstate-2),d0
 
 loc_8A38:
@@ -5959,7 +5958,6 @@ hudVRAM:	macro loc
 		move.l	#($40000000+((loc&$3FFF)<<16)+((loc&$C000)>>14)),d0
 		endm
 
-
 UpdateHUD:
 		tst.w	(f_debugmode).w
 		bne.w	loc_11746
@@ -6077,7 +6075,7 @@ locret_117B0:
 sub_117B2:
 		locVRAM $DF40
 		lea	byte_1181A(pc),a2
-		move.w	#2,d2
+		move.w	#3-1,d2
 		bra.s	loc_117E2
 ; ---------------------------------------------------------------------------
 
@@ -6086,13 +6084,13 @@ sub_117C6:
 		bsr.w	sub_119BA
 		locVRAM $DC40
 		lea	byte_1180E(pc),a2
-		move.w	#$E,d2
+		move.w	#15-1,d2
 
 loc_117E2:
 		lea	byte_11A26(pc),a1
 
 loc_117E6:
-		move.w	#$F,d1
+		move.w	#16-1,d1
 		move.b	(a2)+,d0
 		bmi.s	loc_11802
 		ext.w	d0
@@ -6131,7 +6129,7 @@ sub_1181E:
 		move.w	(v_player+obY).w,d1
 
 sub_1183E:
-		moveq	#7,d6
+		moveq	#8-1,d6
 		lea	(Art_Text).l,a1
 
 loc_11846:
@@ -6160,13 +6158,13 @@ loc_11856:
 
 sub_11874:
 		lea	(Hud_100).l,a2
-		moveq	#2,d6
+		moveq	#3-1,d6
 		bra.s	loc_11886
 ; ---------------------------------------------------------------------------
 
 sub_1187E:
 		lea	(Hud_100000).l,a2
-		moveq	#5,d6
+		moveq	#6-1,d6
 
 loc_11886:
 		moveq	#0,d4
@@ -6228,13 +6226,13 @@ Hud_1:		dc.l 1
 
 sub_118F4:
 		lea	(Hud_1).l,a2
-		moveq	#0,d6
+		moveq	#1-1,d6
 		bra.s	loc_11906
 ; ---------------------------------------------------------------------------
 
 sub_118FE:
 		lea	(Hud_10).l,a2
-		moveq	#1,d6
+		moveq	#2-1,d6
 
 loc_11906:
 		moveq	#0,d4
@@ -6284,7 +6282,7 @@ loc_11922:
 
 sub_11958:
 		lea	(Hud_1000).l,a2
-		moveq	#3,d6
+		moveq	#4-1,d6
 		moveq	#0,d4
 		lea	byte_11A26(pc),a1
 
@@ -6333,7 +6331,7 @@ loc_119A6:
 ; ---------------------------------------------------------------------------
 
 loc_119AC:
-		moveq	#$F,d5
+		moveq	#16-1,d5
 
 loc_119AE:
 		move.l	#0,(a6)
@@ -6346,7 +6344,7 @@ sub_119BA:
 		moveq	#0,d1
 		move.b	(v_lives).w,d1
 		lea	(Hud_10).l,a2
-		moveq	#1,d6
+		moveq	#2-1,d6
 		moveq	#0,d4
 		lea	byte_11D26(pc),a1
 
@@ -6393,7 +6391,7 @@ loc_11A08:
 loc_11A14:
 		tst.w	d6
 		beq.s	loc_119F2
-		moveq	#7,d5
+		moveq	#8-1,d5
 
 loc_11A1A:
 		move.l	#0,(a6)
@@ -6413,10 +6411,10 @@ byte_11D26:	binclude "artunc/Lives Counter Numbers.bin"
 
 		align $8000
 ; ===========================================================================
-; Unused 8x8 Font Art
+; Unused 8x8 ASCII Art
 ; ===========================================================================
 ;byte_18000:
-		binclude "leftovers/artnem/8x8 Compressed Font.nem"	; Some similar art to this is used in other prototypes, such as Sonic 2 Nick Arcade
+		binclude "leftovers/artnem/8x8 ASCII.nem"
 		even
 ; ===========================================================================
 ; Sega Screen/Title Screen Art and Mappings
@@ -6959,7 +6957,7 @@ ObjPos_SZ1:	binclude "objpos/sz1.bin"
 ObjPos_SZ2:	binclude "objpos/sz2.bin"
 		even
 ;0x729CA
-		binclude "leftovers/levels/sz1.bin"	; Leftover from earlier builds
+		binclude "leftovers/objpos/sz1.bin"
 		even
 ObjPos_SZ3:	binclude "objpos/sz3.bin"
 		even
