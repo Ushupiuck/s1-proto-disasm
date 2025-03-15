@@ -955,12 +955,12 @@ NewPLC:
 		move.w	(a1)+,d0			; get length of PLC
 		bmi.s	.skip				; if it's negative, skip the next loop
 
-	.loop:
+.loop:
 		move.l	(a1)+,(a2)+
 		move.w	(a1)+,(a2)+			; copy PLC to RAM
 		dbf	d0,.loop			; repeat for length of PLC
 
-	.skip:
+.skip:
 		movem.l	(sp)+,a1-a2
 		rts
 ; End of function NewPLC
@@ -3348,10 +3348,10 @@ LoadLevelData:
 
 loc_4876:
 		lea	(vdp_data_port).l,a6
-		locVRAM $ACBE
+		locVRAM window_plane+$CBE
 		move.l	#($8500+(vram_unk1>>9))<<16|$8500+(vram_unk2>>9),d2
 		bsr.s	sub_489E
-		locVRAM $AD3E
+		locVRAM window_plane+$D3E
 		move.l	#($8500+(vram_unk3>>9))<<16|$8500+(vram_sprites>>9),d2
 
 sub_489E:
@@ -3621,7 +3621,7 @@ loc_612A:
 
 loc_6130:
 		lea	(CFlo_Data1).l,a4
-		moveq	#$18,d1
+		moveq	#$19-1,d1
 		addq.b	#2,obFrame(a0)
 
 loc_613C:
@@ -5702,7 +5702,7 @@ Special_AniWallsandRings:
 		move.b	(v_ssangle).w,d0
 		lsr.b	#2,d0
 		andi.w	#$F,d0
-		moveq	#$F,d1
+		moveq	#$10-1,d1
 
 loc_109C2:
 		move.w	d0,(a1)
