@@ -421,7 +421,7 @@ loc_472:
 
 ErrorPrint:
 		lea	(vdp_data_port).l,a6
-		locVRAM	$F800
+		locVRAM	vram_sprites
 		lea	(Art_Text).l,a0
 		move.w	#bytesToWcnt(Art_Text_end-Art_Text-tile_size),d1
 
