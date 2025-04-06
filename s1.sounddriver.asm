@@ -701,25 +701,25 @@ PlaySoundID:
 		beq.s	.nosound
 		bcs.w	StopAllSound
 		cmpi.b	#bgm__Last+$E,d7
-		bls.w	dPlaySnd_Music
+		bls.w	PlaySnd_Music
 		cmpi.b	#sfx__First,d7
 		bcs.w	.nosound
 		cmpi.b	#sfx__Last,d7
-		bls.w	dPlaySnd_SFX
+		bls.w	PlaySnd_SFX
 		cmpi.b	#spec__First,d7
 		bcs.w	.nosound
 		cmpi.b	#spec__Last+5,d7
-		bcs.w	dPlaySnd_SpecSFX
+		bcs.w	PlaySnd_SpecSFX
 		cmpi.b	#flg__First,d7
-		bcs.s	dPlaySnd_DAC
+		bcs.s	PlaySnd_DAC
 		cmpi.b	#flg__Last+1,d7
-		bls.s	dPlaySnd_Cmd
+		bls.s	PlaySnd_Cmd
 
 .nosound:
 		rts
 ; ---------------------------------------------------------------------------
 
-dPlaySnd_Cmd:
+PlaySnd_Cmd:
 		subi.b	#flg__First,d7
 		lsl.w	#2,d7
 		jmp	Sound_ExIndex(pc,d7.w)
@@ -734,7 +734,7 @@ ptr_flgE4:	bra.w	StopSpecialSFX
 ptr_flgend:
 ; ---------------------------------------------------------------------------
 
-dPlaySnd_DAC:
+PlaySnd_DAC:
 		addi.b	#$B1,d7
 		move.b	d7,(z80_dac_sample).l
 		nop
@@ -744,7 +744,7 @@ dPlaySnd_DAC:
 		rts
 ; ---------------------------------------------------------------------------
 
-dPlaySnd_Music:
+PlaySnd_Music:
 		cmpi.b	#bgm_ExtraLife,d7
 		bne.s	.bgmnot1up
 		tst.b	SMPS_RAM.f_1up_playing(a6)
@@ -948,9 +948,9 @@ PSGInitBytes:
 		even
 ; ---------------------------------------------------------------------------
 
-dPlaySnd_SFX:
+PlaySnd_SFX:
 		tst.b	SMPS_RAM.f_1up_playing(a6)
-		bne.w	.exits
+		bne.w	.exit
 		cmpi.b	#sfx_Ring,d7
 		bne.s	.notring
 		tst.b	SMPS_RAM.v_ring_speaker(a6)
@@ -964,7 +964,7 @@ dPlaySnd_SFX:
 		cmpi.b	#sfx_Push,d7
 		bne.s	.notpush
 		tst.b	SMPS_RAM.f_push_playing(a6)
-		bne.w	.exits
+		bne.w	.exit
 		move.b	#$80,SMPS_RAM.f_push_playing(a6)
 
 .notpush:
@@ -1038,10 +1038,10 @@ dPlaySnd_SFX:
 
 .nospec:
 		tst.b	SMPS_RAM.v_sfx_psg3_track+SMPS_Track.PlaybackControl(a6)
-		bpl.s	.exits
+		bpl.s	.exit
 		bset	#2,SMPS_RAM.v_spcsfx_psg3_track+SMPS_Track.PlaybackControl(a6)
 
-.exits:
+.exit:
 		rts
 ; ---------------------------------------------------------------------------
 
@@ -1066,7 +1066,7 @@ SFX_SFXChannelRAM:
 		dc.l (v_snddriver_ram.v_sfx_psg3_track)&$FFFFFF ; Noise
 ; ---------------------------------------------------------------------------
 
-dPlaySnd_SpecSFX:
+PlaySnd_SpecSFX:
 		tst.b	SMPS_RAM.f_1up_playing(a6)	; Is 1-up playing?
 		bne.w	.locret				; Return if so
 		movea.l	(Go_SpecSoundIndex).l,a0
@@ -1651,7 +1651,7 @@ PSGDoNext:
 .notcommand:
 		tst.b	d5
 		bpl.s	.duration
-		jsr	dLoadFreqPSG(pc)
+		jsr	LoadFreqPSG(pc)
 		move.b	(a4)+,d5
 		tst.b	d5
 		bpl.s	.duration
@@ -1664,7 +1664,7 @@ PSGDoNext:
 		bra.w	FinishTrackUpdate
 ; ---------------------------------------------------------------------------
 
-dLoadFreqPSG:
+LoadFreqPSG:
 		subi.b	#$81,d5
 		bcs.s	.duration
 		add.b	SMPS_Track.Transpose(a5),d5
@@ -1720,7 +1720,7 @@ dRestPSG:
 
 PSGUpdateVolFX:
 		tst.b	SMPS_Track.VoiceIndex(a5)
-		beq.w	SetPSGVolume_Rts
+		beq.w	SetPSGVolume.return
 
 PSGDoVolFX:
 		move.b	SMPS_Track.Volume(a5),d6
@@ -1737,11 +1737,11 @@ PSGDoVolFX:
 		btst	#7,d0
 		beq.s	.volume
 		cmpi.b	#$83,d0
-		beq.s	dVolEnvCmd_Hold
+		beq.s	VolEnvCmd_Hold
 		cmpi.b	#$85,d0
-		beq.s	dVolEnvCmd_Loop
+		beq.s	VolEnvCmd_Loop
 		cmpi.b	#$80,d0
-		beq.s	dVolEnvCmd_Reset
+		beq.s	VolEnvCmd_Reset
 
 .volume:
 		add.w	d0,d6
@@ -1751,40 +1751,40 @@ PSGDoVolFX:
 
 SetPSGVolume:
 		btst	#1,SMPS_Track.PlaybackControl(a5)
-		bne.s	SetPSGVolume_Rts
+		bne.s	.return
 		btst	#2,SMPS_Track.PlaybackControl(a5)
-		bne.s	SetPSGVolume_Rts
+		bne.s	.return
 		btst	#4,SMPS_Track.PlaybackControl(a5)
 		bne.s	SetPSGVolume_ChkGate
 
-SetPSGVolume_DoIt:
+.doit:
 		or.b	SMPS_Track.VoiceControl(a5),d6
 		addi.b	#$10,d6
 		move.b	d6,(psg_input).l
 
-SetPSGVolume_Rts:
+.return:
 		rts
 ; ---------------------------------------------------------------------------
 
 SetPSGVolume_ChkGate:
 		tst.b	SMPS_Track.NoteTimeoutMaster(a5)
-		beq.s	SetPSGVolume_DoIt
+		beq.s	SetPSGVolume.doit
 		tst.b	SMPS_Track.NoteTimeout(a5)
-		bne.s	SetPSGVolume_DoIt
+		bne.s	SetPSGVolume.doit
 		rts
 ; ---------------------------------------------------------------------------
 
-dVolEnvCmd_Hold:
+VolEnvCmd_Hold:
 		subq.b	#1,SMPS_Track.VolEnvIndex(a5)
 		rts
 ; ---------------------------------------------------------------------------
 
-dVolEnvCmd_Loop:
+VolEnvCmd_Loop:
 		move.b	SMPS_Track.VoiceControl(a0,d0.w),SMPS_Track.VolEnvIndex(a5)
 		bra.w	PSGDoVolFX
 ; ---------------------------------------------------------------------------
 
-dVolEnvCmd_Reset:
+VolEnvCmd_Reset:
 		clr.b	SMPS_Track.VolEnvIndex(a5)
 		bra.w	PSGDoVolFX
 ; ---------------------------------------------------------------------------

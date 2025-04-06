@@ -219,33 +219,35 @@ SetupValues:	dc.l $8000				; VDP register start number
 	save
 	cpu z80	; use Z80 cpu
 	listing purecode	; add to listing file
-		xor	a
-		ld	bc,1FD7h
-		ld	de,29h
-		ld	hl,28h
-		ld	sp,hl
-		ld	(hl),a
-		ldir
-		pop	ix
-		pop	iy
-		ld	i,a
-		ld	r,a
-		ex	af,af'
-		exx
-		pop	af
-		pop	bc
-		pop	de
-		pop	hl
-		ex	af,af'
-		exx
-		pop	af
-		pop	de
-		pop	hl
-		ld	sp,hl
-		di
-		im	1
-		ld	(hl),0E9h
-		jp	(hl)
+zStartupCodeStartLoc:
+	xor	a
+	ld	bc,(z80_ram_end-z80_ram)-(zStartupCodeEndLoc-zStartupCodeStartLoc)-1
+	ld	de,zStartupCodeEndLoc-zStartupCodeStartLoc+1
+	ld	hl,zStartupCodeEndLoc-zStartupCodeStartLoc
+	ld	sp,hl
+	ld	(hl),a
+	ldir
+	pop	ix
+	pop	iy
+	ld	i,a
+	ld	r,a
+	ex	af,af'
+	exx
+	pop	af
+	pop	bc
+	pop	de
+	pop	hl
+	ex	af,af'
+	exx
+	pop	af
+	pop	de
+	pop	hl
+	ld	sp,hl
+	di
+	im	1
+	ld	(hl),0E9h
+	jp	(hl)
+zStartupCodeEndLoc:
 	restore
 	padding off
 
