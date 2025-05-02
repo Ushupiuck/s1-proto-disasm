@@ -87,18 +87,18 @@ Vectors:
 		dc.l ErrorTrap			; Unused (reserved)
 		dc.l ErrorTrap			; Unused (reserved)
 		dc.l ErrorTrap			; Unused (reserved)
-Console:	dc.b "SEGA MEGA DRIVE "			; Hardware system ID (Console name)
+		dc.b "SEGA MEGA DRIVE "			; Hardware system ID (Console name)
 		dc.b "(C)SEGA 1989.JAN"			; Copyright holder and release date (generally year)
-Title_Local:	dc.b "                                                " ; Domestic name (blank)
-Title_Int:	dc.b "                                                " ; International name (blank)
-Serial:	dc.b "GM 00000000-00"			; Serial\version number
+		dc.b "                                                " ; Domestic name (blank)
+		dc.b "                                                " ; International name (blank)
+		dc.b "GM 00000000-00"			; Serial\version number
 Checksum:	dc.w 0					; Checksum
 		dc.b "J               "			; I\O support
 RomStartLoc:	dc.l StartOfROM				; Start address of ROM
 RomEndLoc:		dc.l EndOfROM-1				; End address of ROM
 RamStartLoc:	dc.l v_start&$FFFFFF			; Start address of RAM
 RamEndLoc:		dc.l (v_end-1)&$FFFFFF			; End address of RAM
-SRAMSupport:	dc.l $20202020				; SRAM (none)
+		dc.l $20202020				; SRAM (none)
 		dc.l $20202020				; SRAM start ($200001)
 		dc.l $20202020				; SRAM end ($20xxxx)
 Notes:	dc.b "                                                    " ; Notes (unused, anything can be put in this space, but it has to be 52 bytes.)
@@ -159,7 +159,7 @@ loc_258:
 loc_264:
 		move.l	d0,-(a6)
 		dbf	d6,loc_264
-		move.l	#($8100+%00000100)<<16|$8F00+%00000010,(a4)
+		move.l	#($8100+%0100)<<16|$8F00+%0010,(a4)
 		move.l	#$C0000000,(a4)
 		moveq	#bytesToLcnt(v_palette_end-v_palette),d3
 
@@ -423,7 +423,7 @@ loc_472:
 
 ErrorPrint:
 		lea	(vdp_data_port).l,a6
-		locVRAM	vram_sprites
+		locVRAM	ArtTile_Error_Handler_Font*tile_size
 		lea	(Art_Text).l,a0
 		move.w	#bytesToWcnt(Art_Text_end-Art_Text-tile_size),d1
 
@@ -434,19 +434,20 @@ ErrorPrint:
 		move.b	(v_errortype).w,d0
 		move.w	Error_Text(pc,d0.w),d0
 		lea	Error_Text(pc,d0.w),a0
-		locVRAM (vram_fg+$604)
+		locVRAM vram_fg+$604
 		moveq	#$13-1,d1
 
 .loadtext:
 		moveq	#0,d0
 		move.b	(a0)+,d0
-		addi.w	#$790,d0
+		addi.w	#-'0'+ArtTile_Error_Handler_Font,d0
 		move.w	d0,(a6)
 		dbf	d1,.loadtext
 		rts
 ; ---------------------------------------------------------------------------
 
-Error_Text:	dc.w .exception-Error_Text
+Error_Text:
+		dc.w .exception-Error_Text
 		dc.w .bus-Error_Text
 		dc.w .address-Error_Text
 		dc.w .illinstruct-Error_Text
@@ -472,7 +473,7 @@ Error_Text:	dc.w .exception-Error_Text
 ; ---------------------------------------------------------------------------
 
 ErrorPrintAddr:
-		move.w	#$7CA,(a6)
+		move.w	#ArtTile_Error_Handler_Font+10,(a6)
 		moveq	#8-1,d2
 
 loc_5BA:
@@ -490,7 +491,7 @@ sub_5C4:
 		addq.w	#7,d1
 
 loc_5D2:
-		addi.w	#$7C0,d1
+		addi.w	#ArtTile_Error_Handler_Font,d1
 		move.w	d1,(a6)
 		rts
 ; ---------------------------------------------------------------------------
@@ -514,7 +515,7 @@ VBlank:
 		move.l	(v_scrposy_dup).w,(vdp_data_port).l
 		btst	#6,(v_megadrive).w	; are we on a PAL machine?
 		beq.s	.notPAL	; if not, branch
-		move.w	#$700,d0	; intentionally lag the system to move the CRAM dots
+		move.w	#$701-1,d0	; intentionally lag the system to move the CRAM dots
 		dbf	d0,*
 
 .notPAL:
@@ -536,16 +537,17 @@ VBla_00:
 		rts
 ; ---------------------------------------------------------------------------
 
-VBla_Index:	dc.w VBla_00-VBla_Index
-		dc.w VBla_02-VBla_Index
-		dc.w VBla_04-VBla_Index
-		dc.w VBla_06-VBla_Index
-		dc.w VBla_08-VBla_Index
-		dc.w VBla_0A-VBla_Index
-		dc.w VBla_0C-VBla_Index
-		dc.w VBla_0E-VBla_Index
-		dc.w VBla_10-VBla_Index
-		dc.w VBla_12-VBla_Index
+VBla_Index:
+ptr_VBla_00:	dc.w VBla_00-VBla_Index
+ptr_VBla_02:	dc.w VBla_02-VBla_Index
+ptr_VBla_04:	dc.w VBla_04-VBla_Index
+ptr_VBla_06:	dc.w VBla_06-VBla_Index
+ptr_VBla_08:	dc.w VBla_08-VBla_Index
+ptr_VBla_0A:	dc.w VBla_0A-VBla_Index
+ptr_VBla_0C:	dc.w VBla_0C-VBla_Index
+ptr_VBla_0E:	dc.w VBla_0E-VBla_Index
+ptr_VBla_10:	dc.w VBla_10-VBla_Index
+ptr_VBla_12:	dc.w VBla_12-VBla_Index
 ; ---------------------------------------------------------------------------
 
 VBla_02:
@@ -790,7 +792,7 @@ loc_103E:
 		rts
 ; ---------------------------------------------------------------------------
 VDPSetupArray:
-		dc.w $8000+%00000100
+		dc.w $8000+%0100
 		dc.w $8100+%00110100
 		dc.w $8200+(vram_fg>>10)
 		dc.w $8300+(window_plane>>10)
@@ -805,8 +807,8 @@ VDPSetupArray:
 		dc.w $8C00+%10000001
 		dc.w $8D00+%00111111
 		dc.w $8E00
-		dc.w $8F00+%00000010
-		dc.w $9000+%00000001
+		dc.w $8F00+%0010
+		dc.w $9000+%0001
 		dc.w $9100
 		dc.w $9200
 VDPSetupArray_End:
@@ -1474,7 +1476,7 @@ GM_Sega:
 		bsr.w	ClearPLC
 		bsr.w	PaletteFadeOut
 		lea	(vdp_control_port).l,a6
-		move.w	#$8000+%00000100,(a6)
+		move.w	#$8000+%0100,(a6)
 		move.w	#$8200+(vram_fg>>10),(a6)
 		move.w	#$8400+(vram_bg>>13),(a6)
 		move.w	#$8700,(a6)
@@ -1521,12 +1523,12 @@ GM_Title:
 		bsr.w	ClearPLC
 		bsr.w	PaletteFadeOut
 		lea	(vdp_control_port).l,a6
-		move.w	#$8000+%00000100,(a6)
+		move.w	#$8000+%0100,(a6)
 		move.w	#$8200+(vram_fg>>10),(a6)
 		move.w	#$8400+(vram_bg>>13),(a6)
-		move.w	#$9000+%00000001,(a6)
+		move.w	#$9000+%0001,(a6)
 		move.w	#$9200,(a6)
-		move.w	#$8B00+%00000011,(a6)
+		move.w	#$8B00+%0011,(a6)
 		move.w	#$8700+%00100000,(a6)
 		move.w	(v_vdp_buffer1).w,d0
 		andi.b	#$BF,d0
@@ -1542,7 +1544,7 @@ GM_Title:
 		lea	(Nem_TitleSonic).l,a0
 		bsr.w	NemDec
 		lea	(vdp_data_port).l,a6
-		locVRAM $D000,4(a6)
+		locVRAM $D000,vdp_control_port-vdp_data_port(a6)
 		lea	(Art_Text).l,a5
 		move.w	#bytesToWcnt(Art_Text_end-Art_Text),d1
 
@@ -1673,7 +1675,7 @@ loc_2796:
 		andi.w	#$3FFF,d0
 		btst	#bitB,(v_jpadhold1).w		; Is B pressed?
 		beq.s	loc_27A6			; If not, ignore below
-		move.w	#id_GHZ+3,d0			; Set the zone to Green Hill Act 4
+		move.w	#id_GHZ<<8+3,d0			; Set the zone to Green Hill Act 4
 
 loc_27A6:
 		move.w	d0,(v_zone).w
@@ -1781,7 +1783,7 @@ DemoLevels:
 
 sub_28A6:
 		move.b	(v_jpadpress1).w,d1
-		andi.b	#btnUp|btnDn,d1
+		andi.b	#btnUp+btnDn,d1
 		bne.s	loc_28B6
 		subq.w	#1,(v_levseldelay).w
 		bpl.s	loc_28F0
@@ -1789,7 +1791,7 @@ sub_28A6:
 loc_28B6:
 		move.w	#$B,(v_levseldelay).w
 		move.b	(v_jpadhold1).w,d1
-		andi.b	#btnUp|btnDn,d1
+		andi.b	#btnUp+btnDn,d1
 		beq.s	loc_28F0
 		move.w	(v_levselitem).w,d0
 		btst	#bitUp,d1
@@ -1816,7 +1818,7 @@ loc_28F0:
 		cmpi.w	#$13,(v_levselitem).w
 		bne.s	locret_292A
 		move.b	(v_jpadpress1).w,d1
-		andi.b	#btnL|btnR,d1
+		andi.b	#btnL+btnR,d1
 		beq.s	locret_292A
 		move.w	(v_levselsound).w,d0
 		btst	#bitL,d1
@@ -1954,13 +1956,13 @@ loc_2C0A:
 		bsr.w	PaletteFadeOut
 		bsr.w	ClearScreen
 		lea	(vdp_control_port).l,a6
-		move.w	#$8B00+%00000011,(a6)
+		move.w	#$8B00+%0011,(a6)
 		move.w	#$8200+(vram_fg>>10),(a6)
 		move.w	#$8400+(vram_bg>>13),(a6)
 		move.w	#$8500+(vram_sprites>>9),(a6)
 		move.w	#0,(word_FFFFE8).w
 		move.w	#$8A00+175,(v_hbla_hreg).w
-		move.w	#$8000+%00000100,(a6)
+		move.w	#$8000+%0100,(a6)
 		move.w	#$8700+%00100000,(a6)
 
 		clearRAM v_objspace,v_objspace_end
@@ -2448,8 +2450,8 @@ GM_Special:
 		move.w	#$458,(v_player+obX).w
 		move.w	#$4A0,(v_player+obY).w
 		lea	(vdp_control_port).l,a6
-		move.w	#$8B00+%00000011,(a6)
-		move.w	#$8000+%00000100,(a6)
+		move.w	#$8B00+%0011,(a6)
+		move.w	#$8000+%0100,(a6)
 		move.w	#$8A00+175,(v_hbla_hreg).w
 		move.w	#$9000+%00010001,(a6)
 		bsr.w	SS_PalCycle
@@ -4335,7 +4337,7 @@ loc_8A00:
 		move.l	a1,(v_opl_data+$C).w
 		lea	(v_objstate).w,a2
 		move.w	#$101,(a2)+
-		; Bug: The last 2 bytes of v_objstate are not accounted for
+		; Bug: This does word when it should be doing longword and the last 2 bytes of v_objstate are not accounted for
 		move.w	#bytesToWcnt(v_objstate_end-v_objstate-2),d0
 
 loc_8A38:
