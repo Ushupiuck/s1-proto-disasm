@@ -1,8 +1,8 @@
 s1built.bin
 s1built.prev.bin
-sonic.lst
-sonic.log
-sonic.p
+main.lst
+main.log
+main.p
 SonLVL INI Files/dllcache/*
 SonLVL INI Files/SonLVL.log
 

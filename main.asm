@@ -2276,9 +2276,9 @@ sub_3178:
 		dbf	d1,.loadchunks2
 		rts
 ; ---------------------------------------------------------------------------
-Anim256Unk1:	binclude "map256/Anim Unknown 1.bin"
+Anim256Unk1:	binclude "level/map256/Anim Unknown 1.bin"
 Anim256Unk1_end:	even
-Anim256Unk2:	binclude "map256/Anim Unknown 2.bin"
+Anim256Unk2:	binclude "level/map256/Anim Unknown 2.bin"
 Anim256Unk2_end:	even
 ; ---------------------------------------------------------------------------
 
@@ -2313,9 +2313,9 @@ LoadAnimatedBlocks:
 		dbf	d1,.loadmz
 		rts
 ; ---------------------------------------------------------------------------
-Anim16GHZ:	binclude "map16/Anim GHZ.bin"
+Anim16GHZ:	binclude "level/map16/Anim GHZ.bin"
 Anim16GHZ_end:	even
-Anim16MZ:	binclude "map16/Anim MZ.bin"
+Anim16MZ:	binclude "level/map16/Anim MZ.bin"
 Anim16MZ_end:	even
 ; ---------------------------------------------------------------------------
 
@@ -6511,7 +6511,7 @@ byte_2961E:	binclude "artnem/SLZ Swinging Platform.nem"
 		even
 Nem_SLZ_Platfm:	binclude "artnem/SLZ Platforms.nem"
 		even
-byte_29D4A:	binclude "artnem/slz metal block.nem"
+byte_29D4A:	binclude "artnem/SLZ 32x32 Block.nem"
 		even
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - SZ stuff
@@ -6606,52 +6606,52 @@ ArtAnimalRicky:	binclude "artnem/Animal Squirrel.nem"
 ; Compressed graphics - primary patterns
 ; Blocks are Uncompressed
 ; ---------------------------------------------------------------------------
-Blk16_GHZ:	binclude "map16/GHZ.bin"
+Blk16_GHZ:	binclude "level/map16/GHZ.bin"
 		even
 Nem_GHZ_1st:	binclude "artnem/8x8 - GHZ1.nem"
 		even
 Nem_GHZ_2nd:	binclude "artnem/8x8 - GHZ2.nem"
 		even
-Blk256_GHZ:	binclude "map256/GHZ.kos"
+Blk256_GHZ:	binclude "level/map256/GHZ.kos"
 		even
-Blk16_LZ:	binclude "map16/LZ.bin"
+Blk16_LZ:	binclude "level/map16/LZ.bin"
 		even
 Nem_LZ:	binclude "artnem/8x8 - LZ.nem"
 		even
-Blk256_LZ:	binclude "map256/LZ.kos"
+Blk256_LZ:	binclude "level/map256/LZ.kos"
 		even
-Blk16_MZ:	binclude "map16/MZ.bin"
+Blk16_MZ:	binclude "level/map16/MZ.bin"
 		even
 Nem_MZ:	binclude "artnem/8x8 - MZ.nem"
 		even
-Blk256_MZ:	binclude "map256/MZ.kos"
+Blk256_MZ:	binclude "level/map256/MZ.kos"
 		even
 ;0x3DA48
 ; end chunk data
 		dc.w $F0, 0, 0, 0, 0, 0, 0, 0
 ;0x3DA58
-		binclude "leftovers/map256/Chunk Data.kos"
+		binclude "leftovers/level/map256/Chunk Data.kos"
 		even
 ;0x3DB78
 		binclude "unknown/3DB78.dat"
 		even
-Blk16_SLZ:	binclude "map16/SLZ.bin"
+Blk16_SLZ:	binclude "level/map16/SLZ.bin"
 		even
 Nem_SLZ:	binclude "artnem/8x8 - SLZ.nem"
 		even
-Blk256_SLZ:	binclude "map256/SLZ.kos"
+Blk256_SLZ:	binclude "level/map256/SLZ.kos"
 		even
-Blk16_SZ:	binclude "map16/SZ.bin"
+Blk16_SZ:	binclude "level/map16/SZ.bin"
 		even
 Nem_SZ:	binclude "artnem/8x8 - SZ.nem"
 		even
-Blk256_SZ:	binclude "map256/SZ.kos"
+Blk256_SZ:	binclude "level/map256/SZ.kos"
 		even
-Blk16_CWZ:	binclude "map16/CWZ.bin"
+Blk16_CWZ:	binclude "level/map16/CWZ.bin"
 		even
 Nem_CWZ:	binclude "artnem/8x8 - CWZ.nem"
 		even
-Blk256_CWZ:	binclude "map256/CWZ.kos"
+Blk256_CWZ:	binclude "level/map256/CWZ.kos"
 		even
 ;0x570DC
 ; duplicate cut-off chunk data from CWZ
@@ -6816,80 +6816,80 @@ LayoutArray:	; GHZ
 		dc.w byte_6E3D2-LayoutArray, byte_6E3D2-LayoutArray, byte_6E3D2-LayoutArray
 		dc.w byte_6E3D6-LayoutArray, byte_6E3D6-LayoutArray, byte_6E3D6-LayoutArray
 
-LayoutGHZ1FG:	binclude "levels/ghz1.bin"
+LayoutGHZ1FG:	binclude "level/layout/ghz1.bin"
 		even
-LayoutGHZ1BG:	binclude "levels/ghzbg1.bin"
+LayoutGHZ1BG:	binclude "level/layout/ghzbg1.bin"
 		even
 byte_6CE54:	dc.l 0
-LayoutGHZ2FG:	binclude "levels/ghz2.bin"
+LayoutGHZ2FG:	binclude "level/layout/ghz2.bin"
 		even
-LayoutGHZ2BG:	binclude "levels/ghzbg2.bin"
+LayoutGHZ2BG:	binclude "level/layout/ghzbg2.bin"
 		even
 byte_6CF3C:	dc.l 0
-LayoutGHZ3FG:	binclude "levels/ghz3.bin"
+LayoutGHZ3FG:	binclude "level/layout/ghz3.bin"
 		even
-LayoutGHZ3BG:	binclude "levels/ghzbg3.bin"
+LayoutGHZ3BG:	binclude "level/layout/ghzbg3.bin"
 		even
 byte_6D084:	dc.l 0
 byte_6D088:	dc.l 0
-LayoutLZ1FG:	binclude "levels/lz1.bin"
+LayoutLZ1FG:	binclude "level/layout/lz1.bin"
 		even
-LayoutLZBG:	binclude "levels/lzbg.bin"
+LayoutLZBG:	binclude "level/layout/lzbg.bin"
 		even
 byte_6D190:	dc.l 0
-LayoutLZ2FG:	binclude "levels/lz2.bin"
+LayoutLZ2FG:	binclude "level/layout/lz2.bin"
 		even
 byte_6D216:	dc.l 0
-LayoutLZ3FG:	binclude "levels/lz3.bin"
+LayoutLZ3FG:	binclude "level/layout/lz3.bin"
 		even
 byte_6D31C:	dc.l 0
 byte_6D320:	dc.l 0
-LayoutMZ1FG:	binclude "levels/mz1.bin"
+LayoutMZ1FG:	binclude "level/layout/mz1.bin"
 		even
-LayoutMZ1BG:	binclude "levels/mzbg1.bin"
+LayoutMZ1BG:	binclude "level/layout/mzbg1.bin"
 		even
-LayoutMZ2FG:	binclude "levels/mz2.bin"
+LayoutMZ2FG:	binclude "level/layout/mz2.bin"
 		even
-LayoutMZ2BG:	binclude "levels/mzbg2.bin"
+LayoutMZ2BG:	binclude "level/layout/mzbg2.bin"
 		even
 byte_6D614:	dc.l 0
-LayoutMZ3FG:	binclude "levels/mz3.bin"
+LayoutMZ3FG:	binclude "level/layout/mz3.bin"
 		even
-LayoutMZ3BG:	binclude "levels/mzbg3.bin"
+LayoutMZ3BG:	binclude "level/layout/mzbg3.bin"
 		even
 byte_6D7DC:	dc.l 0
 byte_6D7E0:	dc.l 0
-LayoutSLZ1FG:	binclude "levels/slz1.bin"
+LayoutSLZ1FG:	binclude "level/layout/slz1.bin"
 		even
-LayoutSLZBG:	binclude "levels/slzbg.bin"
+LayoutSLZBG:	binclude "level/layout/slzbg.bin"
 		even
-LayoutSLZ2FG:	binclude "levels/slz2.bin"
+LayoutSLZ2FG:	binclude "level/layout/slz2.bin"
 		even
-LayoutSLZ3FG:	binclude "levels/slz3.bin"
+LayoutSLZ3FG:	binclude "level/layout/slz3.bin"
 		even
 byte_6DBE4:	dc.l 0
-LayoutSZ1FG:	binclude "levels/sz1.bin"
+LayoutSZ1FG:	binclude "level/layout/sz1.bin"
 		even
-LayoutSZBG:	binclude "levels/szbg.bin"
+LayoutSZBG:	binclude "level/layout/szbg.bin"
 		even
 byte_6DCD8:	dc.l 0
-LayoutSZ2FG:	binclude "levels/sz2.bin"
+LayoutSZ2FG:	binclude "level/layout/sz2.bin"
 		even
 byte_6DDDA:	dc.l 0
-LayoutSZ3FG:	binclude "levels/sz3.bin"
+LayoutSZ3FG:	binclude "level/layout/sz3.bin"
 		even
 byte_6DF30:	dc.l 0
 byte_6DF34:	dc.l 0
-LayoutCWZ1:	binclude "levels/cwz1.bin"
+LayoutCWZ1:	binclude "level/layout/cwz1.bin"
 		even
-LayoutCWZ2:	binclude "levels/cwz2.bin"
+LayoutCWZ2:	binclude "level/layout/cwz2.bin"
 		even
-byte_6E33C:	binclude "levels/cwz2bg.bin"
+byte_6E33C:	binclude "level/layout/cwz2bg.bin"
 		even
-LayoutCWZ3:	binclude "levels/cwz3.bin"
+LayoutCWZ3:	binclude "level/layout/cwz3.bin"
 		even
 byte_6E344:	dc.l 0
-LayoutTest:	binclude "leftovers/levels/test.bin"
+LayoutTest:	binclude "leftovers/level/layout/test.bin"
 		even
 byte_6E3CA:	dc.l 0
 byte_6E3CE:	dc.l 0
@@ -6932,44 +6932,44 @@ ObjPos_Index:	; GHZ
 		dc.w ObjPos_CWZ1-ObjPos_Index, ObjPos_Null-ObjPos_Index
 		dc.w $FFFF, 0, 0
 
-ObjPos_GHZ1:	binclude "objpos/ghz1.bin"
+ObjPos_GHZ1:	binclude "level/objpos/ghz1.bin"
 		even
-ObjPos_GHZ2:	binclude "objpos/ghz2.bin"
+ObjPos_GHZ2:	binclude "level/objpos/ghz2.bin"
 		even
-ObjPos_GHZ3:	binclude "objpos/ghz3.bin"
+ObjPos_GHZ3:	binclude "level/objpos/ghz3.bin"
 		even
-ObjPos_LZ1:	binclude "objpos/lz1.bin"
+ObjPos_LZ1:	binclude "level/objpos/lz1.bin"
 		even
-ObjPos_LZ2:	binclude "objpos/lz2.bin"
+ObjPos_LZ2:	binclude "level/objpos/lz2.bin"
 		even
-ObjPos_LZ3:	binclude "objpos/lz3.bin"
+ObjPos_LZ3:	binclude "level/objpos/lz3.bin"
 		even
-ObjPos_MZ1:	binclude "objpos/mz1.bin"
+ObjPos_MZ1:	binclude "level/objpos/mz1.bin"
 		even
-ObjPos_MZ2:	binclude "objpos/mz2.bin"
+ObjPos_MZ2:	binclude "level/objpos/mz2.bin"
 		even
-ObjPos_MZ3:	binclude "objpos/mz3.bin"
+ObjPos_MZ3:	binclude "level/objpos/mz3.bin"
 		even
-ObjPos_SLZ1:	binclude "objpos/slz1.bin"
+ObjPos_SLZ1:	binclude "level/objpos/slz1.bin"
 		even
-ObjPos_SLZ2:	binclude "objpos/slz2.bin"
+ObjPos_SLZ2:	binclude "level/objpos/slz2.bin"
 		even
-ObjPos_SLZ3:	binclude "objpos/slz3.bin"
+ObjPos_SLZ3:	binclude "level/objpos/slz3.bin"
 		even
-ObjPos_SZ1:	binclude "objpos/sz1.bin"
+ObjPos_SZ1:	binclude "level/objpos/sz1.bin"
 		even
-ObjPos_SZ2:	binclude "objpos/sz2.bin"
+ObjPos_SZ2:	binclude "level/objpos/sz2.bin"
 		even
 ;0x729CA
-		binclude "leftovers/objpos/sz1.bin"
+		binclude "leftovers/level/objpos/sz1.bin"
 		even
-ObjPos_SZ3:	binclude "objpos/sz3.bin"
+ObjPos_SZ3:	binclude "level/objpos/sz3.bin"
 		even
-ObjPos_CWZ1:	binclude "objpos/cwz1.bin"
+ObjPos_CWZ1:	binclude "level/objpos/cwz1.bin"
 		even
-ObjPos_CWZ2:	binclude "objpos/cwz2.bin"
+ObjPos_CWZ2:	binclude "level/objpos/cwz2.bin"
 		even
-ObjPos_CWZ3:	binclude "objpos/cwz3.bin"
+ObjPos_CWZ3:	binclude "level/objpos/cwz3.bin"
 		even
 ObjPos_Null:	dc.w $FFFF, 0, 0
 
