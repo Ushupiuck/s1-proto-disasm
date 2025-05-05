@@ -372,28 +372,10 @@ ArtTile_MZ_Fireball:	equ $345
 ArtTile_MZ_Glass_Pillar:	equ $38E
 ArtTile_MZ_Lava:		equ $3A8
 
-; Spring Yard Zone
+; Sparkling Zone
 ArtTile_SYZ_Bumper:		equ $380
 ArtTile_SYZ_Big_Spikeball:	equ $396
 ArtTile_SYZ_Spikeball_Chain:	equ $3BA
-
-; Labyrinth Zone
-ArtTile_LZ_Splash:		equ $259
-ArtTile_LZ_Water_Surface:	equ $300
-ArtTile_LZ_Spikeball_Chain:	equ $310
-ArtTile_LZ_Flapping_Door:	equ $328
-ArtTile_LZ_Bubbles:		equ $348
-ArtTile_LZ_Moving_Block:	equ $3BC
-ArtTile_LZ_Door:		equ $3C4
-ArtTile_LZ_Harpoon:		equ $3CC
-ArtTile_LZ_Pole:		equ $3DE
-ArtTile_LZ_Push_Block:	equ $3DE
-ArtTile_LZ_Blocks:		equ $3E6
-ArtTile_LZ_Conveyor_Belt:	equ $3F6
-ArtTile_LZ_Sonic_Drowning:	equ $440
-ArtTile_LZ_Rising_Platform:	equ ArtTile_LZ_Blocks+$69
-ArtTile_LZ_Orbinaut:	equ $467
-ArtTile_LZ_Cork:		equ ArtTile_LZ_Blocks+$11A
 
 ; Star Light Zone
 ArtTile_SLZ_Seesaw:		equ $374
@@ -406,27 +388,6 @@ ArtTile_SLZ_Fireball_Launcher:	equ $513
 ArtTile_SLZ_Platform:	equ $480
 ArtTile_SLZ_Smashable_Wall:	equ	$4E0
 ArtTile_SLZ_Spikeball:		equ $4F0
-
-; Scrap Brain Zone
-ArtTile_SBZ_Caterkiller:	equ $2B0
-ArtTile_SBZ_Moving_Block_Short:	equ $2C0
-ArtTile_SBZ_Door:		equ $2E8
-ArtTile_SBZ_Girder:		equ $2F0
-ArtTile_SBZ_Disc:		equ $344
-ArtTile_SBZ_Junction:	equ $348
-ArtTile_SBZ_Swing:		equ $391
-ArtTile_SBZ_Saw:		equ $3B5
-ArtTile_SBZ_Flamethrower:	equ $3D9
-ArtTile_SBZ_Collapsing_Floor:	equ $3F5
-ArtTile_SBZ_Orbinaut:		equ $429
-ArtTile_SBZ_Smoke_Puff_1:	equ ArtTile_Level+$448
-ArtTile_SBZ_Smoke_Puff_2:	equ ArtTile_Level+$454
-ArtTile_SBZ_Moving_Block_Long:	equ $460
-ArtTile_SBZ_Horizontal_Door:	equ $46F
-ArtTile_SBZ_Electric_Orb:	equ $47E
-ArtTile_SBZ_Trap_Door:	equ $492
-ArtTile_SBZ_Vanishing_Block:	equ $4C3
-ArtTile_SBZ_Spinning_Platform:	equ $4DF
 
 ; General Level Art
 ArtTile_Level:			equ $000
@@ -515,9 +476,6 @@ ArtTile_SS_Zone_3:		equ $7A9
 ArtTile_SS_Zone_4:		equ $797
 ArtTile_SS_Zone_5:		equ $7A0
 ArtTile_SS_Zone_6:		equ $7A9
-
-; Special Stage Results
-ArtTile_SS_Results_Emeralds:	equ $541
 
 ; Error Handler
 ArtTile_Error_Handler_Font:	equ $7C0
