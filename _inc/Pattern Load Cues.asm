@@ -116,7 +116,7 @@ PLC_MZ:		dc.w ((PLC_MZ2-PLC_MZ-2)/6)-1
 		plcm    Nem_Buzzbomber, ArtTile_Buzz_Bomber
 		plcm    ArtYardin, ArtTile_Yadrin
 		plcm    ArtBasaran, ArtTile_Basaran
-		plcm    ArtSplats, $4E4
+		plcm    ArtSplats, ArtTile_Splats
 
 PLC_MZ2:	dc.w ((PLC_MZ2end-PLC_MZ2-2)/6)-1
 		plcm    ArtButtonMZ, ArtTile_Button+4

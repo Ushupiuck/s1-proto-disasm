@@ -16,7 +16,7 @@ loc_4936:
 		beq.s	locret_495C
 		bcc.s	loc_4952
 		move.w	(v_screenposy).w,(v_limitbtm2).w
-		andi.w	#$FFFE,(v_limitbtm2).w
+		andi.w	#-2,(v_limitbtm2).w
 		neg.w	d1
 
 loc_4952:
