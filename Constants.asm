@@ -464,19 +464,11 @@ ArtTile_SS_Extra_Life:	equ $370
 ArtTile_SS_Emerald_Sparkle:	equ $3F0
 ArtTile_SS_Plane_3:		equ $400
 ArtTile_SS_Red_White_Block:	equ $470
-ArtTile_SS_Ghost_Block:	equ $4F0
+ArtTile_SS_Skull_Block:	equ $4F0
 ArtTile_SS_Plane_4:		equ $500
-ArtTile_SS_W_Block:		equ $570
-ArtTile_SS_Glass:		equ $5F0
+ArtTile_SS_U_Block:		equ $570
 ArtTile_SS_Plane_5:		equ $600
 ArtTile_SS_Plane_6:		equ $700
-ArtTile_SS_Emerald:		equ $770
-ArtTile_SS_Zone_1:		equ $797
-ArtTile_SS_Zone_2:		equ $7A0
-ArtTile_SS_Zone_3:		equ $7A9
-ArtTile_SS_Zone_4:		equ $797
-ArtTile_SS_Zone_5:		equ $7A0
-ArtTile_SS_Zone_6:		equ $7A9
 
 ; Error Handler
 ArtTile_Error_Handler_Font:	equ $7C0

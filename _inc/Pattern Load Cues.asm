@@ -215,8 +215,8 @@ PLC_SpecialStage:	dc.w ((PLC_SpeStageend-PLC_SpecialStage-2)/6)-1
 		plcm    ArtSpecial1up, ArtTile_SS_Extra_Life
 		plcm    ArtSpecialStars, ArtTile_SS_Emerald_Sparkle
 		plcm    byte_65432, ArtTile_SS_Red_White_Block
-		plcm    ArtSpecialSkull, $4F0
-		plcm    ArtSpecialU, $570
+		plcm    ArtSpecialSkull, ArtTile_SS_Skull_Block
+		plcm    ArtSpecialU, ArtTile_SS_U_Block
 PLC_SpeStageend:
 		plcm    ArtSpecialEmerald, 0
 		plcm    ArtSpecialZone1, 0
