@@ -293,9 +293,7 @@ v_megadrive:	ds.b 1
 			ds.b 1		; unused
 f_debugmode:	ds.b 1
 			ds.b 1		; unused
-v_init:			ds.b 1		; 'init' text string (4 bytes)
-			ds.w 1		; unused
-			ds.b 1		; unused
+v_init:			ds.l 1		; 'init' text string (4 bytes)
 v_end:
 	dephase
 

@@ -401,9 +401,10 @@ ArtTile_SLZ_Fan:		equ $3A0
 ArtTile_SLZ_Pylon:		equ $3CC
 ArtTile_SLZ_Swing:		equ $3DC
 ArtTile_SLZ_Orbinaut:		equ $429
-ArtTile_SLZ_Fireball:		equ $480
-ArtTile_SLZ_Fireball_Launcher:	equ $4D8
-ArtTile_SLZ_Collapsing_Floor:	equ $4E0
+ArtTile_SLZ_Fireball:		equ $345
+ArtTile_SLZ_Fireball_Launcher:	equ $513
+ArtTile_SLZ_Platform:	equ $480
+ArtTile_SLZ_Smashable_Wall:	equ	$4E0
 ArtTile_SLZ_Spikeball:		equ $4F0
 
 ; Scrap Brain Zone
@@ -429,14 +430,14 @@ ArtTile_SBZ_Spinning_Platform:	equ $4DF
 
 ; General Level Art
 ArtTile_Level:			equ $000
-ArtTile_Ball_Hog:		equ $302
+ArtTile_Ball_Hog:		equ $400
 ArtTile_Bomb:			equ $400
 ArtTile_Crabmeat:		equ $400
 ArtTile_Missile_Disolve:	equ $41C ; Unused
 ArtTile_Buzz_Bomber:	equ $444
 ArtTile_Chopper:		equ $47B
 ArtTile_Yadrin:			equ $47B
-ArtTile_Jaws:			equ $486
+ArtTile_Jaws:			equ $4CE
 ArtTile_Newtron:		equ $49B
 ArtTile_Burrobot:		equ $4A6
 ArtTile_Basaran:		equ $4B8
@@ -448,7 +449,7 @@ ArtTile_Spring_Horizontal:	equ $523
 ArtTile_Spring_Vertical:	equ $533
 ArtTile_Shield:			equ $541
 ArtTile_Invincibility:	equ $55C
-ArtTile_Game_Over:		equ $55E
+ArtTile_Game_Over:		equ $580
 ArtTile_Title_Card:		equ $580
 ArtTile_Animal_1:		equ $580
 ArtTile_Animal_2:		equ $592

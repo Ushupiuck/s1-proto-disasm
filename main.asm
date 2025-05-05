@@ -1537,14 +1537,14 @@ GM_Title:
 
 		clearRAM v_objspace,v_objspace_end
 
-		locVRAM $4000
+		locVRAM ArtTile_Title_Foreground*tile_size
 		lea	(Nem_TitleFg).l,a0
 		bsr.w	NemDec
-		locVRAM $6000
+		locVRAM ArtTile_Title_Sonic*tile_size
 		lea	(Nem_TitleSonic).l,a0
 		bsr.w	NemDec
 		lea	(vdp_data_port).l,a6
-		locVRAM $D000,vdp_control_port-vdp_data_port(a6)
+		locVRAM ArtTile_Level_Select_Font*tile_size,vdp_control_port-vdp_data_port(a6)
 		lea	(Art_Text).l,a5
 		move.w	#bytesToWcnt(Art_Text_end-Art_Text),d1
 
@@ -1644,7 +1644,7 @@ LevelSelect:
 		bsr.w	RunPLC
 		tst.l	(v_plc_buffer).w
 		bne.s	LevelSelect
-		andi.b	#btnABC|btnStart,(v_jpadpress1).w
+		andi.b	#btnABC+btnStart,(v_jpadpress1).w
 		beq.s	LevelSelect
 		move.w	(v_levselitem).w,d0
 		cmpi.w	#$13,d0
@@ -1766,18 +1766,18 @@ loc_2878:
 ; ---------------------------------------------------------------------------
 
 DemoLevels:
-		dc.w	id_GHZ<<8
-		dc.w	(id_SS-1)<<8
-		dc.w	id_MZ<<8
-		dc.w	(id_SS-1)<<8
-		dc.w	id_SZ<<8
-		dc.w	(id_SS-1)<<8
-		dc.w	id_SLZ<<8
-		dc.w	(id_SS-1)<<8
-		dc.w	id_MZ<<8
-		dc.w	(id_SS-1)<<8
-		dc.w	id_SZ<<8
-		dc.w	(id_SS-1)<<8
+		dc.b	id_GHZ,0
+		dc.b	(id_SS-1),0
+		dc.b	id_MZ,0
+		dc.b	(id_SS-1),0
+		dc.b	id_SZ,0
+		dc.b	(id_SS-1),0
+		dc.b	id_SLZ,0
+		dc.b	(id_SS-1),0
+		dc.b	id_MZ,0
+		dc.b	(id_SS-1),0
+		dc.b	id_SZ,0
+		dc.b	(id_SS-1),0
 		even
 ; ---------------------------------------------------------------------------
 
@@ -2060,7 +2060,7 @@ loc_2D54:
 		movea.l	(a1,d0.w),a1
 		move.b	1(a1),(v_btnpushtime2).w
 		subq.b	#1,(v_btnpushtime2).w
-		move.w	#$708,(v_demolength).w
+		move.w	#30*60,(v_demolength).w
 		move.b	#8,(v_vbla_routine).w
 		bsr.w	WaitForVBla
 		move.w	#$202F,(v_pfade_start).w
@@ -2141,7 +2141,7 @@ loc_2EC8:
 		bne.s	loc_2E9E
 		rts
 ; ---------------------------------------------------------------------------
-		include "leftovers/Debug Coordinate Sprites.asm"
+		include "leftovers/objects/Debug Coordinate Sprites.asm"
 ; ---------------------------------------------------------------------------
 ; Unused, Speculated to have been for a window plane wavy masking effect
 ; involving writes during HBlank. It writes its tables in the Nemesis GFX
@@ -2322,12 +2322,12 @@ Anim16MZ_end:	even
 DebugPosLoadArt:
 		rts
 ; ---------------------------------------------------------------------------
-		locVRAM $9E00
+		locVRAM $4F0*tile_size
 		lea	(Art_Text).l,a0
 		move.w	#bytesToWcnt(Art_Text_end-Art_Text-tile_size*$1F),d1
 		bsr.s	.loadtext
 		lea	(Art_Text).l,a0
-		adda.w	#tile_size*$11,a0
+		adda.w	#$11*tile_size,a0
 		move.w	#bytesToWcnt(Art_Text_end-Art_Text-tile_size*$23),d1
 
 .loadtext:
@@ -2502,7 +2502,7 @@ loc_3662:
 ssLoadBG:
 		lea	(v_start&$FFFFFF).l,a1
 		lea	(Eni_SSBg1).l,a0
-		move.w	#$4051,d0
+		move.w	#make_art_tile(ArtTile_SS_Background_Fish,2,0),d0
 		bsr.w	EniDec
 		move.l	#$50000001,d3
 		lea	(v_start&$FFFFFF+$80).l,a2
@@ -2551,7 +2551,7 @@ loc_36EA:
 		dbf	d7,loc_368C
 		lea	(v_start&$FFFFFF).l,a1
 		lea	(Eni_SSBg2).l,a0
-		move.w	#$4000,d0
+		move.w	#make_art_tile(ArtTile_SS_Background_Clouds,2,0),d0
 		bsr.w	EniDec
 		copyTilemap	v_start&$FFFFFF,vram_fg,64,32
 		copyTilemap	v_start&$FFFFFF,vram_fg+$1000,64,64
@@ -3288,7 +3288,7 @@ DrawChunks:
 ;loc_47D8:
 		lea	(v_bg3screenposx).w,a3
 		move.w	#$6000,d2
-		move.w	#$B0,d4
+		move.w	#(320/2)+16,d4
 		moveq	#3-1,d6
 
 loc_47E6:
@@ -3382,8 +3382,8 @@ locret_48B8:
 ; ---------------------------------------------------------------------------
 
 LevelLayoutLoad:
-		; Bug: This clears too much data
-		; To fix this, change bytesToWcnt to bytesToLcnt
+		; Bug: This clears too much data.
+		; To fix this, change bytesToWcnt to bytesToLcnt.
 		lea	(v_lvllayout).w,a3
 		move.w	#bytesToWcnt(v_lvllayout_end-v_lvllayout),d1
 		moveq	#0,d0
@@ -3426,17 +3426,17 @@ loc_4904:
 ; ---------------------------------------------------------------------------
 		include "_inc/DynamicLevelEvents.asm"
 
-		include "_incObj/02.asm"
+		include "objects/02.asm"
 Map_02:	include "_maps/02.asm"
 
-		include "_incObj/03.asm"
-		include "_incObj/04.asm"
-		include "_incObj/05.asm"
+		include "objects/03.asm"
+		include "objects/04.asm"
+		include "objects/05.asm"
 Map_05:	include "_maps/05.asm"
 
-		include "_incObj/06.asm"
-		include "_incObj/07.asm"
-		include "_incObj/11 Bridge (part 1).asm"
+		include "objects/06.asm"
+		include "objects/07.asm"
+		include "objects/11 Bridge (part 1).asm"
 ; ---------------------------------------------------------------------------
 
 PtfmBridge:
@@ -3571,7 +3571,7 @@ PtfmNormalHeight:
 		sub.w	d3,d0
 		bra.w	PtfmNormal3
 
-		include "_incObj/11 Bridge (part 2).asm"
+		include "objects/11 Bridge (part 2).asm"
 ; ---------------------------------------------------------------------------
 
 PtfmCheckExit:
@@ -3597,27 +3597,27 @@ loc_510A:
 locret_511C:
 		rts
 
-		include "_incObj/11 Bridge (part 3).asm"
+		include "objects/11 Bridge (part 3).asm"
 MapBridge:	include "_maps/Bridge.asm"
 
-		include "_incObj/15 Swinging Platform.asm"
+		include "objects/15 Swinging Platform.asm"
 Map_Swing_GHZ:	include "_maps/Swinging Platforms (GHZ).asm"
 Map_Swing_SLZ:	include "_maps/Swinging Platforms (SLZ).asm"
 
-		include "_incObj/17 Spiked Pole Helix.asm"
+		include "objects/17 Spiked Pole Helix.asm"
 Map_Hel:	include "_maps/Spiked Pole Helix.asm"
 
-		include "_incObj/18 Platforms.asm"
+		include "objects/18 Platforms.asm"
 		include "_maps/Platforms (unused).asm"
 Map_Plat_GHZ:	include "_maps/Platforms (GHZ).asm"
 Map_Plat_SZ:	include "_maps/Platforms (SZ).asm"
 Map_Plat_SLZ:	include "_maps/Platforms (SLZ).asm"
 
-		include "_incObj/19 GHZ Ball.asm"
+		include "objects/19 GHZ Ball.asm"
 Map_GBall:	include "_maps/GHZ Ball.asm"
 
-		include "_incObj/1A Collapsing Ledge (part 1).asm"
-		include "_incObj/53 Collapsing Floors.asm"
+		include "objects/1A Collapsing Ledge (part 1).asm"
+		include "objects/53 Collapsing Floors.asm"
 ; ---------------------------------------------------------------------------
 
 loc_612A:
@@ -3625,7 +3625,7 @@ loc_612A:
 
 loc_6130:
 		lea	(CFlo_Data1).l,a4
-		moveq	#$19-1,d1
+		moveq	#25-1,d1
 		addq.b	#2,obFrame(a0)
 
 loc_613C:
@@ -3721,16 +3721,16 @@ ObjCollapsePtfm_Slope:dc.b $20, $20, $20, $20, $20, $20, $20, $20, $21, $21
 Map_Ledge:	include "_maps/Collapsing Ledge.asm"
 Map_CFlo:	include "_maps/Collapsing Floors.asm"
 
-		include "_incObj/1B.asm"
+		include "objects/1B.asm"
 Map_1B:	include "_maps/1B.asm"
 
-		include "_incObj/1C Scenery.asm"
+		include "objects/1C Scenery.asm"
 Map_Scen:	include "_maps/Scenery.asm"
 
-		include "_incObj/1D Unused Switch.asm"
+		include "objects/1D Unused Switch.asm"
 Map_UnkSwitch:	include "_maps/Unknown Switch.asm"
 
-		include "_incObj/2A Switch Door.asm"
+		include "objects/2A Switch Door.asm"
 ; ---------------------------------------------------------------------------
 
 sub_6936:
@@ -3855,8 +3855,8 @@ loc_6A28:
 ; ---------------------------------------------------------------------------
 Map_2A:	include "_maps/2A.asm"
 
-		include "_incObj/0E Title Screen Sonic.asm"
-		include "_incObj/0F Press Start.asm"
+		include "objects/0E Title Screen Sonic.asm"
+		include "objects/0F Press Start.asm"
 		include "_anim/Title Screen Sonic.asm"
 		include "_anim/Press Start.asm"
 ; ---------------------------------------------------------------------------
@@ -3937,42 +3937,42 @@ locret_6BDA:
 Map_TitleText:	include "_maps/Press Start.asm"
 Map_TitleSonic:	include "_maps/Title Screen Sonic.asm"
 
-		include "_incObj/1E Ballhog.asm"
-		include "_incObj/20 Ballhog's Bomb.asm"
-		include "_incObj/24, 27 & 3F Explosions.asm"
+		include "objects/1E Ballhog.asm"
+		include "objects/20 Ballhog's Bomb.asm"
+		include "objects/24, 27 & 3F Explosions.asm"
 		include "_anim/Ball Hog.asm"
 Map_Hog:	include "_maps/Ball Hog.asm"
 		include "_maps/Ball Hog's Bomb.asm"
 		include "_maps/Ball Hog's Bomb Explosion.asm"
 		include "_maps/Explosions.asm"
 
-		include "_incObj/28 Animals.asm"
-		include "_incObj/29 Points.asm"
+		include "objects/28 Animals.asm"
+		include "objects/29 Points.asm"
 Map_Animal1:	include "_maps/Animals 1.asm"
 Map_Animal2:	include "_maps/Animals 2.asm"
 Map_Animal3:	include "_maps/Animals 3.asm"
 Map_Poi:	include "_maps/Points.asm"
 
-		include "_incObj/1F Crabmeat.asm"
+		include "objects/1F Crabmeat.asm"
 		include "_anim/Crabmeat.asm"
 Map_Crab:	include "_maps/Crabmeat.asm"
 
-		include "_incObj/22 Buzz Bomber.asm"
-		include "_incObj/23 Buzz Bomber Missile.asm"
+		include "objects/22 Buzz Bomber.asm"
+		include "objects/23 Buzz Bomber Missile.asm"
 		include "_anim/Buzz Bomber.asm"
 		include "_anim/Buzz Bomber Missile.asm"
 Map_Buzz:	include "_maps/Buzz Bomber.asm"
 Map_Missile:	include "_maps/Buzz Bomber Missile.asm"
 
-		include "_incObj/25 & 37 Rings.asm"
-		include "_incObj/4B Giant Ring Flash.asm"
+		include "objects/25 & 37 Rings.asm"
+		include "objects/4B Giant Ring Flash.asm"
 		include "_anim/Rings.asm"
 Map_Ring:	include "_maps/Rings.asm"
 Map_GRing:	include "_maps/Giant Ring.asm"
 
-		include "_incObj/26 Monitor.asm"
-		include "_incObj/2E Monitor Content Power-Up.asm"
-		include "_incObj/26 Monitor (SolidSides subroutine).asm"
+		include "objects/26 Monitor.asm"
+		include "objects/2E Monitor Content Power-Up.asm"
+		include "objects/26 Monitor (SolidSides subroutine).asm"
 		include "_anim/Monitor.asm"
 Map_Monitor:	include "_maps/Monitor.asm"
 ; ---------------------------------------------------------------------------
@@ -4019,10 +4019,10 @@ loc_8576:
 ; ---------------------------------------------------------------------------
 Obj_Index:
 		include "_inc/Object Pointers.asm"
-		include "_incObj/sub ObjectFall.asm"
-		include "_incObj/sub SpeedToPos.asm"
-		include "_incObj/sub DisplaySprite.asm"
-		include "_incObj/sub DeleteObject.asm"
+		include "objects/sub ObjectFall.asm"
+		include "objects/sub SpeedToPos.asm"
+		include "objects/sub DisplaySprite.asm"
+		include "objects/sub DeleteObject.asm"
 ; ---------------------------------------------------------------------------
 
 off_8796:	dc.l 0
@@ -4044,7 +4044,7 @@ loc_87B2:
 
 loc_87BA:
 		movea.w	(a4,d6.w),a0
-		tst.b	(a0)
+		tst.b	obID(a0)
 		beq.w	loc_886E
 		bclr	#7,obRender(a0)
 		move.b	obRender(a0),d0
@@ -4337,7 +4337,7 @@ loc_8A00:
 		move.l	a1,(v_opl_data+$C).w
 		lea	(v_objstate).w,a2
 		move.w	#$101,(a2)+
-		; Bug: This does word when it should be doing longword and the last 2 bytes of v_objstate are not accounted for
+		; Bug: This does word when it should be doing longword and the last 2 bytes of v_objstate are not accounted for.
 		move.w	#bytesToWcnt(v_objstate_end-v_objstate-2),d0
 
 loc_8A38:
@@ -4527,44 +4527,44 @@ loc_8B96:
 locret_8BA2:
 		rts
 
-		include "_incObj/2B Chopper.asm"
+		include "objects/2B Chopper.asm"
 		include "_anim/Chopper.asm"
 Map_Chop:	include "_maps/Chopper.asm"
 
-		include "_incObj/2C Jaws.asm"
+		include "objects/2C Jaws.asm"
 		include "_anim/Jaws.asm"
 Map_Jaws:	include "_maps/Jaws.asm"
 
-		include "_incObj/2D Burrobot.asm"
+		include "objects/2D Burrobot.asm"
 		include "_anim/Burrobot.asm"
 Map_Burro:	include "_maps/Burrobot.asm"
 
-		include "_incObj/2F MZ Large Grassy Platforms.asm"
+		include "objects/2F MZ Large Grassy Platforms.asm"
 
-		include "_incObj/35 Burning Grass.asm"
+		include "objects/35 Burning Grass.asm"
 		include "_anim/Burning Grass.asm"
 Map_LGrass:	include "_maps/MZ Large Grassy Platforms.asm"
 Map_Fire:	include "_maps/Fireballs.asm"
 
-		include "_incObj/30 MZ Large Green Glass Blocks.asm"
+		include "objects/30 MZ Large Green Glass Blocks.asm"
 Map_Glass:	include "_maps/MZ Large Green Glass Blocks.asm"
 
-		include "_incObj/31 Chained Stompers.asm"
-		include "_incObj/45 Sideways Stomper.asm"
+		include "objects/31 Chained Stompers.asm"
+		include "objects/45 Sideways Stomper.asm"
 Map_CStom:	include "_maps/Chained Stompers.asm"
 Map_SStom:	include "_maps/Sideways Stomper.asm"
 
-		include "_incObj/32 Button.asm"
+		include "objects/32 Button.asm"
 		include "_maps/Button.asm"
 
-		include "_incObj/33 Pushable Blocks.asm"
+		include "objects/33 Pushable Blocks.asm"
 Map_Push:	include "_maps/Pushable Blocks.asm"
 
-		include "_incObj/sub SolidObject.asm"
+		include "objects/sub SolidObject.asm"
 
-		include "_incObj/34 Title Cards.asm"
-		include "_incObj/39 Game Over.asm"
-		include "_incObj/3A Got Through Act.asm"
+		include "objects/34 Title Cards.asm"
+		include "objects/39 Game Over.asm"
+		include "objects/3A Got Through Act.asm"
 
 Map_TitleCard:	dc.w byte_A8A4-Map_TitleCard, byte_A8D2-Map_TitleCard, byte_A900-Map_TitleCard
 		dc.w byte_A920-Map_TitleCard, byte_A94E-Map_TitleCard, byte_A97C-Map_TitleCard
@@ -4714,16 +4714,16 @@ byte_AAD7:	dc.b 7
 		dc.b $F8, 1, 1, $70, $48
 		even
 
-		include "_incObj/36 Spikes.asm"
+		include "objects/36 Spikes.asm"
 		include "_maps/Spikes.asm"
 
-		include "_incObj/3B Purple Rock.asm"
-		include "_incObj/49 Waterfall Sound.asm"
+		include "objects/3B Purple Rock.asm"
+		include "objects/49 Waterfall Sound.asm"
 
 Map_PRock:	include "_maps/Purple Rock.asm"
 
-		include "_incObj/3C Smashable Wall.asm"
-		include "_incObj/sub SmashObject.asm"
+		include "objects/3C Smashable Wall.asm"
+		include "objects/sub SmashObject.asm"
 
 ObjSmashWall_FragRight:
 		dc.w $400, -$500
@@ -4749,7 +4749,7 @@ ObjSmashWall_FragLeft:
 
 MapSmashWall:	include "_maps/Smashable Walls.asm"
 
-		include "_incObj/3D Boss - Green Hill (part 1).asm"
+		include "objects/3D Boss - Green Hill (part 1).asm"
 
 sub_B146:
 		move.b	(v_vbla_byte).w,d0
@@ -4790,78 +4790,78 @@ BossMove:
 		move.l	d3,obBossY(a0)
 		rts
 
-		include "_incObj/3D Boss - Green Hill (part 2).asm"
-		include "_incObj/48 Eggman's Swinging Ball.asm"
+		include "objects/3D Boss - Green Hill (part 2).asm"
+		include "objects/48 Eggman's Swinging Ball.asm"
 
 		include "_anim/Eggman.asm"
 Map_Eggman:	include "_maps/Eggman.asm"
 
 Map_BossItems:	include "_maps/Boss Items.asm"
 
-		include "_incObj/3E Prison Capsule.asm"
+		include "objects/3E Prison Capsule.asm"
 
 		include "_anim/Prison Capsule.asm"
 Map_Pri:	include "_maps/Prison Capsule.asm"
 
-		include "_incObj/40 Motobug.asm"
+		include "objects/40 Motobug.asm"
 
 		include "_anim/Moto Bug.asm"
 Map_Moto:	include "_maps/Moto Bug.asm"
 
-		include "_incObj/41 Springs.asm"
+		include "objects/41 Springs.asm"
 
 		include "_anim/Springs.asm"
 Map_Spring:	include "_maps/Springs.asm"
 
-		include "_incObj/42 Newtron.asm"
+		include "objects/42 Newtron.asm"
 
 		include "_anim/Newtron.asm"
 Map_Newt:	include "_maps/Newtron.asm"
 
-		include "_incObj/43 Roller.asm"
+		include "objects/43 Roller.asm"
 		include "_anim/Roller.asm"
 Map_Roll:	include "_maps/Roller.asm"
 
-		include "_incObj/44 GHZ Edge Walls.asm"
+		include "objects/44 GHZ Edge Walls.asm"
 Map_Edge:	include "_maps/GHZ Edge Walls.asm"
 
-		include "_incObj/13 Lava Ball Maker.asm"
-		include "_incObj/14 Lava Ball.asm"
+		include "objects/13 Lava Ball Maker.asm"
+		include "objects/14 Lava Ball.asm"
 		include "_anim/Fireballs.asm"
 
-		include "_incObj/46 MZ Bricks.asm"
+		include "objects/46 MZ Bricks.asm"
 Map_Brick:	include "_maps/MZ Bricks.asm"
 
-		include "_incObj/12 Light.asm"
+		include "objects/12 Light.asm"
 Map_Light:	include "_maps/Light.asm"
 
-		include "_incObj/47 Bumper.asm"
+		include "objects/47 Bumper.asm"
 		include "_anim/Bumper.asm"
 Map_Bump:	include "_maps/Bumper.asm"
 
-		include "_incObj/0D Signpost.asm"
+		include "objects/0D Signpost.asm"
 Ani_Sign:	include "_anim/Signpost.asm"
 Map_Sign:	include "_maps/Signpost.asm"
 
-		include "_incObj/4C & 4D Lava Geyser Maker.asm"
+		include "objects/4C & 4D Lava Geyser Maker.asm"
 
-		include "_incObj/4E Wall of Lava.asm"
+		include "objects/4E Wall of Lava.asm"
 
-		include "_incObj/54 Lava Tag.asm"
+		include "objects/54 Lava Tag.asm"
 Map_LTag:	include "_maps/Lava Tag.asm"
 		include "_anim/Lava Geyser.asm"
 		include "_anim/Wall of Lava.asm"
 Map_Geyser:	include "_maps/Lava Geyser.asm"
 Map_LWall:	include "_maps/Wall of Lava.asm"
 
-		include "_incObj/4F Splats.asm"
+		include "objects/4F Splats.asm"
 Map_Splats:	include "_maps/Splats.asm"
 
-		include "_incObj/50 Yadrin.asm"
+		include "objects/50 Yadrin.asm"
 Ani_Yadrin:	include "_anim/Yadrin.asm"
 Map_Yadrin:	include "_maps/Yadrin.asm"
 
-		include "_incObj/51 Smashable Green Block.asm"
+		include "objects/51 Smashable Green Block.asm"
 
 ObjSmashBlock_Frag:
 		dc.w -$200, -$200
@@ -4872,38 +4872,38 @@ ObjSmashBlock_Frag:
 
 MapSmashBlock:	include "_maps/Smashable Green Block.asm"
 
-		include "_incObj/52 Moving Blocks.asm"
+		include "objects/52 Moving Blocks.asm"
 MapMovingPtfm:	include "_maps/Moving Blocks (MZ).asm"
 
-		include "_incObj/55 Basaran.asm"
+		include "objects/55 Basaran.asm"
 		include "_anim/Basaran.asm"
 Map_Bas:	include "_maps/Basaran.asm"
 
-		include "_incObj/56 Floating Blocks and Doors.asm"
+		include "objects/56 Floating Blocks and Doors.asm"
 Map_FBlock:	include "_maps/Floating Blocks and Doors.asm"
 
-		include "_incObj/57 Spiked Ball and Chain.asm"
+		include "objects/57 Spiked Ball and Chain.asm"
 		include "_maps/Spiked Ball and Chain (SZ).asm"
 
-		include "_incObj/58 Big Spiked Ball.asm"
+		include "objects/58 Big Spiked Ball.asm"
 		include "_maps/Big Spiked Ball.asm"
 
-		include "_incObj/59 SLZ Elevators.asm"
+		include "objects/59 SLZ Elevators.asm"
 Map_Elev:	include "_maps/SLZ Elevators.asm"
 
-		include "_incObj/5A SLZ Circling Platform.asm"
+		include "objects/5A SLZ Circling Platform.asm"
 Map_Circ:	include "_maps/SLZ Circling Platform.asm"
 
-		include "_incObj/5B Staircase.asm"
+		include "objects/5B Staircase.asm"
 Map_Stair:	include "_maps/Staircase.asm"
 
-		include "_incObj/5C Pylon.asm"
+		include "objects/5C Pylon.asm"
 Map_Pylon:	include "_maps/Pylon.asm"
 
-		include "_incObj/5D Fan.asm"
+		include "objects/5D Fan.asm"
 Map_Fan:	include "_maps/Fan.asm"
 
-		include "_incObj/5E Seesaw.asm"
+		include "objects/5E Seesaw.asm"
 
 ObjSeeSaw_SlopeTilt:dc.b $24, $24, $26, $28, $2A, $2C, $2A, $28, $26, $24
 		dc.b $23, $22, $21, $20, $1F, $1E, $1D, $1C, $1B, $1A
@@ -4990,8 +4990,8 @@ MusicList2:	dc.b bgm_GHZ
 		dc.b bgm_CWZ
 		even
 
-		include "_incObj/Sonic Display.asm"
-		include "_incObj/Sonic RecordPosition.asm"
+		include "objects/Sonic Display.asm"
+		include "objects/Sonic RecordPosition.asm"
 ; ---------------------------------------------------------------------------
 
 sub_E96C:
@@ -5036,11 +5036,11 @@ loc_E9C6:
 		bsr.w	Sonic_Floor
 		rts
 
-		include "_incObj/Sonic Move.asm"
-		include "_incObj/Sonic RollSpeed.asm"
-		include "_incObj/Sonic JumpDirection.asm"
+		include "objects/Sonic Move.asm"
+		include "objects/Sonic RollSpeed.asm"
+		include "objects/Sonic JumpDirection.asm"
 ; ---------------------------------------------------------------------------
-
+		; unused
 ;Sonic_Squish:
 		move.b	obAngle(a0),d0
 		addi.b	#$20,d0
@@ -5057,18 +5057,18 @@ loc_E9C6:
 locret_EDF8:
 		rts
 
-		include "_incObj/Sonic LevelBound.asm"
-		include "_incObj/Sonic Roll.asm"
-		include "_incObj/Sonic Jump.asm"
-		include "_incObj/Sonic JumpHeight.asm"
-		include "_incObj/Sonic SlopeResist.asm"
-		include "_incObj/Sonic RollRepel.asm"
-		include "_incObj/Sonic SlopeRepel.asm"
-		include "_incObj/Sonic JumpAngle.asm"
-		include "_incObj/Sonic Floor.asm"
-		include "_incObj/Sonic ResetOnFloor.asm"
+		include "objects/Sonic LevelBound.asm"
+		include "objects/Sonic Roll.asm"
+		include "objects/Sonic Jump.asm"
+		include "objects/Sonic JumpHeight.asm"
+		include "objects/Sonic SlopeResist.asm"
+		include "objects/Sonic RollRepel.asm"
+		include "objects/Sonic SlopeRepel.asm"
+		include "objects/Sonic JumpAngle.asm"
+		include "objects/Sonic Floor.asm"
+		include "objects/Sonic ResetOnFloor.asm"
 ; ---------------------------------------------------------------------------
-
+		; unused
 ;loc_F26A:
 		lea	(v_objslot10).w,a1
 		move.w	obX(a0),d0
@@ -5098,8 +5098,9 @@ sub_F290:
 		move.b	d0,object_size*3+obFrame(a1)
 		rts
 
-		include "_incObj/Sonic (part 2).asm"
+		include "objects/Sonic (part 2).asm"
 ; ---------------------------------------------------------------------------
+		; unused
 		dc.b $12
 		dc.b 9
 		dc.b $A
@@ -5126,14 +5127,14 @@ sub_F290:
 		dc.b $A
 		even
 
-		include "_incObj/Sonic Loops.asm"
-		include "_incObj/Sonic Animate.asm"
+		include "objects/Sonic Loops.asm"
+		include "objects/Sonic Animate.asm"
 ; ---------------------------------------------------------------------------
 Ani_Sonic:	include "_anim/Sonic.asm"
-		include "_incObj/Sonic LoadGfx.asm"
+		include "objects/Sonic LoadGfx.asm"
 
-		include "_incObj/38 Shield and Invincibility.asm"
-		include "_incObj/4A Giant Ring.asm"
+		include "objects/38 Shield and Invincibility.asm"
+		include "objects/4A Giant Ring.asm"
 
 		include "_anim/Shield.asm"
 		include "_maps/Shield.asm"
@@ -5141,18 +5142,19 @@ Ani_Sonic:	include "_anim/Sonic.asm"
 		include "_anim/Special Stage Entry (Unused).asm"
 Map_Vanish:	include "_maps/Special Stage Entry (Unused).asm"
 
-		include "_incObj/sub ReactToItem.asm"
+		include "objects/sub ReactToItem.asm"
 
-		include "_incObj/Sonic AnglePos.asm"
+		include "objects/Sonic AnglePos.asm"
 
-		include "_incObj/sub FindNearestTile.asm"
-		include "_incObj/sub FindFloor.asm"
-		include "_incObj/sub FindWall.asm"
+		include "objects/sub FindNearestTile.asm"
+		include "objects/sub FindFloor.asm"
+		include "objects/sub FindWall.asm"
 ; ---------------------------------------------------------------------------
 
 LogCollision:
 		rts
 ; ---------------------------------------------------------------------------
+		; unused
 		lea	(colWidth).l,a1
 		lea	(colWidth).l,a2
 		move.w	#$100-1,d3
@@ -5320,6 +5322,7 @@ loc_105B6:
 locret_105BE:
 		rts
 ; ---------------------------------------------------------------------------
+		; unused
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
 
@@ -5470,6 +5473,7 @@ Sonic_NoRunningOnWalls:
 		move.b	#$80,d2
 		bra.w	loc_105A8
 ; ---------------------------------------------------------------------------
+		; unused
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
 
@@ -5728,6 +5732,7 @@ loc_109E0:
 		move.b	#7,(v_ani2_time).w
 		bra.s	loc_10A02
 ; ---------------------------------------------------------------------------
+		; unused
 		addq.b	#1,(v_ani2_frame).w		; the GOAL blocks were meant to flash yellow
 		andi.b	#1,(v_ani2_frame).w
 
@@ -5909,6 +5914,7 @@ loc_10BC8:
 
 		include "_inc/Special Stage Mappings & VRAM Pointers.asm"
 
+		; unused
 ;sub_10C98:
 		lea	(v_ssblockbuffer).l,a1
 		lea	(SS_1).l,a0
@@ -5924,12 +5930,12 @@ loc_10CA8:
 		dbf	d1,loc_10CA6
 		rts
 
-		include "_incObj/09 Sonic in Special Stage.asm"
-		include "_incObj/10 Sonic Animation Test.asm"
+		include "objects/09 Sonic in Special Stage.asm"
+		include "objects/10 Sonic Animation Test.asm"
 
 		include "_inc/AnimateLevelGfx.asm"
 
-		include "_incObj/21 HUD.asm"
+		include "objects/21 HUD.asm"
 Map_HUD:	include "_maps/HUD.asm"
 ; ---------------------------------------------------------------------------
 
@@ -5958,17 +5964,13 @@ locret_11678:
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
-hudVRAM:	macro loc
-		move.l	#($40000000+((loc&$3FFF)<<16)+((loc&$C000)>>14)),d0
-		endm
-
 UpdateHUD:
 		tst.w	(f_debugmode).w
 		bne.w	loc_11746
 		tst.b	(f_scorecount).w
 		beq.s	loc_1169A
 		clr.b	(f_scorecount).w
-		hudVRAM $DC80
+		locVRAM (ArtTile_HUD+$1A)*tile_size,d0
 		move.l	(v_score).w,d1
 		bsr.w	sub_1187E
 
@@ -5980,7 +5982,7 @@ loc_1169A:
 
 loc_116A6:
 		clr.b	(f_extralife).w
-		hudVRAM $DF40
+		locVRAM (ArtTile_HUD+$30)*tile_size,d0
 		moveq	#0,d1
 		move.w	(v_rings).w,d1
 		bsr.w	sub_11874
@@ -6005,11 +6007,11 @@ loc_116BA:
 		move.b	#9,(a1)
 
 loc_116EE:
-		hudVRAM $DE40
+		locVRAM (ArtTile_HUD+$28)*tile_size,d0
 		moveq	#0,d1
 		move.b	(v_timemin).w,d1
 		bsr.w	sub_118F4
-		hudVRAM $DEC0
+		locVRAM (ArtTile_HUD+$2C)*tile_size,d0
 		moveq	#0,d1
 		move.b	(v_timesec).w,d1
 		bsr.w	sub_118FE
@@ -6024,7 +6026,7 @@ loc_1171C:
 		tst.b	(f_endactbonus).w
 		beq.s	locret_11744
 		clr.b	(f_endactbonus).w
-		locVRAM $AE00
+		locVRAM (ArtTile_Title_Card-$10)*tile_size
 		moveq	#0,d1
 		move.w	(v_timebonus).w,d1
 		bsr.w	sub_11958
@@ -6045,13 +6047,13 @@ loc_11746:
 
 loc_11756:
 		clr.b	(f_extralife).w
-		hudVRAM $DF40
+		locVRAM (ArtTile_HUD+$30)*tile_size,d0
 		moveq	#0,d1
 		move.w	(v_rings).w,d1
 		bsr.w	sub_11874
 
 loc_1176A:
-		hudVRAM $DEC0
+		locVRAM (ArtTile_HUD+$2C)*tile_size,d0
 		moveq	#0,d1
 		move.b	(v_spritecount).w,d1
 		bsr.w	sub_118FE
@@ -6064,7 +6066,7 @@ loc_11788:
 		tst.b	(f_endactbonus).w
 		beq.s	locret_117B0
 		clr.b	(f_endactbonus).w
-		locVRAM $AE00
+		locVRAM (ArtTile_Title_Card-$10)*tile_size
 		moveq	#0,d1
 		move.w	(v_timebonus).w,d1
 		bsr.w	sub_11958
@@ -6077,7 +6079,7 @@ locret_117B0:
 ; ---------------------------------------------------------------------------
 
 sub_117B2:
-		locVRAM $DF40
+		locVRAM (ArtTile_HUD+$30)*tile_size
 		lea	byte_1181A(pc),a2
 		move.w	#3-1,d2
 		bra.s	loc_117E2
@@ -6086,7 +6088,7 @@ sub_117B2:
 sub_117C6:
 		lea	(vdp_data_port).l,a6
 		bsr.w	sub_119BA
-		locVRAM $DC40
+		locVRAM (ArtTile_HUD+$18)*tile_size
 		lea	byte_1180E(pc),a2
 		move.w	#15-1,d2
 
@@ -6123,7 +6125,7 @@ byte_1181A:	dc.b $FF, $FF, 0, 0
 ; ---------------------------------------------------------------------------
 
 sub_1181E:
-		locVRAM $DC40
+		locVRAM (ArtTile_HUD+$18)*tile_size
 		move.w	(v_screenposx).w,d1
 		swap	d1
 		move.w	(v_player+obX).w,d1
@@ -6344,7 +6346,7 @@ loc_119AE:
 ; ---------------------------------------------------------------------------
 
 sub_119BA:
-		hudVRAM $FBA0
+		locVRAM (ArtTile_HUD+$113)*tile_size,d0
 		moveq	#0,d1
 		move.b	(v_lives).w,d1
 		lea	(Hud_10).l,a2
@@ -6408,7 +6410,7 @@ byte_11A26:	binclude "artunc/HUD Numbers.bin"
 byte_11D26:	binclude "artunc/Lives Counter Numbers.bin"
 		even
 
-		include "_incObj/DebugMode.asm"
+		include "objects/DebugMode.asm"
 		include "_inc/DebugList.asm"
 		include "_inc/LevelHeaders.asm"
 		include "_inc/Pattern Load Cues.asm"
@@ -6567,13 +6569,13 @@ Nem_HUD:	binclude "artnem/HUD.nem"
 		even
 Nem_Lives:	binclude "artnem/HUD - Life Counter Icon.nem"
 		even
-Nem_Rings:	binclude "artnem/Rings.nem"
+Nem_Ring:	binclude "artnem/Rings.nem"
 		even
 Nem_Monitors:	binclude "artnem/Monitors.nem"
 		even
 ArtExplosions:	binclude "artnem/Explosion.nem"
 		even
-byte_2E6C8:	binclude "artnem/score points.nem"
+Nem_Points:	binclude "artnem/score points.nem"
 		even
 ArtGameOver:	binclude "artnem/Game Over.nem"
 		even
