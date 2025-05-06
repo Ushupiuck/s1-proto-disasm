@@ -6435,6 +6435,8 @@ Nem_TitleFg:	binclude "artnem/Title Screen Foreground.nem"
 		even
 Nem_TitleSonic:	binclude "artnem/Title Screen Sonic.nem"
 		even
+		
+		align	$800
 Map_Sonic:	include "_maps/Sonic.asm"
 SonicDynPLC:	include "_maps/Sonic - Dynamic Gfx Script.asm"
 ; ---------------------------------------------------------------------------
@@ -6715,7 +6717,7 @@ ArtSpecial1up:	binclude "artnem/Special 1UP.nem"
 		even
 ArtSpecialStars:binclude "artnem/Art Stars.nem"
 		even
-byte_65432:	binclude "artnem/ss red white.nem"
+byte_65432:	binclude "artnem/Special Red-White.nem"
 		even
 ArtSpecialZone1:binclude "artnem/Special ZONE1.nem"
 		even
