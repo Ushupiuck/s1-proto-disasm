@@ -252,7 +252,6 @@ zStartupCodeEndLoc:
 	padding off
 
 		dc.b $9F,$BF,$DF,$FF			; values for PSG channel volumes
-		even
 ; ---------------------------------------------------------------------------
 
 loc_306:
