@@ -114,6 +114,7 @@ ErrorTrap:
 		bra.s	ErrorTrap
 ; ===========================================================================
 
+; This contains an earlier version of ICD_BLK4.PRG
 EntryPoint:
 		tst.l	(z80_port_1_control).l
 loc_20C:
@@ -3716,7 +3717,7 @@ ObjCollapsePtfm_Slope:dc.b $20, $20, $20, $20, $20, $20, $20, $20, $21, $21
 		dc.b $30, $30, $30, $30, $30, $30, $30, $30
 		even
 
-		include "_maps/06256.asm"
+		include "_maps/Collapsing Ledge (Unused).asm"
 Map_Ledge:	include "_maps/Collapsing Ledge.asm"
 Map_CFlo:	include "_maps/Collapsing Floors.asm"
 
