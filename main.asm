@@ -886,7 +886,7 @@ PlaySound_Unused:
 		move.b	d0,(v_snddriver_ram.v_soundqueue2).w
 		rts
 
-		include "_inc/PauseGame.asm"
+		include "include/PauseGame.asm"
 ; ---------------------------------------------------------------------------
 
 TilemapToVRAM:
@@ -904,7 +904,7 @@ loc_1228:
 		dbf	d2,loc_1222
 		rts
 ; ---------------------------------------------------------------------------
-		include "_inc/Nemesis Decompression.asm"
+		include "include/Nemesis Decompression.asm"
 ; ---------------------------------------------------------------------------
 
 AddPLC:
@@ -1109,9 +1109,9 @@ loc_14F4:
 		rts
 ; ---------------------------------------------------------------------------
 
-		include "_inc/Enigma Decompression.asm"
-		include "_inc/Kosinski Decompression.asm"
-		include "_inc/PaletteCycle.asm"
+		include "include/Enigma Decompression.asm"
+		include "include/Kosinski Decompression.asm"
+		include "include/PaletteCycle.asm"
 
 Cyc_Title:	binclude "palette/Cycle - Title.bin"
 		even
@@ -1310,7 +1310,7 @@ PalLoad2:
 		dbf	d7,.loop
 		rts
 
-		include "_inc/Palette Pointers.asm"
+		include "include/Palette Pointers.asm"
 
 Pal_SegaBG:	binclude "palette/Sega Screen.bin"
 		even
@@ -2170,7 +2170,7 @@ loc_3034:
 		addq.w	#2,(f_water).w
 		rts
 
-		include "_inc/LZWaterFeatures.asm"
+		include "include/LZWaterFeatures.asm"
 
 ; ---------------------------------------------------------------------------
 
@@ -2357,7 +2357,7 @@ DebugPosLoadArt:
 .1bpp:	dc.b 0, 6, $60, $66
 		even
 
-		include "_inc/Oscillatory Routines.asm"
+		include "include/Oscillatory Routines.asm"
 
 ; ---------------------------------------------------------------------------
 
@@ -2764,8 +2764,8 @@ byte_3A9A:	dc.b 8, 2, 4, $FF, 2, 3, 8, $FF, 4, 2, 2, 3, 8, $FD, 4
 		dc.b 2, 2, 3, 2, $FF
 		even
 ; ---------------------------------------------------------------------------
-		include "_inc/LevelSizeLoad & BgScrollSpeed.asm"
-		include "_inc/DeformLayers.asm"
+		include "include/LevelSizeLoad & BgScrollSpeed.asm"
+		include "include/DeformLayers.asm"
 ; ---------------------------------------------------------------------------
 
 ; sub_43B6:
@@ -3424,7 +3424,7 @@ loc_4904:
 		dbf	d2,loc_4900
 		rts
 ; ---------------------------------------------------------------------------
-		include "_inc/DynamicLevelEvents.asm"
+		include "include/DynamicLevelEvents.asm"
 
 		include "objects/02.asm"
 Map_02:	include "_maps/02.asm"
@@ -4018,7 +4018,7 @@ loc_8576:
 		rts
 ; ---------------------------------------------------------------------------
 Obj_Index:
-		include "_inc/Object Pointers.asm"
+		include "include/Object Pointers.asm"
 		include "objects/sub ObjectFall.asm"
 		include "objects/sub SpeedToPos.asm"
 		include "objects/sub DisplaySprite.asm"
@@ -5912,7 +5912,7 @@ loc_10BC8:
 		rts
 ; ---------------------------------------------------------------------------
 
-		include "_inc/Special Stage Mappings & VRAM Pointers.asm"
+		include "include/Special Stage Mappings & VRAM Pointers.asm"
 
 		; unused
 ;sub_10C98:
@@ -5933,7 +5933,7 @@ loc_10CA8:
 		include "objects/09 Sonic in Special Stage.asm"
 		include "objects/10 Sonic Animation Test.asm"
 
-		include "_inc/AnimateLevelGfx.asm"
+		include "include/AnimateLevelGfx.asm"
 
 		include "objects/21 HUD.asm"
 Map_HUD:	include "_maps/HUD.asm"
@@ -6411,9 +6411,9 @@ byte_11D26:	binclude "artunc/Lives Counter Numbers.bin"
 		even
 
 		include "objects/DebugMode.asm"
-		include "_inc/DebugList.asm"
-		include "_inc/LevelHeaders.asm"
-		include "_inc/Pattern Load Cues.asm"
+		include "include/DebugList.asm"
+		include "include/LevelHeaders.asm"
+		include "include/Pattern Load Cues.asm"
 
 		align $8000
 ; ===========================================================================
