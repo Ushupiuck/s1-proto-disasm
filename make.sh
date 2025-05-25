@@ -1,4 +1,5 @@
 #!/bin/bash
+chmod +x
 if test -f s1built.bin; then
 	mv -f s1built.bin s1built.prev.bin
 fi
