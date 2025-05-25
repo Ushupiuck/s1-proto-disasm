@@ -6415,7 +6415,7 @@ byte_11D26:	binclude "artunc/Lives Counter Numbers.bin"
 		include "include/LevelHeaders.asm"
 		include "include/Pattern Load Cues.asm"
 
-		align $8000
+		align	$8000
 ; ===========================================================================
 ; Unused 8x8 ASCII Art
 ; ===========================================================================
@@ -6436,7 +6436,7 @@ Nem_TitleFg:	binclude "artnem/Title Screen Foreground.nem"
 Nem_TitleSonic:	binclude "artnem/Title Screen Sonic.nem"
 		even
 		
-		align	$800
+		align	$4000
 Map_Sonic:	include "_maps/Sonic.asm"
 SonicDynPLC:	include "_maps/Sonic - Dynamic Gfx Script.asm"
 ; ---------------------------------------------------------------------------
@@ -6459,7 +6459,7 @@ Nem_Flash:	binclude "artnem/Flash.nem"
 		binclude "artnem/Unused - Goggles.nem"
 		even
 
-		align $400
+		align	$400
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - GHZ stuff
 ; ---------------------------------------------------------------------------
@@ -6605,7 +6605,7 @@ ArtAnimalFlicky:binclude "artnem/Animal Flicky.nem"
 ArtAnimalRicky:	binclude "artnem/Animal Squirrel.nem"
 		even
 
-		align $1000
+		align	$1000
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - primary patterns
 ; Blocks are Uncompressed
@@ -6689,7 +6689,7 @@ byte_61578:	binclude "demodata/Intro - SZ.bin"	; Sparkling's demo (?)
 byte_6161E:	binclude "demodata/Intro - Special Stage.bin" ; Special stage demo
 		even
 
-		align $3000
+		align	$3000
 
 		include "_maps/SS Walls.asm"
 ; ---------------------------------------------------------------------------
@@ -6736,7 +6736,7 @@ ArtSpecialUpDown:binclude "artnem/Special UP-DOWN.nem"
 ArtSpecialEmerald:binclude "artnem/Special Emeralds.nem"
 		even
 
-		align $4000
+		align	$4000
 ; ---------------------------------------------------------------------------
 ; Collision data
 ; ---------------------------------------------------------------------------
@@ -6780,7 +6780,6 @@ Art_MzSaturns:	binclude "artunc/MZ Saturns.bin"
 		even
 Art_MzTorch:	binclude "artunc/MZ Background torch.bin"
 		even
-
 ; ---------------------------------------------------------------------------
 ; Level	layout index
 ; ---------------------------------------------------------------------------
@@ -6900,7 +6899,7 @@ byte_6E3CE:	dc.l 0
 byte_6E3D2:	dc.l 0
 byte_6E3D6:	dc.l 0
 
-		align $2000
+		align	$2000
 ; ===========================================================================
 ; Object Layout Index
 ; ===========================================================================
@@ -6977,7 +6976,7 @@ ObjPos_CWZ3:	binclude "level/objpos/cwz3.bin"
 		even
 ObjPos_Null:	dc.w $FFFF, 0, 0
 
-		align $2000
+		align	$2000
 
 		include "s1.sounddriver.asm"
 
