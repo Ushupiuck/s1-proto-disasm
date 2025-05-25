@@ -22,10 +22,9 @@ Go_SoundIndex:		dc.l SoundIndex
 Go_Modulation:		dc.l ModulationIndex
 ; off_74010:
 Go_PSGIndex:		dc.l PSG_Index
-		dc.l $A0
-		dc.l UpdateMusic
+			dc.l $A0
+			dc.l UpdateMusic
 Go_SpeedUpIndex:	dc.l SpeedUpIndex
-
 ; ---------------------------------------------------------------------------
 ; PSG instruments used in music
 ; ---------------------------------------------------------------------------
@@ -95,13 +94,13 @@ ptr_musend:
 ; ---------------------------------------------------------------------------
 ; SoundTypes:
 SoundPriorities:
-		dc.b $80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80 ; $81
-		dc.b $80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$70 ; $90
+		dc.b     $80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80 ; $81
+		dc.b $80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80 ; $90
 		dc.b $70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70 ; $A0
 		dc.b $70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70 ; $B0
-		dc.b $70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$80 ; $C0
+		dc.b $70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70,$70 ; $C0
 		dc.b $80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80,$80 ; $D0
-		dc.b $80,$80,$80,$80,$80		; $E0
+		dc.b $80,$80,$80,$80,$80,$80		; $E0
 		even
 ; ---------------------------------------------------------------------------
 ; Updates SMPS
@@ -109,8 +108,8 @@ SoundPriorities:
 UpdateMusic:
 		stopZ80
 		waitZ80
-		btst	#7,(z80_dac_status).l
-		beq.s	.driverinput
+		btst	#7,(z80_dac_status).l	; Is DAC accepting new samples?
+		beq.s	.driverinput		; Branch if yes
 		startZ80
 		nop
 		nop
@@ -123,9 +122,9 @@ UpdateMusic:
 .driverinput:
 		lea	(v_snddriver_ram&$FFFFFF).l,a6
 		clr.b	SMPS_RAM.f_voice_selector(a6)
-		tst.b	SMPS_RAM.f_pausemusic(a6)
-		bne.w	PauseMusic
-		subq.b	#1,SMPS_RAM.v_main_tempo_timeout(a6)
+		tst.b	SMPS_RAM.f_pausemusic(a6)		; is music paused?
+		bne.w	PauseMusic				; if yes, branch
+		subq.b	#1,SMPS_RAM.v_main_tempo_timeout(a6)	; Has main tempo timer expired?
 		bne.s	.skipdelay
 		jsr	TempoWait(pc)
 
@@ -274,10 +273,7 @@ DACUpdateTrack:
 		dc.b dpcmLoopCounter(6400)
 		dc.b dpcmLoopCounter(6250)
 		; the values below are invalid and will play at a very slow rate
-		dc.b $FF
-		dc.b $FF
-		dc.b $FF
-		dc.b $FF
+		dc.b $FF, $FF
 		even
 ; ---------------------------------------------------------------------------
 
