@@ -6778,7 +6778,7 @@ Art_MzLava2:	binclude "artunc/MZ Lava.bin"
 		even
 Art_MzSaturns:	binclude "artunc/MZ Saturns.bin"
 		even
-Art_MzTorch:	binclude "artunc/MZ Background torch.bin"
+Art_MzTorch:	binclude "artunc/MZ Background Torch.bin"
 		even
 ; ---------------------------------------------------------------------------
 ; Level	layout index
