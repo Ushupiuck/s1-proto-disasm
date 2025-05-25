@@ -1,6 +1,6 @@
 ; +-----------------------------------------------------+
-; | Sonic the Hedgehog (Prototype)						|
-; | Split/Text Disassembly.								|
+; | Sonic the Hedgehog (Prototype)			|
+; | Split/Text Disassembly.				|
 ; | Originally done by Mega Drive Developers Collective.|
 ; +-----------------------------------------------------+
 
@@ -22,7 +22,7 @@ zeroOffsetOptimization = 0
 ; ---------------------------------------------------------------------------
 
 StartOfROM:
-Vectors:	
+Vectors:
 		dc.l v_systemstack&$FFFFFF	; Initial stack pointer value
 		dc.l EntryPoint			; Start of program
 		dc.l BusError			; Bus error
@@ -1690,7 +1690,7 @@ loc_27AA:
 		bsr.w	PlaySound_Special
 		rts
 ; ---------------------------------------------------------------------------
-LevSelOrder:	
+LevSelOrder:
 		dc.b id_GHZ,0	; GHZ1
 		dc.b id_GHZ,1	; GHZ2
 		dc.b id_GHZ,2	; GHZ3
@@ -1922,7 +1922,7 @@ LevelSelectText:
 		binclude "misc/Level Select Text.bin"
 		even
 
-MusicList:	
+MusicList:
 		dc.b bgm_GHZ
 		dc.b bgm_LZ
 		dc.b bgm_MZ
@@ -3071,7 +3071,7 @@ DrawBlock:
 		add.l	d7,d0		; Next row
 		move.l	d0,(a5)
 		move.l	(a1)+,(a6)	; Write bottom two tiles
-		rts	
+		rts
 ; ===========================================================================
 
 DrawFlipX:
@@ -3086,7 +3086,7 @@ DrawFlipX:
 		eori.l	#$8000800,d4
 		swap	d4
 		move.l	d4,(a6)		; Write bottom two tiles
-		rts	
+		rts
 ; ===========================================================================
 
 DrawFlipY:
@@ -3101,7 +3101,7 @@ DrawFlipY:
 		move.l	d0,(a5)
 		eori.l	#$10001000,d5
 		move.l	d5,(a6)
-		rts	
+		rts
 ; ===========================================================================
 
 DrawFlipXY:
@@ -3116,7 +3116,7 @@ DrawFlipXY:
 		eori.l	#$18001800,d5
 		swap	d5
 		move.l	d5,(a6)
-		rts	
+		rts
 ; End of function DrawBlocks
 
 ; ---------------------------------------------------------------------------
@@ -3219,7 +3219,7 @@ Calc_VRAM_Pos:
 		moveq	#3,d0	; Highest bits of plane VRAM address
 		swap	d0
 		move.w	d4,d0
-		rts	
+		rts
 ; End of function Calc_VRAM_Pos
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
@@ -6434,7 +6434,7 @@ Nem_TitleFg:	binclude "artnem/Title Screen Foreground.nem"
 		even
 Nem_TitleSonic:	binclude "artnem/Title Screen Sonic.nem"
 		even
-		
+
 		align	$800
 Map_Sonic:	include "_maps/Sonic.asm"
 SonicDynPLC:	include "_maps/Sonic - Dynamic Gfx Script.asm"
@@ -6663,7 +6663,7 @@ Blk256_CWZ:	binclude "level/map256/CWZ.kos"
 		dc.w $F89F, $F0, 0, 0, 0, 0, 0, 0
 ; and a duplicate of a duplicate end of chunk data pointer
 		dc.w $F89F, $F0, 0, 0, 0, 0, 0, 0
-		
+
 ;0x5711C
 		binclude "unknown/5711C.dat"
 		even
