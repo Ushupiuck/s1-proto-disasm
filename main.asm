@@ -1996,6 +1996,7 @@ loc_2C92:
 		bsr.w	DeformLayers
 		bsr.w	LoadLevelData
 		bsr.w	LoadAnimatedBlocks
+		bsr.w	LoadAnimatedChunks
 		bsr.w	LoadTilesFromStart
 		jsr	(LogCollision).l
 		move.l	#colGHZ,(v_collindex).w		; Load Green Hill's collision - what follows are some C style conditional statements, really unnecessary and replaced with a table in the final game
@@ -2244,7 +2245,8 @@ DemoDataPtr:
 		dc.b 0, $1A, 8, $FF, 8, $CA, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 		even
 ; ---------------------------------------------------------------------------
-;sub_314C:
+
+LoadAnimatedChunks:
 		cmpi.b	#id_06,(v_zone).w	; are we on Zone 6?
 		bne.s	locret_3176	; if not, branch
 		bsr.w	sub_3178
@@ -6635,7 +6637,9 @@ Blk256_MZ:	binclude "level/map256/MZ.kos"
 ;0x3DA58
 		binclude "leftovers/level/map256/Chunk Data.kos"
 		even
-;0x3DB78
+;0x3DB78	; judging the pattern of this data,
+		; it seems to also be chunk data as well.
+		; except it's uncompressed...
 		binclude "unknown/3DB78.dat"
 		even
 Blk16_SLZ:	binclude "level/map16/SLZ.bin"
@@ -6664,7 +6668,7 @@ Blk256_CWZ:	binclude "level/map256/CWZ.kos"
 ; and a duplicate of a duplicate end of chunk data pointer
 		dc.w $F89F, $F0, 0, 0, 0, 0, 0, 0
 
-;0x5711C
+;0x5711C	; seems to be chunk data as well?
 		binclude "unknown/5711C.dat"
 		even
 ; ---------------------------------------------------------------------------
