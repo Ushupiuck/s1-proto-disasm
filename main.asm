@@ -114,6 +114,7 @@ ErrorTrap:
 		bra.s	ErrorTrap
 ; ===========================================================================
 
+; This contains an earlier version of ICD_BLK4.PRG
 EntryPoint:
 		tst.l	(z80_port_1_control).l
 loc_20C:
@@ -885,7 +886,7 @@ PlaySound_Unused:
 		move.b	d0,(v_snddriver_ram.v_soundqueue2).w
 		rts
 
-		include "_inc/PauseGame.asm"
+		include "include/PauseGame.asm"
 ; ---------------------------------------------------------------------------
 
 TilemapToVRAM:
@@ -903,7 +904,7 @@ loc_1228:
 		dbf	d2,loc_1222
 		rts
 ; ---------------------------------------------------------------------------
-		include "_inc/Nemesis Decompression.asm"
+		include "include/Nemesis Decompression.asm"
 ; ---------------------------------------------------------------------------
 
 AddPLC:
@@ -1108,9 +1109,9 @@ loc_14F4:
 		rts
 ; ---------------------------------------------------------------------------
 
-		include "_inc/Enigma Decompression.asm"
-		include "_inc/Kosinski Decompression.asm"
-		include "_inc/PaletteCycle.asm"
+		include "include/Enigma Decompression.asm"
+		include "include/Kosinski Decompression.asm"
+		include "include/PaletteCycle.asm"
 
 Cyc_Title:	binclude "palette/Cycle - Title.bin"
 		even
@@ -1309,7 +1310,7 @@ PalLoad2:
 		dbf	d7,.loop
 		rts
 
-		include "_inc/Palette Pointers.asm"
+		include "include/Palette Pointers.asm"
 
 Pal_SegaBG:	binclude "palette/Sega Screen.bin"
 		even
@@ -2170,7 +2171,7 @@ loc_3034:
 		addq.w	#2,(f_water).w
 		rts
 
-		include "_inc/LZWaterFeatures.asm"
+		include "include/LZWaterFeatures.asm"
 
 ; ---------------------------------------------------------------------------
 
@@ -2358,7 +2359,7 @@ DebugPosLoadArt:
 .1bpp:	dc.b 0, 6, $60, $66
 		even
 
-		include "_inc/Oscillatory Routines.asm"
+		include "include/Oscillatory Routines.asm"
 
 ; ---------------------------------------------------------------------------
 
@@ -2765,8 +2766,8 @@ byte_3A9A:	dc.b 8, 2, 4, $FF, 2, 3, 8, $FF, 4, 2, 2, 3, 8, $FD, 4
 		dc.b 2, 2, 3, 2, $FF
 		even
 ; ---------------------------------------------------------------------------
-		include "_inc/LevelSizeLoad & BgScrollSpeed.asm"
-		include "_inc/DeformLayers.asm"
+		include "include/LevelSizeLoad & BgScrollSpeed.asm"
+		include "include/DeformLayers.asm"
 ; ---------------------------------------------------------------------------
 
 ; sub_43B6:
@@ -3425,7 +3426,7 @@ loc_4904:
 		dbf	d2,loc_4900
 		rts
 ; ---------------------------------------------------------------------------
-		include "_inc/DynamicLevelEvents.asm"
+		include "include/DynamicLevelEvents.asm"
 
 		include "objects/02.asm"
 Map_02:	include "_maps/02.asm"
@@ -3718,7 +3719,7 @@ ObjCollapsePtfm_Slope:dc.b $20, $20, $20, $20, $20, $20, $20, $20, $21, $21
 		dc.b $30, $30, $30, $30, $30, $30, $30, $30
 		even
 
-		include "_maps/06256.asm"
+		include "_maps/Collapsing Ledge (Unused).asm"
 Map_Ledge:	include "_maps/Collapsing Ledge.asm"
 Map_CFlo:	include "_maps/Collapsing Floors.asm"
 
@@ -4019,7 +4020,7 @@ loc_8576:
 		rts
 ; ---------------------------------------------------------------------------
 Obj_Index:
-		include "_inc/Object Pointers.asm"
+		include "include/Object Pointers.asm"
 		include "objects/sub ObjectFall.asm"
 		include "objects/sub SpeedToPos.asm"
 		include "objects/sub DisplaySprite.asm"
@@ -5913,7 +5914,7 @@ loc_10BC8:
 		rts
 ; ---------------------------------------------------------------------------
 
-		include "_inc/Special Stage Mappings & VRAM Pointers.asm"
+		include "include/Special Stage Mappings & VRAM Pointers.asm"
 
 		; unused
 ;sub_10C98:
@@ -5934,7 +5935,7 @@ loc_10CA8:
 		include "objects/09 Sonic in Special Stage.asm"
 		include "objects/10 Sonic Animation Test.asm"
 
-		include "_inc/AnimateLevelGfx.asm"
+		include "include/AnimateLevelGfx.asm"
 
 		include "objects/21 HUD.asm"
 Map_HUD:	include "_maps/HUD.asm"
@@ -6412,11 +6413,11 @@ byte_11D26:	binclude "artunc/Lives Counter Numbers.bin"
 		even
 
 		include "objects/DebugMode.asm"
-		include "_inc/DebugList.asm"
-		include "_inc/LevelHeaders.asm"
-		include "_inc/Pattern Load Cues.asm"
+		include "include/DebugList.asm"
+		include "include/LevelHeaders.asm"
+		include "include/Pattern Load Cues.asm"
 
-		align $8000
+		align	$8000
 ; ===========================================================================
 ; Unused 8x8 ASCII Art
 ; ===========================================================================
@@ -6436,8 +6437,8 @@ Nem_TitleFg:	binclude "artnem/Title Screen Foreground.nem"
 		even
 Nem_TitleSonic:	binclude "artnem/Title Screen Sonic.nem"
 		even
-
-		align	$800
+		
+		align	$4000
 Map_Sonic:	include "_maps/Sonic.asm"
 SonicDynPLC:	include "_maps/Sonic - Dynamic Gfx Script.asm"
 ; ---------------------------------------------------------------------------
@@ -6460,7 +6461,7 @@ Nem_Flash:	binclude "artnem/Flash.nem"
 		binclude "artnem/Unused - Goggles.nem"
 		even
 
-		align $400
+		align	$400
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - GHZ stuff
 ; ---------------------------------------------------------------------------
@@ -6606,7 +6607,7 @@ ArtAnimalFlicky:binclude "artnem/Animal Flicky.nem"
 ArtAnimalRicky:	binclude "artnem/Animal Squirrel.nem"
 		even
 
-		align $1000
+		align	$1000
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - primary patterns
 ; Blocks are Uncompressed
@@ -6692,7 +6693,7 @@ byte_61578:	binclude "demodata/Intro - SZ.bin"	; Sparkling's demo (?)
 byte_6161E:	binclude "demodata/Intro - Special Stage.bin" ; Special stage demo
 		even
 
-		align $3000
+		align	$3000
 
 		include "_maps/SS Walls.asm"
 ; ---------------------------------------------------------------------------
@@ -6739,7 +6740,7 @@ ArtSpecialUpDown:binclude "artnem/Special UP-DOWN.nem"
 ArtSpecialEmerald:binclude "artnem/Special Emeralds.nem"
 		even
 
-		align $4000
+		align	$4000
 ; ---------------------------------------------------------------------------
 ; Collision data
 ; ---------------------------------------------------------------------------
@@ -6781,9 +6782,8 @@ Art_MzLava2:	binclude "artunc/MZ Lava.bin"
 		even
 Art_MzSaturns:	binclude "artunc/MZ Saturns.bin"
 		even
-Art_MzTorch:	binclude "artunc/MZ Background torch.bin"
+Art_MzTorch:	binclude "artunc/MZ Background Torch.bin"
 		even
-
 ; ---------------------------------------------------------------------------
 ; Level	layout index
 ; ---------------------------------------------------------------------------
@@ -6903,7 +6903,7 @@ byte_6E3CE:	dc.l 0
 byte_6E3D2:	dc.l 0
 byte_6E3D6:	dc.l 0
 
-		align $2000
+		align	$2000
 ; ===========================================================================
 ; Object Layout Index
 ; ===========================================================================
@@ -6980,7 +6980,7 @@ ObjPos_CWZ3:	binclude "level/objpos/cwz3.bin"
 		even
 ObjPos_Null:	dc.w $FFFF, 0, 0
 
-		align $2000
+		align	$2000
 
 		include "s1.sounddriver.asm"
 

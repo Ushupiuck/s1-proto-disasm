@@ -693,23 +693,23 @@ PlaySoundID:
 		moveq	#0,d7
 		move.b	SMPS_RAM.v_sound_id(a6),d7
 		move.b	#$80,SMPS_RAM.v_sound_id(a6)
-		cmpi.b	#$80,d7
-		beq.s	.nosound
+		cmpi.b	#$80,d7	; is sound id negative?
+		beq.s	.nosound	; if equal to negative, branch
 		bcs.w	StopAllSound
-		cmpi.b	#bgm__Last+$E,d7
-		bls.w	PlaySnd_Music
-		cmpi.b	#sfx__First,d7
-		bcs.w	.nosound
-		cmpi.b	#sfx__Last,d7
-		bls.w	PlaySnd_SFX
-		cmpi.b	#spec__First,d7
-		bcs.w	.nosound
-		cmpi.b	#spec__Last+5,d7
-		bcs.w	PlaySnd_SpecSFX
-		cmpi.b	#flg__First,d7
-		bcs.s	PlaySnd_DAC
-		cmpi.b	#flg__Last+1,d7
-		bls.s	PlaySnd_Cmd
+		cmpi.b	#bgm__Last+$E,d7	; is this music? (Bugged: Should not include +$E, all entries after $91 up to $9F will try to be played even though the slots aren't occupied by any music)
+		bls.w	PlaySnd_Music	; if so, branch
+		cmpi.b	#sfx__First,d7	; is this between music and sfx?
+		bcs.w	.nosound	; if so, branch
+		cmpi.b	#sfx__Last,d7	; is this sfx?
+		bls.w	PlaySnd_SFX	; if so, branch
+		cmpi.b	#spec__First,d7	; is this between sfx and special sfx?
+		bcs.w	.nosound	; if so, branch
+		cmpi.b	#spec__Last+5,d7	; is this special sfx? (Bugged: Should not include +5)
+		bcs.w	PlaySnd_SpecSFX	; if so, branch
+		cmpi.b	#flg__First,d7	; is this between special sfx and sound commands?
+		bcs.s	PlaySnd_DAC	; if so, branch
+		cmpi.b	#flg__Last+1,d7	; is this sound commands? (Bugged: Should not include +1)
+		bls.s	PlaySnd_Cmd	; if so, branch
 
 .nosound:
 		rts

@@ -1,12 +1,8 @@
 		include	"s1.sounddriver.ram.asm"
 
-; sign-extends a 32-bit integer to 64-bit
-; all RAM addresses are run through this function to allow them to work in both 16-bit and 32-bit addressing modes
-ramaddr function x,(-(x&$80000000)<<1)|x
-
 ; Variables (v) and Flags (f)
 
-	phase ramaddr($FFFF0000)
+	phase $FFFF0000
 v_start:
 v_256x256:		ds.b $52*$200	; 256x256 tile mappings ($A400 bytes)
 v_256x256_end:
