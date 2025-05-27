@@ -40,7 +40,7 @@ loc_6836:
 ; ---------------------------------------------------------------------------
 
 sub_683C:
-		lea	(v_objspace).w,a1
+		lea	(v_player).w,a1
 		move.w	obX(a1),d0
 		sub.w	obX(a0),d0
 		add.w	d1,d0

@@ -53,7 +53,7 @@ loc_C77C:
 loc_C798:
 		subq.w	#1,objoff_32(a0)
 		bpl.s	locret_C802
-		move.w	#$B,objoff_32(a0)
+		move.w	#12-1,objoff_32(a0)
 		moveq	#0,d0
 		move.b	objoff_34(a0),d0
 		addq.b	#2,objoff_34(a0)

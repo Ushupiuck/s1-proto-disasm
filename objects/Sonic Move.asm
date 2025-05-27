@@ -28,7 +28,7 @@ Sonic_NoRight:
 		beq.s	Sonic_Balance
 		moveq	#0,d0
 		move.b	standonobject(a0),d0
-		lsl.w	#6,d0
+		lsl.w	#object_size_bits,d0
 		lea	(v_objspace).w,a1
 		lea	(a1,d0.w),a1
 		tst.b	obStatus(a1)
@@ -102,7 +102,7 @@ loc_EAE6:
 
 loc_EAEA:
 		move.b	(v_jpadhold2).w,d0
-		andi.b	#btnL|btnR,d0
+		andi.b	#btnL+btnR,d0
 		bne.s	loc_EB16
 		move.w	obInertia(a0),d0
 		beq.s	loc_EB16

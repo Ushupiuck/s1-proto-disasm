@@ -15,9 +15,9 @@ locret_EF76:
 ; ---------------------------------------------------------------------------
 
 loc_EF78:
-		cmpi.w	#$F040,obVelY(a0)
+		cmpi.w	#-$FC0,obVelY(a0)
 		bge.s	locret_EF86
-		move.w	#$F040,obVelY(a0)
+		move.w	#-$FC0,obVelY(a0)
 
 locret_EF86:
 		rts

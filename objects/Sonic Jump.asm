@@ -6,7 +6,7 @@ Sonic_Jump:
 		beq.w	locret_EF46
 		moveq	#0,d0
 		move.b	obAngle(a0),d0
-		addi.b	#-$80,d0
+		addi.b	#$80,d0
 		bsr.w	sub_10520
 		cmpi.w	#6,d1
 		blt.w	locret_EF46
