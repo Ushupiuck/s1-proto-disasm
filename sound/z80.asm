@@ -1,6 +1,5 @@
-
 		save
-		phase	0	; set Z80 location to 0
+		!org	0	; set Z80 location to 0
 		cpu z80	; use Z80 cpu
 		listing purecode	; add to listing file
 
@@ -268,6 +267,14 @@ zDAC_Timpani:
 	binclude "dac/timpani.dpcm"
 zDAC_Timpani_End:
 
+	if MOMPASS==2
+		if $ > 2000h
+			fatal "The driver is too big	; the maximum size it can take is 2000h. It currently takes \{$}h bytes. You won't be able to use this thing."
+		else
+			message "Driver size: \{$}h bytes."
+		endif
+	endif
+
 		restore
 		padding off
-		dephase
+		!org (DACDriver+Size_of_DAC_driver_guess)
