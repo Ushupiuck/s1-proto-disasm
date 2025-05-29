@@ -76,7 +76,7 @@ loc_811A:
 		beq.w	loc_818A
 		tst.w	obVelY(a1)
 		bmi.s	loc_8138
-		cmpi.b	#2,obAnim(a1)
+		cmpi.b	#id_Roll,obAnim(a1)
 		beq.s	loc_818A
 
 loc_8138:
@@ -117,7 +117,7 @@ loc_8174:
 loc_818A:
 		btst	#5,obStatus(a0)
 		beq.s	loc_81A4
-		move.w	#1,obAnim(a1)
+		move.w	#id_Run,obAnim(a1)
 
 loc_8198:
 		bclr	#5,obStatus(a0)

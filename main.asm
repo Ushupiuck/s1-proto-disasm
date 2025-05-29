@@ -123,17 +123,17 @@ loc_20C:
 		bne.s	loc_20C
 		lea	SetupValues(pc),a5
 		movem.l	(a5)+,d5-a4
-		move.w	-$1100(a1),d0
+		move.w	z80_version-1-z80_bus_request(a1),d0
 		andi.w	#$F00,d0
 		beq.s	loc_232
-		move.l	#"SEGA",$2F00(a1)
+		move.l	#"SEGA",security_addr-z80_bus_request(a1)
 
 loc_232:
 		move.w	(a4),d0
 		moveq	#0,d0
 		movea.l	d0,a6
 		move.l	a6,usp
-		moveq	#$18-1,d1
+		moveq	#VDPInitValues_End-VDPInitValues-1,d1
 
 loc_23C:
 		move.b	(a5)+,d5
@@ -148,7 +148,7 @@ loc_23C:
 loc_252:
 		btst	d0,(a1)
 		bne.s	loc_252
-		moveq	#$28-1,d2
+		moveq	#Z80StartupCodeEnd-Z80StartupCodeBegin-1,d2
 
 loc_258:
 		move.b	(a5)+,(a0)+
@@ -173,10 +173,10 @@ loc_278:
 loc_286:
 		move.l	d0,(a3)
 		dbf	d4,loc_286
-		moveq	#4-1,d5
+		moveq	#PSGInitValues_End-PSGInitValues-1,d5
 
 loc_28E:
-		move.b	(a5)+,$10(a3)
+		move.b	(a5)+,psg_input-vdp_data_port-1(a3)
 		dbf	d5,loc_28E
 		move.w	d0,(a2)
 		movem.l	(a6),d0-a6
@@ -193,6 +193,7 @@ SetupValues:	dc.l $8000				; VDP register start number
 		dc.l vdp_data_port			; VDP data
 		dc.l vdp_control_port			; VDP control
 
+VDPInitValues:
 		dc.b 4			; VDP $80 - 8-colour mode
 		dc.b $14		; VDP $81 - Megadrive mode, DMA enable
 		dc.b (vram_fg>>10)	; VDP $82 - foreground nametable address
@@ -215,10 +216,13 @@ SetupValues:	dc.l $8000				; VDP register start number
 		dc.w $FFFF		; VDP $93/94 - DMA length
 		dc.w 0			; VDP $95/96 - DMA source
 		dc.b $80		; VDP $97 - DMA fill VRAM
+VDPInitValues_End:
 
 ; Z80 initalization
+Z80StartupCodeBegin:
 	save
 	cpu z80	; use Z80 cpu
+	phase	0
 	listing purecode	; add to listing file
 zStartupCodeStartLoc:
 	xor	a
@@ -249,10 +253,14 @@ zStartupCodeStartLoc:
 	ld	(hl),0E9h
 	jp	(hl)
 zStartupCodeEndLoc:
+	dephase
 	restore
 	padding off
+Z80StartupCodeEnd:
 
+PSGInitValues:
 		dc.b $9F,$BF,$DF,$FF			; values for PSG channel volumes
+PSGInitValues_End:
 ; ---------------------------------------------------------------------------
 
 loc_306:
@@ -832,9 +840,9 @@ SoundDriverLoad:
 		nop
 		stopZ80
 		resetZ80
-		lea	(Unc_Z80).l,a0
+		lea	(DACDriver).l,a0
 		lea	(z80_ram).l,a1
-		move.w	#(Unc_Z80_End-Unc_Z80)-1,d0
+		move.w	#DACDriver_End-DACDriver-1,d0
 
 .loop:
 		move.b	(a0)+,(a1)+

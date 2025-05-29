@@ -125,14 +125,14 @@ locret_B7C4:
 loc_B7C6:
 		move.b	(v_vbla_byte).w,d0
 		andi.b	#7,d0
-		bne.s	VBla_028
+		bne.s	loc_B7E8
 		bsr.w	FindFreeObj
-		bne.s	VBla_028
+		bne.s	loc_B7E8
 		_move.b	#id_Animals,obID(a1)
 		move.w	obX(a0),obX(a1)
 		move.w	obY(a0),obY(a1)
 
-VBla_028:
+loc_B7E8:
 		subq.w	#1,obTimeFrame(a0)
 		bne.s	locret_B7F8
 		addq.b	#2,obRoutine(a0)

@@ -55,7 +55,7 @@ loc_7636:
 
 loc_764A:
 		addq.b	#2,ob2ndRout(a0)
-		move.w	#127,objoff_30(a0)
+		move.w	#128-1,objoff_30(a0)
 		move.w	#$80,obVelX(a0)
 		bsr.w	sub_7742
 		addq.b	#3,d0
@@ -69,7 +69,7 @@ locret_7670:
 ; ---------------------------------------------------------------------------
 
 loc_7672:
-		move.w	#59,objoff_30(a0)
+		move.w	#60-1,objoff_30(a0)
 		move.b	#6,obAnim(a0)
 		bsr.w	FindFreeObj
 		bne.s	loc_76A8
@@ -127,7 +127,7 @@ loc_770E:
 
 loc_7728:
 		subq.b	#2,ob2ndRout(a0)
-		move.w	#59,objoff_30(a0)
+		move.w	#60-1,objoff_30(a0)
 
 loc_7732:
 		move.w	#0,obVelX(a0)

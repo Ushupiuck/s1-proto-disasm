@@ -2518,8 +2518,8 @@ SSG_Reg_Table:	dc.b $90, $50
 		dc.b $9C, $5C
 SSG_Reg_Table_End:
 
-Unc_Z80:	include	"sound/z80.asm"
-Unc_Z80_End:	even
+DACDriver:	include	"sound/z80.asm"
+DACDriver_End:	even
 ; ---------------------------------------------------------------------------
 ; SMPS2ASM - A collection of macros that make SMPS's bytecode human-readable.
 ; ---------------------------------------------------------------------------
