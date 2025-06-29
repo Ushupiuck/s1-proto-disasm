@@ -9,9 +9,10 @@ vram_hscroll_prev:	equ $DC00	; horizontal scroll table
 vram_bg:	equ $E000	; plane B (background namespace)
 vram_sonic:	equ $F000	; Sonic graphics
 window_plane_prev:	equ $F000	; window plane
-vram_unk1:	equ $F200
-vram_unk2:	equ $F400
-vram_unk3:	equ $F600
+vram_sprite1:	equ $F200
+vram_sprite2:	equ $F400
+vram_sprite3:	equ $F600
+vram_sprite4:	equ $F800
 vram_sprites:	equ $F800	; sprite table
 vram_hscroll:	equ $FC00	; horizontal scroll table
 tile_size:	equ 8*8/2
