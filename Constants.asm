@@ -8,6 +8,7 @@ vram_sprites_prev:	equ $D800	; sprite table
 vram_hscroll_prev:	equ $DC00	; horizontal scroll table
 vram_bg:	equ $E000	; plane B (background namespace)
 vram_sonic:	equ $F000	; Sonic graphics
+vram_sprites_lives:	equ	$F000	; sprite table
 window_plane_prev:	equ $F000	; window plane
 vram_sprite1:	equ $F200
 vram_sprite2:	equ $F400
