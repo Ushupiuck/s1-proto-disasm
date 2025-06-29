@@ -4,20 +4,21 @@ Size_of_DAC_driver_guess:	equ $1C5C
 window_plane:	equ $A000	; window plane
 vram_fg:	equ $C000	; plane A (foreground namespace)
 vram_special:	equ $D000	; plane A (foreground namespace)
-vram_sprites_prev:	equ $D800	; sprite table
-vram_hscroll_prev:	equ $DC00	; horizontal scroll table
 vram_bg:	equ $E000	; plane B (background namespace)
 vram_sonic:	equ $F000	; Sonic graphics
-vram_sprites_lives:	equ	$F000	; sprite table
+vram_sprites:	equ $F800	; sprite table
+vram_hscroll:	equ $FC00	; horizontal scroll table
+tile_size:	equ 8*8/2
+plane_size_64x32:	equ 64*32*2
+
+; VRAM data from ICD_BLK4
+vram_sprites_prev:	equ $D800	; sprite table
+vram_hscroll_prev:	equ $DC00	; horizontal scroll table
 window_plane_prev:	equ $F000	; window plane
 vram_sprite1:	equ $F200
 vram_sprite2:	equ $F400
 vram_sprite3:	equ $F600
 vram_sprite4:	equ $F800
-vram_sprites:	equ $F800	; sprite table
-vram_hscroll:	equ $FC00	; horizontal scroll table
-tile_size:	equ 8*8/2
-plane_size_64x32:	equ 64*32*2
 
 ; Game modes
 id_Sega:	equ ptr_GM_Sega-GameModeArray		; $00

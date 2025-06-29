@@ -3359,10 +3359,10 @@ LoadLevelData:
 
 loc_4876:
 		lea	(vdp_data_port).l,a6
-		locVRAM vram_sprites_lives+$CBE
+		locVRAM window_plane+$CBE
 		move.l	#($8500+(vram_sprite1>>9))<<16|$8500+(vram_sprite2>>9),d2
 		bsr.s	sub_489E
-		locVRAM vram_sprites_lives+$D3E
+		locVRAM window_plane+$D3E
 		move.l	#($8500+(vram_sprite3>>9))<<16|$8500+(vram_sprite4>>9),d2
 
 sub_489E:
