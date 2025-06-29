@@ -813,7 +813,7 @@ VDPSetupArray:
 		dc.w $8A00
 		dc.w $8B00
 		dc.w $8C00+%10000001
-		dc.w $8D00+%00111111
+		dc.w $8D00+(vram_hscroll>>10)
 		dc.w $8E00
 		dc.w $8F00+%0010
 		dc.w $9000+%0001
@@ -848,11 +848,11 @@ SoundDriverLoad:
 		move.b	(a0)+,(a1)+
 		dbf	d0,.loop
 		moveq	#0,d0
-		lea	(z80_dac_unk1FF8).l,a1
+		lea	(z80_dac_voicetbladr).l,a1
 		move.b	d0,(a1)+	; Write 0 to 1FF8
-		move.b	#$80,(a1)+	; Write $80 to 1FF9
+		move.b	#$80,(a1)+	; Write $80 to 1FF9 (zVoiceTblAdr = 8000h)
 		move.b	#7,(a1)+	; Write 7 to 1FFA
-		move.b	#$80,(a1)+	; Write $80 to 1FFB
+		move.b	#$80,(a1)+	; Write $80 to 1FFB (zBankStore = 8007h)
 		move.b	d0,(a1)+	; Write 0 to 1FFC
 		move.b	d0,(a1)+	; Write 0 to 1FFD
 		move.b	d0,(a1)+	; Write 0 to 1FFE
@@ -2762,7 +2762,6 @@ loc_3A72:
 ; ---------------------------------------------------------------------------
 
 byte_3A86:	dc.b 9, $28, $18, $10, $28, $18, $10, $30, $18, 8, $10
-		dc.b 0
 		even
 
 byte_3A92:	dc.b 6, $30, $30, $30, $28, $18, $18, $18
