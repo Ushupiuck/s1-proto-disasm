@@ -184,7 +184,7 @@ loc_28E:
 		bra.s	loc_306
 ; ---------------------------------------------------------------------------
 SetupValues:	dc.l $8000				; VDP register start number
-		dc.l $3FFF				; size of RAM\4
+		dc.l (v_end-v_start)/4-1		; size of RAM\4
 		dc.l $100				; VDP register diff
 
 		dc.l z80_ram				; start of Z80 RAM
@@ -197,9 +197,9 @@ VDPInitValues:
 		dc.b 4			; VDP $80 - 8-colour mode
 		dc.b $14		; VDP $81 - Megadrive mode, DMA enable
 		dc.b (vram_fg>>10)	; VDP $82 - foreground nametable address
-		dc.b ($F000>>10)	; VDP $83 - window nametable address
+		dc.b (window_plane_prev>>10)	; VDP $83 - window nametable address
 		dc.b (vram_bg>>13)	; VDP $84 - background nametable address
-		dc.b ($D800>>9)		; VDP $85 - sprite table address
+		dc.b (vram_sprites_prev>>9)		; VDP $85 - sprite table address
 		dc.b 0			; VDP $86 - unused
 		dc.b 0			; VDP $87 - background colour
 		dc.b 0			; VDP $88 - unused
@@ -207,7 +207,7 @@ VDPInitValues:
 		dc.b 255		; VDP $8A - HBlank register
 		dc.b 0			; VDP $8B - full screen scroll
 		dc.b $81		; VDP $8C - 40 cell display
-		dc.b ($DC00>>10)	; VDP $8D - hscroll table address
+		dc.b (vram_hscroll_prev>>10)	; VDP $8D - hscroll table address
 		dc.b 0			; VDP $8E - unused
 		dc.b 1			; VDP $8F - VDP increment
 		dc.b 1			; VDP $90 - 64 cell hscroll size

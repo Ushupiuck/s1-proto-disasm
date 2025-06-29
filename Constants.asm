@@ -4,8 +4,11 @@ Size_of_DAC_driver_guess:	equ $1C5C
 window_plane:	equ $A000	; window plane
 vram_fg:	equ $C000	; plane A (foreground namespace)
 vram_special:	equ $D000	; plane A (foreground namespace)
+vram_sprites_prev:	equ $D800	; sprite table
+vram_hscroll_prev:	equ $DC00	; horizontal scroll table
 vram_bg:	equ $E000	; plane B (background namespace)
 vram_sonic:	equ $F000	; Sonic graphics
+window_plane_prev:	equ $F000	; window plane
 vram_unk1:	equ $F200
 vram_unk2:	equ $F400
 vram_unk3:	equ $F600
