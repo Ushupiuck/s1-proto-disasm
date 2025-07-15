@@ -274,10 +274,7 @@ DACUpdateTrack:
 		dc.b dpcmLoopCounter(6400)
 		dc.b dpcmLoopCounter(6250)
 		; the values below are invalid and will play at a very slow rate
-		dc.b $FF
-		dc.b $FF
-		dc.b $FF
-		dc.b $FF
+		dc.b $FF, $FF, $FF, $FF
 		even
 ; ---------------------------------------------------------------------------
 

@@ -1493,7 +1493,7 @@ GM_Sega:
 		andi.b	#$BF,d0
 		move.w	d0,(vdp_control_port).l
 		bsr.w	ClearScreen
-		locVRAM 0
+		locVRAM ArtTile_Sega_Tiles*tile_size
 		lea	(Nem_SegaLogo).l,a0
 		bsr.w	NemDec
 		lea	(v_start&$FFFFFF).l,a1
@@ -1944,7 +1944,7 @@ MusicList:
 GM_Level:
 		move.b	#bgm_Fade,d0
 		bsr.w	PlaySound_Special
-		locVRAM $B000
+		locVRAM ArtTile_Title_Card*tile_size
 		lea	(Nem_TitleCard).l,a0
 		bsr.w	NemDec
 		bsr.w	ClearPLC
@@ -2248,9 +2248,30 @@ DemoDataPtr:
 		dc.l byte_61578
 		dc.l byte_6161E
 
-		dc.b 0, $8B, 8, $37, 0, $42, 8, $5C, 0, $6A, 8, $5F, 0, $2F, 8, $2C
-		dc.b 0, $21, 8, 3, $28, $30, 8, 8, 0, $2E, 8, $15, 0, $F, 8, $46
-		dc.b 0, $1A, 8, $FF, 8, $CA, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		dc.b 0, 139
+		dc.b btnR, 55
+		dc.b 0, 66
+		dc.b btnR, 92
+		dc.b 0, 106
+		dc.b btnR, 95
+		dc.b 0, 47
+		dc.b btnR, 44
+		dc.b 0, 33
+		dc.b btnR, 3
+		dc.b btnR+btnC, 48
+		dc.b btnR, 8
+		dc.b 0, 46
+		dc.b btnR, 21
+		dc.b 0, 15
+		dc.b btnR, 70
+		dc.b 0, 26
+		dc.b btnR, 255
+		dc.b btnR, 202
+		dc.b 0, 0
+		dc.b 0, 0
+		dc.b 0, 0
+		dc.b 0, 0
+		dc.b 0, 0
 		even
 ; ---------------------------------------------------------------------------
 ;sub_314C:
@@ -2518,14 +2539,14 @@ ssLoadBG:
 
 loc_368C:
 		move.l	d3,d0
-		moveq	#3,d6
+		moveq	#4-1,d6
 		moveq	#0,d4
 		cmpi.w	#3,d7
 		bhs.s	loc_369A
 		moveq	#1,d4
 
 loc_369A:
-		moveq	#7,d5
+		moveq	#8-1,d5
 
 loc_369C:
 		movea.l	a2,a1
@@ -2695,7 +2716,7 @@ loc_39DE:
 		swap	d0
 		lea	(byte_3A9A).l,a1
 		lea	(v_ngfx_buffer).w,a3
-		moveq	#9,d3
+		moveq	#$A-1,d3
 
 loc_39F4:
 		move.w	2(a3),d0
@@ -2720,7 +2741,7 @@ loc_3A1C:
 		subq.w	#1,(v_bg3screenposx).w
 		lea	(v_ssscroll_buffer).w,a3
 		move.l	#$18000,d2
-		moveq	#6,d1
+		moveq	#7-1,d1
 
 loc_3A32:
 		move.l	(a3),d0
@@ -3367,7 +3388,7 @@ loc_4876:
 
 sub_489E:
 		moveq	#0,d3
-		moveq	#3,d1
+		moveq	#4-1,d1
 		sub.w	d0,d1
 		bcs.s	loc_48AC
 
@@ -3389,10 +3410,8 @@ locret_48B8:
 ; ---------------------------------------------------------------------------
 
 LevelLayoutLoad:
-		; Bug: This clears too much data.
-		; To fix this, divid by 4.
 		lea	(v_lvllayout).w,a3
-		move.w	#(v_lvllayout_end-v_lvllayout)/2-1,d1
+		move.w	#(v_lvllayout_end-v_lvllayout)/2-1,d1	; Bug: This clears too much data! To fix this, divid by 4.
 		moveq	#0,d0
 
 loc_48C4:

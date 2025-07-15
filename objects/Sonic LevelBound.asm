@@ -24,7 +24,7 @@ Sonic_LevelBound:
 
 Sonic_BoundSides:
 		move.w	d0,obX(a0)
-		move.w	#0,obScreenY(a0)
+		move.w	#0,obX+2(a0)
 		move.w	#0,obVelX(a0)
 		move.w	#0,obInertia(a0)
 		rts

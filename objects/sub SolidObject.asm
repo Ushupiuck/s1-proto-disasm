@@ -7,7 +7,7 @@ SolidObject:
 		beq.w	loc_A37C
 		move.w	d1,d2
 		add.w	d2,d2
-		lea	(v_objspace).w,a1
+		lea	(v_player).w,a1
 		btst	#1,obStatus(a1)
 		bne.s	loc_A2EE
 		move.w	obX(a1),d0
@@ -39,7 +39,7 @@ loc_A30C:
 		bne.w	loc_A448
 		tst.b	obRender(a0)
 		bpl.w	loc_A42E
-		lea	(v_objspace).w,a1
+		lea	(v_player).w,a1
 		move.w	obX(a1),d0
 		sub.w	obX(a0),d0
 		add.w	d1,d0
@@ -82,7 +82,7 @@ loc_A37C:
 		bne.w	loc_A448
 		tst.b	obRender(a0)
 		bpl.w	loc_A42E
-		lea	(v_objspace).w,a1
+		lea	(v_player).w,a1
 		move.w	obX(a1),d0
 		sub.w	obX(a0),d0
 		add.w	d1,d0
