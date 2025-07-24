@@ -475,7 +475,7 @@ FMSetRest:
 FM3SpcUpdateFreq:
 		lea	.fm3freqs(pc),a1
 		lea	SMPS_RAM.v_detune_start(a6),a2
-		moveq	#(.fm3freqs_end-.fm3freqs)/2-1,d7
+		moveq	#bytesToWcnt(.fm3freqs_end-.fm3freqs),d7
 
 .loopfm3:
 		move.w	d6,d1
@@ -763,7 +763,7 @@ PlaySnd_Music:
 
 		movea.l	a6,a0
 		lea	SMPS_RAM.v_1up_ram_copy(a6),a1
-		move.w	#(SMPS_RAM.v_1up_ram_end-SMPS_RAM.v_1up_ram)/4-1,d0 ; Backup $220 bytes: all variables and music track data
+		move.w	#bytesToLcnt(SMPS_RAM.v_1up_ram_end-SMPS_RAM.v_1up_ram),d0 ; Backup $220 bytes: all variables and music track data
 
 .memcopy:
 		move.l	(a0)+,(a1)+
@@ -1008,7 +1008,7 @@ PlaySnd_SFX:
 .continue:
 		movea.l	SFX_SFXChannelRAM(pc,d3.w),a5
 		movea.l	a5,a2
-		moveq	#(SMPS_Track.len)/4-1,d0
+		moveq	#bytesToLcnt(SMPS_Track.len),d0
 
 .clear:
 		clr.l	(a2)+
@@ -1095,7 +1095,7 @@ PlaySnd_SpecSFX:
 
 .sfxinitpsg:
 		movea.l	a5,a2
-		moveq	#(SMPS_Track.len)/4-1,d0	; $30 bytes
+		moveq	#bytesToLcnt(SMPS_Track.len),d0	; $30 bytes
 
 .clearsfxtrackram:
 		clr.l	(a2)+
@@ -1388,7 +1388,7 @@ StopAllSound:
 		jsr	WriteFMI(pc)
 		movea.l	a6,a0
 		; Bug: This should be clearing all variables and track data, but misses the last $10 bytes of v_spcsfx_psg3_Track.
-		move.w	#(SMPS_RAM.v_1up_ram_copy-$10)/4-1,d0 ; Clear $390 bytes: all variables and most track data
+		move.w	#bytesToLcnt(SMPS_RAM.v_1up_ram_copy-$10),d0 ; Clear $390 bytes: all variables and most track data
 
 .clearramloop:
 		clr.l	(a0)+
@@ -1401,19 +1401,19 @@ StopAllSound:
 InitMusicPlayback:
 		movea.l	a6,a0
 		; Save several values
-		; Bug: v_soundqueue0 and the other queues are not saved
+		; Bug: v_soundqueue0 is not saved
 		_move.b	SMPS_RAM.v_sndprio(a6),d1
 		move.b	SMPS_RAM.f_1up_playing(a6),d2
 		move.b	SMPS_RAM.f_speedup(a6),d3
 		move.b	SMPS_RAM.v_fadein_counter(a6),d4
-		move.w	#(SMPS_RAM.v_1up_ram_end-SMPS_RAM.v_1up_ram)/4-1,d0
+		move.w	#bytesToLcnt(SMPS_RAM.v_1up_ram_end-SMPS_RAM.v_1up_ram),d0
 
 .clearramloop:
 		clr.l	(a0)+
 		dbf	d0,.clearramloop
 
 		; Restore the values saved above
-		; Bug: Like above, v_soundqueue0 and the other queues are not restored
+		; Bug: Like above, v_soundqueue0 is not restored either
 		_move.b	d1,SMPS_RAM.v_sndprio(a6)
 		move.b	d2,SMPS_RAM.f_1up_playing(a6)
 		move.b	d3,SMPS_RAM.f_speedup(a6)
@@ -1963,7 +1963,7 @@ cfE3_GlobalMod:
 cfFadeInToPrevious:
 		movea.l	a6,a0
 		lea	SMPS_RAM.v_1up_ram_copy(a6),a1
-		move.w	#(SMPS_RAM.v_1up_ram_end-SMPS_RAM.v_1up_ram)/4-1,d0 ; $220 bytes to restore: all variables and music track data
+		move.w	#bytesToLcnt(SMPS_RAM.v_1up_ram_end-SMPS_RAM.v_1up_ram),d0 ; $220 bytes to restore: all variables and music track data
 ; loc_75284:
 .restoreramloop:
 		move.l	(a1)+,(a0)+
@@ -2498,7 +2498,7 @@ cfFE_SpcFM3Mode:
 
 cfSSG_Reg:
 		lea	SSG_Reg_Table(pc),a1
-		moveq	#(SSG_Reg_Table_End-SSG_Reg_Table)/2-1,d3
+		moveq	#bytesToWcnt(SSG_Reg_Table_End-SSG_Reg_Table),d3
 
 .loop:
 		move.b	(a1)+,d0

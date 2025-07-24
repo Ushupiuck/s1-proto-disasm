@@ -162,13 +162,13 @@ loc_264:
 		dbf	d6,loc_264
 		move.l	#($8100+%0100)<<16|$8F00+%0010,(a4)
 		move.l	#$C0000000,(a4)
-		moveq	#(v_palette_end-v_palette)/4-1,d3
+		moveq	#bytesToLcnt(v_palette_end-v_palette),d3
 
 loc_278:
 		move.l	d0,(a3)
 		dbf	d3,loc_278
 		move.l	#$40000010,(a4)
-		moveq	#($50)/4-1,d4
+		moveq	#bytesToLcnt($50),d4
 
 loc_286:
 		move.l	d0,(a3)
@@ -285,7 +285,7 @@ loc_32C:
 		nop
 		lea	(v_crossresetram).w,a6
 		moveq	#0,d7
-		move.w	#(v_end-v_crossresetram)/4-1,d6
+		move.w	#bytesToLcnt(v_end-v_crossresetram),d6
 
 loc_348:
 		move.l	d7,(a6)+
@@ -299,7 +299,7 @@ loc_348:
 loc_36A:
 		lea	(v_start&$FFFFFF).l,a6
 		moveq	#0,d7
-		move.w	#(v_crossresetram-v_start)/4-1,d6
+		move.w	#bytesToLcnt(v_crossresetram-v_start),d6
 
 loc_376:
 		move.l	d7,(a6)+
@@ -335,7 +335,7 @@ ptr_GM_Special:	bra.w	GM_Special
 ChecksumError:
 		bsr.w	VDPSetupGame
 		move.l	#$C0000000,(vdp_control_port).l	; Set VDP to CRAM write
-		moveq	#(v_palette_end-v_palette)/2-1,d7
+		moveq	#bytesToWcnt(v_palette_end-v_palette),d7
 
 .palette:
 		move.w	#cRed,(vdp_data_port).l		; Write red to data
@@ -433,7 +433,7 @@ ErrorPrint:
 		lea	(vdp_data_port).l,a6
 		locVRAM	ArtTile_Error_Handler_Font*tile_size
 		lea	(Art_Text).l,a0
-		move.w	#(Art_Text_end-Art_Text-tile_size)/2-1,d1
+		move.w	#bytesToWcnt(Art_Text_end-Art_Text-tile_size),d1
 
 .loadart:
 		move.w	(a0)+,(a6)
@@ -718,7 +718,7 @@ HBlank2:
 		locVRAM vram_sprites
 		lea	(v_spritetablebuffer).w,a0
 		lea	(vdp_data_port).l,a5
-		move.w	#(v_spritetablebuffer_end-v_spritetablebuffer)/4-1,d0
+		move.w	#bytesToLcnt(v_spritetablebuffer_end-v_spritetablebuffer),d0
 
 .spritetabletovdp:
 		move.l	(a0)+,(a5)
@@ -778,7 +778,7 @@ VDPSetupGame:
 		lea	(vdp_control_port).l,a0
 		lea	(vdp_data_port).l,a1
 		lea	(VDPSetupArray).l,a2
-		moveq	#(VDPSetupArray_End-VDPSetupArray)/2-1,d7
+		moveq	#bytesToWcnt(VDPSetupArray_End-VDPSetupArray),d7
 
 loc_101E:
 		move.w	(a2)+,(a0)
@@ -787,7 +787,7 @@ loc_101E:
 		move.w	d0,(v_vdp_buffer1).w
 		moveq	#0,d0
 		move.l	#$C0000000,(vdp_control_port).l
-		move.w	#(v_palette_end-v_palette)/2-1,d7
+		move.w	#bytesToWcnt(v_palette_end-v_palette),d7
 
 loc_103E:
 		move.w	d0,(a1)
@@ -988,7 +988,7 @@ NewPLC:
 
 ClearPLC:
 		lea	(v_plc_buffer).w,a2		; PLC buffer space in RAM
-		moveq	#(v_plc_buffer_end-v_plc_buffer)/4-1,d0
+		moveq	#bytesToLcnt(v_plc_buffer_end-v_plc_buffer),d0
 
 .clearram:
 		clr.l	(a2)+
@@ -1088,7 +1088,7 @@ locret_14D0:
 
 ShiftPLC:
 		lea	(v_plc_buffer).w,a0
-		moveq	#(v_plc_buffer_only_end-v_plc_buffer-6)/4-1,d0
+		moveq	#bytesToLcnt(v_plc_buffer_only_end-v_plc_buffer-6),d0
 
 loc_14D8:
 		move.l	6(a0),(a0)+
@@ -1554,7 +1554,7 @@ GM_Title:
 		lea	(vdp_data_port).l,a6
 		locVRAM ArtTile_Level_Select_Font*tile_size,vdp_control_port-vdp_data_port(a6)
 		lea	(Art_Text).l,a5
-		move.w	#(Art_Text_end-Art_Text)/2-1,d1
+		move.w	#bytesToWcnt(Art_Text_end-Art_Text),d1
 
 loc_25D8:
 		move.w	(a5)+,(a6)
@@ -1574,7 +1574,7 @@ loc_25D8:
 		bsr.w	NemDec
 		lea	(Blk16_GHZ).l,a0
 		lea	(v_16x16).w,a4
-		move.w	#(v_16x16_end-v_16x16)/4-1,d0
+		move.w	#bytesToLcnt(v_16x16_end-v_16x16),d0
 
 .loadblocks:
 		move.l	(a0)+,(a4)+
@@ -1637,7 +1637,7 @@ loc_26E4:
 		disable_ints
 		lea	(vdp_data_port).l,a6
 		move.l	#$60000003,(vdp_control_port).l
-		move.w	#($1000)/4-1,d1
+		move.w	#bytesToLcnt($1000),d1
 
 loc_2732:
 		move.l	d0,(a6)
@@ -1797,7 +1797,7 @@ sub_28A6:
 		bpl.s	loc_28F0
 
 loc_28B6:
-		move.w	#12-1,(v_levseldelay).w
+		move.w	#$B,(v_levseldelay).w
 		move.b	(v_jpadhold1).w,d1
 		andi.b	#btnUp+btnDn,d1
 		beq.s	loc_28F0
@@ -2069,7 +2069,7 @@ loc_2D54:
 		movea.l	(a1,d0.w),a1
 		move.b	1(a1),(v_btnpushtime2).w
 		subq.b	#1,(v_btnpushtime2).w
-		move.w	#1800,(v_demolength).w
+		move.w	#30*60,(v_demolength).w
 		move.b	#8,(v_vbla_routine).w
 		bsr.w	WaitForVBla
 		move.w	#$202F,(v_pfade_start).w
@@ -2286,7 +2286,7 @@ LoadAnimatedChunks:
 
 sub_3166:
 		lea	(Anim256Unk1).l,a0
-		move.w	#(Anim256Unk1_end-Anim256Unk1)/2-1,d1
+		move.w	#bytesToWcnt(Anim256Unk1_end-Anim256Unk1),d1
 
 .loadchunks:
 		move.w	(a0)+,(a1)+
@@ -2299,7 +2299,7 @@ locret_3176:
 sub_3178:
 		lea	(v_256x256&$FFFFFF).l,a1
 		lea	(Anim256Unk2).l,a0
-		move.w	#(Anim256Unk2_end-Anim256Unk2)/2-1,d1
+		move.w	#bytesToWcnt(Anim256Unk2_end-Anim256Unk2),d1
 
 .loadchunks2:
 		move.w	(a0)+,d0
@@ -2324,7 +2324,7 @@ LoadAnimatedBlocks:
 .isslz:
 		lea	(v_16x16+$1790).w,a1	; load ROM address for animated blocks to load in the main block RAM into a1.
 		lea	(Anim16GHZ).l,a0	; load animated GHZ blocks into a0.
-		move.w	#(Anim16GHZ_end-Anim16GHZ)/2-1,d1	; load approximate size of the blocks into d1.
+		move.w	#bytesToWcnt(Anim16GHZ_end-Anim16GHZ),d1	; load approximate size of the blocks into d1.
 
 .loadghz:
 		move.w	(a0)+,(a1)+
@@ -2337,7 +2337,7 @@ LoadAnimatedBlocks:
 .ismz:
 		lea	(v_16x16+$17A0).w,a1	; load ROM address for animated blocks to load in the main block RAM into a1.
 		lea	(Anim16MZ).l,a0	; load animated MZ blocks into a0.
-		move.w	#(Anim16MZ_end-Anim16MZ)/2-1,d1	; load approximate size of the blocks into d1.
+		move.w	#bytesToWcnt(Anim16MZ_end-Anim16MZ),d1	; load approximate size of the blocks into d1.
 
 .loadmz:
 		move.w	(a0)+,(a1)+
@@ -2355,11 +2355,11 @@ DebugPosLoadArt:
 ; ---------------------------------------------------------------------------
 		locVRAM $4F0*tile_size
 		lea	(Art_Text).l,a0
-		move.w	#(Art_Text_end-Art_Text-tile_size*$1F)/2-1,d1
+		move.w	#bytesToWcnt(Art_Text_end-Art_Text-tile_size*$1F),d1
 		bsr.s	.loadtext
 		lea	(Art_Text).l,a0
 		adda.w	#$11*tile_size,a0
-		move.w	#(Art_Text_end-Art_Text-tile_size*$23)/2-1,d1
+		move.w	#bytesToWcnt(Art_Text_end-Art_Text-tile_size*$23),d1
 
 .loadtext:
 		move.w	(a0)+,(vdp_data_port).l
@@ -2395,21 +2395,21 @@ DebugPosLoadArt:
 UpdateTimers:
 		subq.b	#1,(v_ani0_time).w
 		bpl.s	loc_3464
-		move.b	#12-1,(v_ani0_time).w
+		move.b	#$B,(v_ani0_time).w
 		subq.b	#1,(v_ani0_frame).w
 		andi.b	#7,(v_ani0_frame).w
 
 loc_3464:
 		subq.b	#1,(v_ani1_time).w
 		bpl.s	loc_347A
-		move.b	#8-1,(v_ani1_time).w
+		move.b	#7,(v_ani1_time).w
 		addq.b	#1,(v_ani1_frame).w
 		andi.b	#3,(v_ani1_frame).w
 
 loc_347A:
 		subq.b	#1,(v_ani2_time).w
 		bpl.s	loc_3498
-		move.b	#8-1,(v_ani2_time).w
+		move.b	#7,(v_ani2_time).w
 		addq.b	#1,(v_ani2_frame).w
 		cmpi.b	#6,(v_ani2_frame).w
 		bcs.s	loc_3498
@@ -3346,7 +3346,7 @@ LoadLevelData:
 		addq.l	#4,a2
 		movea.l	(a2)+,a0
 		lea	(v_16x16).w,a4
-		move.w	#(v_16x16_end-v_16x16)/4-1,d0
+		move.w	#bytesToLcnt(v_16x16_end-v_16x16),d0
 
 .loadblocks:
 		move.l	(a0)+,(a4)+
@@ -3412,8 +3412,10 @@ locret_48B8:
 ; ---------------------------------------------------------------------------
 
 LevelLayoutLoad:
+		; Bug: This clears too much data.
+		; To fix this, change bytesToWcnt to bytesToLcnt.
 		lea	(v_lvllayout).w,a3
-		move.w	#(v_lvllayout_end-v_lvllayout)/2-1,d1	; Bug: This clears too much data! To fix this, divid by 4.
+		move.w	#bytesToWcnt(v_lvllayout_end-v_lvllayout),d1
 		moveq	#0,d0
 
 loc_48C4:
@@ -4366,7 +4368,7 @@ loc_8A00:
 		lea	(v_objstate).w,a2
 		move.w	#$101,(a2)+
 		; Bug: This does word when it should be doing longword and the last 2 bytes of v_objstate are not accounted for.
-		move.w	#(v_objstate_end-v_objstate-2)/2-1,d0
+		move.w	#bytesToWcnt(v_objstate_end-v_objstate-2),d0
 
 loc_8A38:
 		clr.l	(a2)+
@@ -5738,7 +5740,7 @@ Special_AniWallsandRings:
 		move.b	(v_ssangle).w,d0
 		lsr.b	#2,d0
 		andi.w	#$F,d0
-		moveq	#($20)/2-1,d1
+		moveq	#$10-1,d1
 
 loc_109C2:
 		move.w	d0,(a1)
@@ -5747,7 +5749,7 @@ loc_109C2:
 
 		subq.b	#1,(v_ani1_time).w
 		bpl.s	loc_109E0
-		move.b	#8-1,(v_ani1_time).w
+		move.b	#7,(v_ani1_time).w
 		addq.b	#1,(v_ani1_frame).w
 		andi.b	#3,(v_ani1_frame).w
 
@@ -5757,7 +5759,7 @@ loc_109E0:
 		addq.w	#8,a1
 		subq.b	#1,(v_ani2_time).w
 		bpl.s	loc_10A02
-		move.b	#8-1,(v_ani2_time).w
+		move.b	#7,(v_ani2_time).w
 		bra.s	loc_10A02
 ; ---------------------------------------------------------------------------
 		; unused
@@ -5770,7 +5772,7 @@ loc_10A02:
 		move.b	(v_ani2_frame).w,1(a1)
 		subq.b	#1,(v_ani0_time).w
 		bpl.s	loc_10A26
-		move.b	#8-1,(v_ani0_time).w
+		move.b	#7,(v_ani0_time).w
 		subq.b	#1,(v_ani0_frame).w
 		andi.b	#3,(v_ani0_frame).w
 
@@ -5813,7 +5815,7 @@ SS_WaRiVramSet:	dc.w $142, $142, $142, $2142
 
 sub_10ACC:
 		lea	(v_ssitembuffer).l,a2
-		move.w	#(v_ssitembuffer_end-v_ssitembuffer)/8-1,d0
+		move.w	#bytesToXcnt(v_ssitembuffer_end-v_ssitembuffer,8),d0
 
 loc_10AD6:
 		tst.b	(a2)
@@ -5827,7 +5829,7 @@ locret_10AE0:
 
 Special_AniItems:
 		lea	(v_ssitembuffer).l,a0
-		move.w	#(v_ssitembuffer_end-v_ssitembuffer)/8-1,d7
+		move.w	#bytesToXcnt(v_ssitembuffer_end-v_ssitembuffer,8),d7
 
 loc_10AEC:
 		moveq	#0,d0
@@ -5851,7 +5853,7 @@ SS_AniIndex:	dc.l SS_AniRingSparks
 SS_AniRingSparks:
 		subq.b	#1,2(a0)
 		bpl.s	locret_10B32
-		move.b	#6-1,2(a0)
+		move.b	#5,2(a0)
 		moveq	#0,d0
 		move.b	3(a0),d0
 		addq.b	#1,3(a0)
@@ -5873,7 +5875,7 @@ byte_10B34:	dc.b $17, $18, $19, $1A, 0, 0
 SS_AniBumper:
 		subq.b	#1,2(a0)
 		bpl.s	locret_10B68
-		move.b	#8-1,2(a0)
+		move.b	#7,2(a0)
 		moveq	#0,d0
 		move.b	3(a0),d0
 		addq.b	#1,3(a0)
@@ -5898,7 +5900,7 @@ byte_10B6A:	dc.b $1B, $1C, $1B, $1C, 0, 0
 
 SS_Load:
 		lea	(v_ssbuffer1).l,a1
-		move.w	#(v_ssbuffer2-v_ssbuffer1)/4-1,d0
+		move.w	#bytesToLcnt(v_ssbuffer2-v_ssbuffer1),d0
 
 loc_10B7A:
 		clr.l	(a1)+
@@ -5909,7 +5911,7 @@ loc_10B7A:
 		moveq	#$24-1,d1
 
 loc_10B8E:
-		moveq	#($24)/4-1,d2
+		moveq	#bytesToLcnt($24),d2
 
 loc_10B90:
 		move.l	(a0)+,(a1)+
@@ -5920,7 +5922,7 @@ loc_10B90:
 
 		lea	(v_ssblocktypes+8).l,a1
 		lea	(SS_MapIndex).l,a0
-		moveq	#(SS_MapIndex_End-SS_MapIndex)/6-1,d1
+		moveq	#bytesToXcnt(SS_MapIndex_End-SS_MapIndex,6),d1
 
 loc_10BAC:
 		move.l	(a0)+,(a1)+
@@ -5930,7 +5932,7 @@ loc_10BAC:
 		dbf	d1,loc_10BAC
 
 		lea	(v_ssitembuffer).l,a1
-		move.w	#(v_ssitembuffer_end-v_ssitembuffer)/4-1,d1
+		move.w	#bytesToLcnt(v_ssitembuffer_end-v_ssitembuffer),d1
 
 loc_10BC8:
 
@@ -5949,7 +5951,7 @@ loc_10BC8:
 		moveq	#$40-1,d1
 
 loc_10CA6:
-		moveq	#($40)/4-1,d2
+		moveq	#bytesToLcnt($40),d2
 
 loc_10CA8:
 		move.l	(a0)+,(a1)+
