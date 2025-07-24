@@ -31,11 +31,11 @@ StartOfZ80:
 		ld	sp,z80_stack
 		xor	a
 		ld	(zDAC_Status),a
-		ld	a,(zUnk_1FFB)
+		ld	a,(zBankStore+1)
 		rlca
 		ld	(zBankRegister),a
 		ld	b,8
-		ld	a,(zUnk_1FFA)
+		ld	a,(zBankStore)
 
 loc_16:
 		ld	(zBankRegister),a
@@ -69,22 +69,22 @@ loc_31:
 		xor	a
 		ld	(zDAC_Status),a
 		dec	hl
-		ld	ix,zUnk_1FFC
+		ld	ix,zLoopDataStr
 		ld	d,0
 		exx
 		pop	hl
 		ld	(zDAC_Update),a
 		pop	af
-		ld	(zUnk_1FF7),a
+		ld	(zVoiceFlag),a
 		sub	81h
 		ld	(hl),a
 		ld	de,0
 		ld	iy,zPCM_Table
 		cp	6	; Is the sample 87h or higher?
 		jr	c,loc_73	; If not, branch
-		ld	(zUnk_1FF7),a
+		ld	(zVoiceFlag),a
 		ld	(zDAC_Update),a
-		ld	iy,(zUnk_1FF8)
+		ld	iy,(zVoiceTblAdr)
 		sub	7
 
 loc_73:
@@ -98,10 +98,10 @@ loc_73:
 		add	iy,bc
 		ld	e,(iy+0)
 		ld	d,(iy+1)
-		ld	a,(zUnk_1FF7)
+		ld	a,(zVoiceFlag)
 		or	a
 		jp	m,loc_8F
-		ld	hl,(zUnk_1FF8)
+		ld	hl,(zVoiceTblAdr)
 		add	hl,de
 		ex	de,hl
 
@@ -109,7 +109,7 @@ loc_8F:
 		ld	c,(iy+2)
 		ld	b,(iy+3)
 		ld	a,(iy+4)
-		ld	(zUnk_1FFE),a
+		ld	(zRepeatFlag),a
 		exx
 		ld	c,80h
 		exx
@@ -182,7 +182,7 @@ loc_F5:
 		or	b	; 4
 		jp	nz,zPlayPCMLoop	; 10
 							; 420 cycles in total
-		ld	a,(zUnk_1FFE)
+		ld	a,(zRepeatFlag)
 		or	a
 		jp	z,loc_153
 		exx
@@ -192,7 +192,7 @@ loc_F5:
 
 loc_10C:
 		dec	a
-		ld	(zUnk_1FFE),a
+		ld	(zRepeatFlag),a
 		jr	z,loc_133
 		ld	c,(ix+0)
 		exx
@@ -202,7 +202,7 @@ loc_10C:
 		ld	c,l
 		ld	e,(iy+0)
 		ld	d,(iy+1)
-		ld	hl,(zUnk_1FF8)
+		ld	hl,(zVoiceTblAdr)
 		add	hl,de
 		ld	e,(iy+2)
 		ld	d,(iy+3)
@@ -221,7 +221,7 @@ loc_133:
 		ld	e,(iy+0)
 		ld	d,(iy+1)
 		add	hl,de
-		ld	de,(zUnk_1FF8)
+		ld	de,(zVoiceTblAdr)
 		add	hl,de
 		ex	de,hl
 		jp	zPlayPCMLoop

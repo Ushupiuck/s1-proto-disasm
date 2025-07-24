@@ -6,13 +6,19 @@ vram_fg:	equ $C000	; plane A (foreground namespace)
 vram_special:	equ $D000	; plane A (foreground namespace)
 vram_bg:	equ $E000	; plane B (background namespace)
 vram_sonic:	equ $F000	; Sonic graphics
-vram_unk1:	equ $F200
-vram_unk2:	equ $F400
-vram_unk3:	equ $F600
 vram_sprites:	equ $F800	; sprite table
 vram_hscroll:	equ $FC00	; horizontal scroll table
 tile_size:	equ 8*8/2
 plane_size_64x32:	equ 64*32*2
+
+; VRAM data from ICD_BLK4
+vram_sprites_prev:	equ $D800	; sprite table
+vram_hscroll_prev:	equ $DC00	; horizontal scroll table
+window_plane_prev:	equ $F000	; window plane
+vram_sprite1:	equ $F200
+vram_sprite2:	equ $F400
+vram_sprite3:	equ $F600
+vram_sprite4:	equ $F800
 
 ; Game modes
 id_Sega:	equ ptr_GM_Sega-GameModeArray		; $00
@@ -214,13 +220,12 @@ psg_input:		equ $C00011
 	phase	$1FF4
 z80_stack:	ds.w 1
 zDAC_Update:	ds.b 1
-zUnk_1FF7:	ds.b 1
-zUnk_1FF8:	ds.w 1
-zUnk_1FFA:	ds.b 1
-zUnk_1FFB:	ds.b 1
-zUnk_1FFC:	ds.b 1
+zVoiceFlag:	ds.b 1
+zVoiceTblAdr:	ds.w 1
+zBankStore:	ds.w 1
+zLoopDataStr:	ds.b 1
 zDAC_Status:	ds.b 1					; Bit 7 set if the driver is not accepting new samples, it is clear otherwise
-zUnk_1FFE:	ds.b 1
+zRepeatFlag:	ds.b 1
 zDAC_Sample:	ds.b 1					; Sample to play, the 68k will move into this locatiton whatever sample that's supposed to be played.
 	dephase
 	!org 0
@@ -236,7 +241,7 @@ zROMWindow:	equ $8000
 z80_ram:		equ $A00000			; start of Z80 RAM
 z80_dac3_pitch:		equ z80_ram+zTimpani_Pitch
 z80_dac_update:		equ z80_ram+zDAC_Update
-z80_dac_unk1FF8:	equ z80_ram+zUnk_1FF8
+z80_dac_voicetbladr:	equ z80_ram+zVoiceTblAdr
 z80_dac_status:		equ z80_ram+zDAC_Status
 z80_dac_sample:		equ z80_ram+zDAC_Sample
 z80_ram_end:		equ $A02000			; end of non-reserved Z80 RAM

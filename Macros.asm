@@ -106,18 +106,6 @@ copyUncTilemap:	macro destination,width,height
 		moveq	#(height)-1,d2
 		bsr.w	TilemapToVRAM
 		endm
-		
-; calculates initial loop counter value for a dbf loop
-; that writes n bytes total at 4 bytes per iteration
-bytesToLcnt function n,n>>2-1
-
-; calculates initial loop counter value for a dbf loop
-; that writes n bytes total at 2 bytes per iteration
-bytesToWcnt function n,n>>1-1
-		
-; calculates initial loop counter value for a dbf loop
-; that writes n bytes total at x bytes per iteration
-bytesToXcnt function n,x,n/x-1
 
 ; ---------------------------------------------------------------------------
 ; start the Z80
@@ -186,6 +174,27 @@ out_of_range:	macro exit,pos
 		subi.w	#128,d1
 		andi.w	#-$80,d1
 		sub.w	d1,d0				; approx distance between object and screen
+		cmpi.w	#128+320+192,d0
+		bhi.ATTRIBUTE	exit
+		endm
+		
+; ---------------------------------------------------------------------------
+; check if object moves out of range
+; input: location to jump to if out of range, x-axis pos (obX(a0) by default)
+; ---------------------------------------------------------------------------
+
+out_of_range_rememberstate:	macro exit,pos
+		if ("pos"<>"")
+		move.w	pos,d0				; get object position (if specified as not obX)
+		else
+		move.w	obX(a0),d0			; get object position
+		endif
+		andi.w	#-$80,d0			; round down to nearest $80
+		move.w	(v_screenposx).w,d1		; get screen position
+		subi.w	#128,d1
+		andi.w	#-$80,d1
+		sub.w	d1,d0				; approx distance between object and screen
+		bmi.ATTRIBUTE	exit
 		cmpi.w	#128+320+192,d0
 		bhi.ATTRIBUTE	exit
 		endm

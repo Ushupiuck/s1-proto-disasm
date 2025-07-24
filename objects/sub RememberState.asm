@@ -1,13 +1,5 @@
 RememberState:
-		move.w	obX(a0),d0
-		andi.w	#-$80,d0
-		move.w	(v_screenposx).w,d1
-		subi.w	#$80,d1
-		andi.w	#-$80,d1
-		sub.w	d1,d0
-		bmi.w	loc_B938
-		cmpi.w	#$280,d0
-		bhi.w	loc_B938
+		out_of_range_rememberstate.w	loc_B938
 		bra.w	DisplaySprite
 ; ---------------------------------------------------------------------------
 

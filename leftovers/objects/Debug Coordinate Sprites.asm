@@ -2,7 +2,7 @@
 Debug_Coord_Sprites:
 		lea	(Debug_Coords_XY_Index).l,a0
 		lea	(v_objslot10).w,a1
-		move.w	#bytesToLcnt(Debug_Coords_XY_Index_End-Debug_Coords_XY_Index),d1
+		move.w	#(Debug_Coords_XY_Index_End-Debug_Coords_XY_Index)/4-1,d1
 
 .loop:
 		move.b	#id_Obj05,obID(a1)
@@ -33,7 +33,7 @@ Debug_Coords_XY_Index_End:
 Debug_Coord_B_Sprites:
 		lea	(Debug_Coords_B_XY_Index).l,a0
 		lea	(v_objslotA).w,a1
-		move.w	#bytesToLcnt(Debug_Coords_B_XY_Index_End-Debug_Coords_B_XY_Index),d1
+		move.w	#(Debug_Coords_B_XY_Index_End-Debug_Coords_B_XY_Index)/4-1,d1
 
 .loop:
 		move.b	#id_Obj05,obID(a1)
