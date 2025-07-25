@@ -80,7 +80,7 @@ loc_C4C6:
 loc_C4D2:
 		bsr.w	SpeedToPos
 		addi.w	#$18,obVelY(a0)
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		tst.w	d1
 		bpl.w	locret_C50C
 		add.w	d1,obY(a0)
@@ -99,8 +99,6 @@ locret_C50C:
 
 loc_C50E:
 		moveq	#0,d0
-
-loc_C510:
 		move.b	(v_oscillate+$12).w,d0
 		lsr.w	#3,d0
 		move.w	objoff_30(a0),d1

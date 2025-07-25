@@ -60,7 +60,7 @@ loc_80EA:
 
 loc_80FA:
 		bsr.w	ObjectFall
-		jsr	(ObjectHitFloor).l
+		jsr	(ObjFloorDist).l
 		tst.w	d1
 		bpl.w	loc_81A4
 		add.w	d1,obY(a0)

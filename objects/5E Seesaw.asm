@@ -26,7 +26,7 @@ loc_E6DA:
 		lea	(ObjSeeSaw_SlopeLine).l,a2
 
 loc_E6EE:
-		lea	(v_objspace).w,a1
+		lea	(v_player).w,a1
 		move.w	#$30,d1
 		jsr	(PtfmSloped).l
 		btst	#3,(a0)
@@ -55,7 +55,7 @@ loc_E71E:
 
 sub_E738:
 		moveq	#2,d1
-		lea	(v_objspace).w,a1
+		lea	(v_player).w,a1
 		move.w	obX(a0),d0
 		sub.w	obX(a1),d0
 		bcc.s	loc_E74C

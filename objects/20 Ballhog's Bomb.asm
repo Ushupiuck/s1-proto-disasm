@@ -25,7 +25,7 @@ ObjCannonball_Act:
 		bne.s	loc_70C2
 		tst.w	objoff_30(a0)
 		bne.s	loc_70D2
-		jsr	(ObjectHitFloor).l
+		jsr	(ObjFloorDist).l
 		tst.w	d1
 		bpl.s	loc_70D6
 		add.w	d1,obY(a0)

@@ -21,7 +21,7 @@ loc_8D02:
 		move.b	#$C,obActWid(a0)
 		bset	#0,obStatus(a0)
 		bsr.w	ObjectFall
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		tst.w	d1
 		bpl.s	locret_8D54
 		add.w	d1,obY(a0)
@@ -73,14 +73,14 @@ loc_8DA2:
 		subi.w	#$18,d3
 
 loc_8DC8:
-		bsr.w	ObjectHitFloor2
+		bsr.w	ObjFloorDist2
 		cmpi.w	#$C,d1
 		bge.s	loc_8DDE
 		rts
 ; ---------------------------------------------------------------------------
 
 loc_8DD4:
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		add.w	d1,obY(a0)
 		rts
 ; ---------------------------------------------------------------------------
@@ -107,7 +107,7 @@ loc_8E10:
 		addi.w	#$18,obVelY(a0)
 		bmi.s	locret_8E44
 		move.b	#3,obAnim(a0)
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		tst.w	d1
 		bpl.s	locret_8E44
 		add.w	d1,obY(a0)

@@ -20,7 +20,7 @@ loc_75C2:
 		move.b	#6,obColType(a0)
 		move.b	#$15,obActWid(a0)
 		bsr.w	ObjectFall
-		jsr	(ObjectHitFloor).l
+		jsr	(ObjFloorDist).l
 		tst.w	d1
 		bpl.s	locret_7614
 		add.w	d1,obY(a0)
@@ -107,7 +107,7 @@ loc_76D4:
 		subi.w	#$20,d3
 
 loc_76FA:
-		jsr	(ObjectHitFloor2).l
+		jsr	(ObjFloorDist2).l
 		cmpi.w	#-8,d1
 		blt.s	loc_7728
 		cmpi.w	#$C,d1
@@ -116,7 +116,7 @@ loc_76FA:
 ; ---------------------------------------------------------------------------
 
 loc_770E:
-		jsr	(ObjectHitFloor).l
+		jsr	(ObjFloorDist).l
 		add.w	d1,obY(a0)
 		move.b	d3,obAngle(a0)
 		bsr.w	sub_7742

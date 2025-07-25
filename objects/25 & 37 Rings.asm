@@ -228,7 +228,7 @@ loc_7E48:
 		add.b	d7,d0
 		andi.b	#3,d0
 		bne.s	loc_7E82
-		jsr	(ObjectHitFloor).l
+		jsr	(ObjFloorDist).l
 		tst.w	d1
 		bpl.s	loc_7E82
 		add.w	d1,obY(a0)

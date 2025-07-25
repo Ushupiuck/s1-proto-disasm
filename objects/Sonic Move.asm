@@ -29,7 +29,7 @@ Sonic_NoRight:
 		moveq	#0,d0
 		move.b	standonobject(a0),d0
 		lsl.w	#object_size_bits,d0
-		lea	(v_objspace).w,a1
+		lea	(v_player).w,a1
 		lea	(a1,d0.w),a1
 		tst.b	obStatus(a1)
 		bmi.s	Sonic_LookUp
@@ -48,7 +48,7 @@ Sonic_NoRight:
 ; ---------------------------------------------------------------------------
 
 Sonic_Balance:
-		jsr	(ObjectHitFloor).l
+		jsr	(ObjFloorDist).l
 		cmpi.w	#$C,d1
 		blt.s	Sonic_LookUp
 		cmpi.b	#3,objoff_36(a0)

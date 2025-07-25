@@ -20,7 +20,7 @@ loc_6F46:
 		move.b	#5,obColType(a0)
 		move.b	#$C,obActWid(a0)
 		bsr.w	ObjectFall
-		jsr	(ObjectHitFloor).l
+		jsr	(ObjFloorDist).l
 		tst.w	d1
 		bpl.s	locret_6F94
 		add.w	d1,obY(a0)
@@ -87,7 +87,7 @@ loc_701C:
 		subq.w	#1,objoff_30(a0)
 		bmi.s	loc_7032
 		bsr.w	SpeedToPos
-		jsr	(ObjectHitFloor).l
+		jsr	(ObjFloorDist).l
 		add.w	d1,obY(a0)
 		rts
 ; ---------------------------------------------------------------------------

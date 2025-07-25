@@ -20,7 +20,7 @@ loc_D338:
 		move.b	#8,obWidth(a0)
 		move.b	#$CC,obColType(a0)
 		bsr.w	ObjectFall
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		tst.w	d1
 		bpl.s	locret_D38A
 		add.w	d1,obY(a0)
@@ -61,7 +61,7 @@ locret_D3CE:
 
 loc_D3D0:
 		bsr.w	SpeedToPos
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		cmpi.w	#-8,d1
 		blt.s	loc_D3F0
 		cmpi.w	#$C,d1

@@ -89,7 +89,7 @@ loc_A01C:
 		btst	#1,obStatus(a0)
 		beq.s	loc_A05E
 		addi.w	#$18,obVelY(a0)
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		tst.w	d1
 		bpl.w	loc_A05C
 		add.w	d1,obY(a0)
@@ -159,7 +159,7 @@ loc_A0C6:
 
 loc_A0CC:
 		move.w	(sp)+,d4
-		lea	(v_objspace).w,a1
+		lea	(v_player).w,a1
 		bclr	#3,obStatus(a1)
 		bclr	#3,obStatus(a0)
 		bra.w	loc_9FF6
@@ -227,7 +227,7 @@ loc_A172:
 		bne.s	loc_A1B8
 		bsr.w	SpeedToPos
 		addi.w	#$18,obVelY(a0)
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		tst.w	d1
 		bpl.w	locret_A1B6
 		add.w	d1,obY(a0)
@@ -298,7 +298,7 @@ loc_A222:
 		move.w	#-$40,d1
 
 loc_A24C:
-		lea	(v_objspace).w,a1
+		lea	(v_player).w,a1
 		add.w	d0,obX(a1)
 		move.w	d1,obInertia(a1)
 		move.w	#0,obVelX(a1)
@@ -309,7 +309,7 @@ loc_A24C:
 		tst.b	obSubtype(a0)
 		bmi.s	locret_A29A
 		move.w	d0,-(sp)
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		move.w	(sp)+,d0
 		cmpi.w	#4,d1
 		ble.s	loc_A296

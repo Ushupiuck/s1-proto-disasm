@@ -2248,31 +2248,7 @@ DemoDataPtr:
 		dc.l byte_61578
 		dc.l byte_6161E
 
-		dc.b 0, 139
-		dc.b btnR, 55
-		dc.b 0, 66
-		dc.b btnR, 92
-		dc.b 0, 106
-		dc.b btnR, 95
-		dc.b 0, 47
-		dc.b btnR, 44
-		dc.b 0, 33
-		dc.b btnR, 3
-		dc.b btnR+btnC, 48
-		dc.b btnR, 8
-		dc.b 0, 46
-		dc.b btnR, 21
-		dc.b 0, 15
-		dc.b btnR, 70
-		dc.b 0, 26
-		dc.b btnR, 255
-		dc.b btnR, 202
-		dc.b 0, 0
-		dc.b 0, 0
-		dc.b 0, 0
-		dc.b 0, 0
-		dc.b 0, 0
-		even
+		include	"demodata/Unused.asm"
 ; ---------------------------------------------------------------------------
 ;sub_314C:
 		cmpi.b	#id_06,(v_zone).w	; are we on Zone 6?
@@ -5371,10 +5347,10 @@ locret_105EE:
 		rts
 ; ---------------------------------------------------------------------------
 
-ObjectHitFloor:
+ObjFloorDist:
 		move.w	obX(a0),d3
 
-ObjectHitFloor2:
+ObjFloorDist2:
 		move.w	obY(a0),d2
 		moveq	#0,d0
 		move.b	obHeight(a0),d0
@@ -6706,13 +6682,13 @@ byte_60BB0:	binclude "artnem/Prison Capsule.nem"
 ; ===========================================================================
 ; Demos
 ; ===========================================================================
-byte_61434:	binclude "demodata/Intro - GHZ.bin"	; Green Hill's demo (act 2?)
+byte_61434:	include "demodata/Intro - GHZ.asm"	; Green Hill's demo (act 2?)
 		even
 byte_614C6:	binclude "demodata/Intro - MZ.bin"	; Marble's demo
 		even
 byte_61578:	binclude "demodata/Intro - SZ.bin"	; Sparkling's demo (?)
 		even
-byte_6161E:	binclude "demodata/Intro - Special Stage.bin" ; Special stage demo
+byte_6161E:	include "demodata/Intro - Special Stage.asm" ; Special stage demo
 		even
 
 		align	$3000

@@ -97,8 +97,7 @@ RespawnNo:	ds.b 1		; respawn list index number
 Routine:	ds.b 1		; routine number
 2ndRout:				; secondary routine number
 Solid:		ds.b 1		; solid status flag
-Angle:		ds.b 1		; angle
-			ds.b 1		; unused
+Angle:		ds.w 1		; angle
 Subtype:	ds.b 1		; object subtype
 Off_29		ds.b 1
 Off_2A		ds.b 1

@@ -261,11 +261,11 @@ DACUpdateTrack:
 		subi.b	#$88,d0
 		move.b	.timpanipitch(pc,d0.w),d0
 		tst.b	(z80_dac_update).l	; is the dac update flag set?
-		bne.s	.nodac		; if not, branch
+		bne.s	.noupdate		; if not, branch
 		move.b	d0,(z80_dac3_pitch).l
 		move.b	#$83,(z80_dac_sample).l	; use timpani sample
 
-.nodac:
+.noupdate:
 		rts
 ; ---------------------------------------------------------------------------
 
@@ -1245,6 +1245,7 @@ StopSpecialSFX:
 		tst.b	SMPS_Track.PlaybackControl(a5)	; Is track playing?
 		bpl.s	.fadedfm			; Branch if not
 		movea.l	SMPS_RAM.v_voice_ptr(a6),a1		; Voice pointer
+		; Bug: The high bit is not cleared here
 		move.b	SMPS_Track.VoiceIndex(a5),d0		; Current voice
 		jsr	SetVoice(pc)
 
@@ -2071,7 +2072,7 @@ cfSetLFO:
 		move.b	(a4),d3				; d3 = slot data
 		adda.w	#9,a0				; a0 = DR1 addr
 		lea	LFO_Reg_Table(pc),a2
-		moveq	#(LFO_Reg_Table_End-LFO_Reg_Table)-1,d6 ; loop time
+		moveq	#LFO_Reg_Table_End-LFO_Reg_Table-1,d6 ; loop time
 
 .lfo_loop:
 		move.b	(a1)+,d1			; d1 = DR data
@@ -2097,7 +2098,7 @@ cfSetLFO:
 ; ---------------------------------------------------------------------------
 
 LFO_Reg_Table:	dc.b $60, $68, $64, $6C
-LFO_Reg_Table_End:
+LFO_Reg_Table_End
 ; ---------------------------------------------------------------------------
 
 cfSetTempo:
@@ -2158,7 +2159,7 @@ SetVoice:
 		move.b	#$B0,d0				; Command to write feedback/algorithm
 		jsr	WriteFMIorII(pc)
 		lea	FMInstrumentOperatorTable(pc),a2
-		moveq	#(FMInstrumentOperatorTable_End-FMInstrumentOperatorTable)-1,d3 ; Don't want to send TL yet
+		moveq	#FMInstrumentOperatorTable_End-FMInstrumentOperatorTable-1,d3 ; Don't want to send TL yet
 
 .sendvoiceloop:
 		move.b	(a2)+,d0
@@ -2166,8 +2167,8 @@ SetVoice:
 		jsr	WriteFMIorII(pc)
 		dbf	d3,.sendvoiceloop
 
-		moveq	#(FMInstrumentTLTable_End-FMInstrumentTLTable)-1,d5
-		andi.w	#7,d4				; Get algorithm
+		moveq	#FMInstrumentTLTable_End-FMInstrumentTLTable-1,d5
+		andi.w	#FMSlotMask_End-FMSlotMask-1,d4	; Get algorithm
 		move.b	FMSlotMask(pc,d4.w),d4		; Get slot mask for algorithm
 		move.b	SMPS_Track.Volume(a5),d3		; Track volume attenuation
 
@@ -2191,7 +2192,7 @@ locret_75454:
 ; ---------------------------------------------------------------------------
 
 FMSlotMask:	dc.b 8,	8, 8, 8, $A, $E, $E, $F
-		even
+FMSlotMask_End
 ; ---------------------------------------------------------------------------
 
 SendVoiceTL:
@@ -2220,11 +2221,11 @@ SendVoiceTL:
 		adda.w	#21,a1				; Want TL
 		lea	FMInstrumentTLTable(pc),a2
 		move.b	SMPS_Track.FeedbackAlgo(a5),d0	; Get feedback/algorithm
-		andi.w	#7,d0				; Want only algorithm
+		andi.w	#FMSlotMask_End-FMSlotMask-1,d0	; Want only algorithm
 		move.b	FMSlotMask(pc,d0.w),d4		; Get slot mask
 		move.b	SMPS_Track.Volume(a5),d3		; Get track volume attenuation
 		bmi.s	.locret				; If negative, stop
-		moveq	#(FMInstrumentTLTable_End-FMInstrumentTLTable)-1,d5
+		moveq	#FMInstrumentTLTable_End-FMInstrumentTLTable-1,d5
 
 .sendtlloop:
 		move.b	(a2)+,d0
@@ -2517,10 +2518,10 @@ SSG_Reg_Table:	dc.b $90, $50
 		dc.b $98, $58
 		dc.b $94, $54
 		dc.b $9C, $5C
-SSG_Reg_Table_End:
+SSG_Reg_Table_End
 
 DACDriver:	include	"sound/z80.asm"
-DACDriver_End:	even
+DACDriver_End
 ; ---------------------------------------------------------------------------
 ; SMPS2ASM - A collection of macros that make SMPS's bytecode human-readable.
 ; ---------------------------------------------------------------------------

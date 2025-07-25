@@ -50,7 +50,7 @@ loc_D274:
 		tst.w	obVelY(a0)
 		bmi.s	loc_D2AE
 		move.b	#0,obFrame(a0)
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		tst.w	d1
 		bpl.s	loc_D2AE
 		move.w	(a1),d0

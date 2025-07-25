@@ -90,7 +90,7 @@ locret_C360:
 
 loc_C362:
 		bclr	#1,obStatus(a0)
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		tst.w	d1
 		bpl.s	locret_C382
 		move.b	#8,obSubtype(a0)
