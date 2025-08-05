@@ -6,8 +6,10 @@ ObjMZBlocks:
 		move.w	off_C3FC(pc,d0.w),d1
 		jmp	off_C3FC(pc,d1.w)
 ; ---------------------------------------------------------------------------
+off_C3FC:	dc.w loc_C400-off_C3FC
+			dc.w loc_C43C-off_C3FC
 
-off_C3FC:	dc.w loc_C400-off_C3FC, loc_C43C-off_C3FC
+brick_origY = objoff_30
 ; ---------------------------------------------------------------------------
 
 loc_C400:
@@ -19,7 +21,7 @@ loc_C400:
 		move.b	#4,obRender(a0)
 		move.b	#3,obPriority(a0)
 		move.b	#$10,obActWid(a0)
-		move.w	obY(a0),objoff_30(a0)
+		move.w	obY(a0),brick_origY(a0)
 		move.w	#$5C0,objoff_32(a0)
 
 loc_C43C:
@@ -42,9 +44,11 @@ loc_C46A:
 		out_of_range.w	DeleteObject
 		rts
 ; ---------------------------------------------------------------------------
-
-off_C48E:	dc.w locret_C498-off_C48E, loc_C4B2-off_C48E, loc_C49A-off_C48E, loc_C4D2-off_C48E
-		dc.w loc_C50E-off_C48E
+off_C48E:	dc.w locret_C498-off_C48E
+			dc.w loc_C4B2-off_C48E
+			dc.w loc_C49A-off_C48E
+			dc.w loc_C4D2-off_C48E
+			dc.w loc_C50E-off_C48E
 ; ---------------------------------------------------------------------------
 
 locret_C498:
@@ -71,7 +75,7 @@ loc_C4B2:
 		addi.w	#$10,d0
 
 loc_C4C6:
-		move.w	objoff_30(a0),d1
+		move.w	brick_origY(a0),d1
 		sub.w	d0,d1
 		move.w	d1,obY(a0)
 		rts
@@ -85,7 +89,7 @@ loc_C4D2:
 		bpl.w	locret_C50C
 		add.w	d1,obY(a0)
 		clr.w	obVelY(a0)
-		move.w	obY(a0),objoff_30(a0)
+		move.w	obY(a0),brick_origY(a0)
 		move.b	#4,obSubtype(a0)
 		move.w	(a1),d0
 		andi.w	#$3FF,d0
@@ -101,7 +105,7 @@ loc_C50E:
 		moveq	#0,d0
 		move.b	(v_oscillate+$12).w,d0
 		lsr.w	#3,d0
-		move.w	objoff_30(a0),d1
+		move.w	brick_origY(a0),d1
 		sub.w	d0,d1
 		move.w	d1,obY(a0)
 		rts
