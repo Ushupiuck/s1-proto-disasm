@@ -162,13 +162,13 @@ loc_264:
 		dbf	d6,loc_264
 		move.l	#($8100+%0100)<<16|$8F00+%0010,(a4)
 		move.l	#$C0000000,(a4)
-		moveq	#(v_palette_end-v_palette)/4-1,d3
+		moveq	#bytesToLcnt(v_palette_end-v_palette),d3
 
 loc_278:
 		move.l	d0,(a3)
 		dbf	d3,loc_278
 		move.l	#$40000010,(a4)
-		moveq	#($50)/4-1,d4
+		moveq	#bytesToLcnt($50),d4
 
 loc_286:
 		move.l	d0,(a3)
@@ -183,15 +183,15 @@ loc_28E:
 		disable_ints
 		bra.s	loc_306
 ; ---------------------------------------------------------------------------
-SetupValues:	dc.l $8000				; VDP register start number
-		dc.l (v_end-v_start)/4-1		; size of RAM\4
-		dc.l $100				; VDP register diff
+SetupValues:	dc.l $8000			; VDP register start number
+		dc.l bytesToLcnt(v_end-v_start)		; size of RAM divided by 4
+		dc.l $100					; VDP register diff
 
 		dc.l z80_ram				; start of Z80 RAM
-		dc.l z80_bus_request			; Z80 bus request
+		dc.l z80_bus_request		; Z80 bus request
 		dc.l z80_reset				; Z80 reset
 		dc.l vdp_data_port			; VDP data
-		dc.l vdp_control_port			; VDP control
+		dc.l vdp_control_port		; VDP control
 
 VDPInitValues:
 		dc.b 4			; VDP $80 - 8-colour mode
@@ -259,7 +259,7 @@ zStartupCodeEndLoc:
 Z80StartupCodeEnd:
 
 PSGInitValues:
-		dc.b $9F,$BF,$DF,$FF			; values for PSG channel volumes
+		dc.b $9F,$BF,$DF,$FF		; values for PSG channel volumes
 PSGInitValues_End:
 ; ---------------------------------------------------------------------------
 
@@ -285,7 +285,7 @@ loc_32C:
 		nop
 		lea	(v_crossresetram).w,a6
 		moveq	#0,d7
-		move.w	#(v_end-v_crossresetram)/4-1,d6
+		move.w	#bytesToLcnt(v_end-v_crossresetram),d6
 
 loc_348:
 		move.l	d7,(a6)+
@@ -299,7 +299,7 @@ loc_348:
 loc_36A:
 		lea	(v_start&$FFFFFF).l,a6
 		moveq	#0,d7
-		move.w	#(v_crossresetram-v_start)/4-1,d6
+		move.w	#bytesToLcnt(v_crossresetram-v_start),d6
 
 loc_376:
 		move.l	d7,(a6)+
@@ -335,7 +335,7 @@ ptr_GM_Special:	bra.w	GM_Special
 ChecksumError:
 		bsr.w	VDPSetupGame
 		move.l	#$C0000000,(vdp_control_port).l	; Set VDP to CRAM write
-		moveq	#(v_palette_end-v_palette)/2-1,d7
+		moveq	#bytesToWcnt(v_palette_end-v_palette),d7
 
 .palette:
 		move.w	#cRed,(vdp_data_port).l		; Write red to data
@@ -433,7 +433,7 @@ ErrorPrint:
 		lea	(vdp_data_port).l,a6
 		locVRAM	ArtTile_Error_Handler_Font*tile_size
 		lea	(Art_Text).l,a0
-		move.w	#(Art_Text_end-Art_Text-tile_size)/2-1,d1
+		move.w	#bytesToWcnt(Art_Text_end-Art_Text-tile_size),d1
 
 .loadart:
 		move.w	(a0)+,(a6)
@@ -718,7 +718,7 @@ HBlank2:
 		locVRAM vram_sprites
 		lea	(v_spritetablebuffer).w,a0
 		lea	(vdp_data_port).l,a5
-		move.w	#(v_spritetablebuffer_end-v_spritetablebuffer)/4-1,d0
+		move.w	#bytesToLcnt(v_spritetablebuffer_end-v_spritetablebuffer),d0
 
 .spritetabletovdp:
 		move.l	(a0)+,(a5)
@@ -778,7 +778,7 @@ VDPSetupGame:
 		lea	(vdp_control_port).l,a0
 		lea	(vdp_data_port).l,a1
 		lea	(VDPSetupArray).l,a2
-		moveq	#(VDPSetupArray_End-VDPSetupArray)/2-1,d7
+		moveq	#bytesToWcnt(VDPSetupArray_End-VDPSetupArray),d7
 
 loc_101E:
 		move.w	(a2)+,(a0)
@@ -787,7 +787,7 @@ loc_101E:
 		move.w	d0,(v_vdp_buffer1).w
 		moveq	#0,d0
 		move.l	#$C0000000,(vdp_control_port).l
-		move.w	#(v_palette_end-v_palette)/2-1,d7
+		move.w	#bytesToWcnt(v_palette_end-v_palette),d7
 
 loc_103E:
 		move.w	d0,(a1)
@@ -988,7 +988,7 @@ NewPLC:
 
 ClearPLC:
 		lea	(v_plc_buffer).w,a2		; PLC buffer space in RAM
-		moveq	#(v_plc_buffer_end-v_plc_buffer)/4-1,d0
+		moveq	#bytesToLcnt(v_plc_buffer_end-v_plc_buffer),d0
 
 .clearram:
 		clr.l	(a2)+
@@ -1088,7 +1088,7 @@ locret_14D0:
 
 ShiftPLC:
 		lea	(v_plc_buffer).w,a0
-		moveq	#(v_plc_buffer_only_end-v_plc_buffer-6)/4-1,d0
+		moveq	#bytesToLcnt(v_plc_buffer_only_end-v_plc_buffer-6),d0
 
 loc_14D8:
 		move.l	6(a0),(a0)+
@@ -1554,7 +1554,7 @@ GM_Title:
 		lea	(vdp_data_port).l,a6
 		locVRAM ArtTile_Level_Select_Font*tile_size,vdp_control_port-vdp_data_port(a6)
 		lea	(Art_Text).l,a5
-		move.w	#(Art_Text_end-Art_Text)/2-1,d1
+		move.w	#bytesToWcnt(Art_Text_end-Art_Text),d1
 
 loc_25D8:
 		move.w	(a5)+,(a6)
@@ -1574,7 +1574,7 @@ loc_25D8:
 		bsr.w	NemDec
 		lea	(Blk16_GHZ).l,a0
 		lea	(v_16x16).w,a4
-		move.w	#(v_16x16_end-v_16x16)/4-1,d0
+		move.w	#bytesToLcnt(v_16x16_end-v_16x16),d0
 
 .loadblocks:
 		move.l	(a0)+,(a4)+
@@ -1637,7 +1637,7 @@ loc_26E4:
 		disable_ints
 		lea	(vdp_data_port).l,a6
 		move.l	#$60000003,(vdp_control_port).l
-		move.w	#($1000)/4-1,d1
+		move.w	#bytesToLcnt($1000),d1
 
 loc_2732:
 		move.l	d0,(a6)
@@ -2260,7 +2260,7 @@ DemoDataPtr:
 
 sub_3166:
 		lea	(Anim256Unk1).l,a0
-		move.w	#(Anim256Unk1_end-Anim256Unk1)/2-1,d1
+		move.w	#bytesToWcnt(Anim256Unk1_end-Anim256Unk1),d1
 
 .loadchunks:
 		move.w	(a0)+,(a1)+
@@ -2273,7 +2273,7 @@ locret_3176:
 sub_3178:
 		lea	(v_256x256&$FFFFFF).l,a1
 		lea	(Anim256Unk2).l,a0
-		move.w	#(Anim256Unk2_end-Anim256Unk2)/2-1,d1
+		move.w	#bytesToWcnt(Anim256Unk2_end-Anim256Unk2),d1
 
 .loadchunks2:
 		move.w	(a0)+,d0
@@ -2298,7 +2298,7 @@ LoadAnimatedBlocks:
 .isslz:
 		lea	(v_16x16+$1790).w,a1	; load ROM address for animated blocks to load in the main block RAM into a1.
 		lea	(Anim16GHZ).l,a0	; load animated GHZ blocks into a0.
-		move.w	#(Anim16GHZ_end-Anim16GHZ)/2-1,d1	; load approximate size of the blocks into d1.
+		move.w	#bytesToWcnt(Anim16GHZ_end-Anim16GHZ),d1	; load approximate size of the blocks into d1.
 
 .loadghz:
 		move.w	(a0)+,(a1)+
@@ -2311,7 +2311,7 @@ LoadAnimatedBlocks:
 .ismz:
 		lea	(v_16x16+$17A0).w,a1	; load ROM address for animated blocks to load in the main block RAM into a1.
 		lea	(Anim16MZ).l,a0	; load animated MZ blocks into a0.
-		move.w	#(Anim16MZ_end-Anim16MZ)/2-1,d1	; load approximate size of the blocks into d1.
+		move.w	#bytesToWcnt(Anim16MZ_end-Anim16MZ),d1	; load approximate size of the blocks into d1.
 
 .loadmz:
 		move.w	(a0)+,(a1)+
@@ -2329,11 +2329,11 @@ DebugPosLoadArt:
 ; ---------------------------------------------------------------------------
 		locVRAM $4F0*tile_size
 		lea	(Art_Text).l,a0
-		move.w	#(Art_Text_end-Art_Text-tile_size*$1F)/2-1,d1
+		move.w	#bytesToWcnt(Art_Text_end-Art_Text-tile_size*$1F),d1
 		bsr.s	.loadtext
 		lea	(Art_Text).l,a0
 		adda.w	#$11*tile_size,a0
-		move.w	#(Art_Text_end-Art_Text-tile_size*$23)/2-1,d1
+		move.w	#bytesToWcnt(Art_Text_end-Art_Text-tile_size*$23),d1
 
 .loadtext:
 		move.w	(a0)+,(vdp_data_port).l
@@ -2358,12 +2358,10 @@ DebugPosLoadArt:
 		dbf	d1,.loadtext
 		rts
 ; ---------------------------------------------------------------------------
-
 .1bpp:	dc.b 0, 6, $60, $66
 		even
 
 		include "include/Oscillatory Routines.asm"
-
 ; ---------------------------------------------------------------------------
 
 UpdateTimers:
@@ -3320,7 +3318,7 @@ LoadLevelData:
 		addq.l	#4,a2
 		movea.l	(a2)+,a0
 		lea	(v_16x16).w,a4
-		move.w	#(v_16x16_end-v_16x16)/4-1,d0
+		move.w	#bytesToLcnt(v_16x16_end-v_16x16),d0
 
 .loadblocks:
 		move.l	(a0)+,(a4)+
@@ -3387,7 +3385,7 @@ locret_48B8:
 
 LevelLayoutLoad:
 		lea	(v_lvllayout).w,a3
-		move.w	#(v_lvllayout_end-v_lvllayout)/2-1,d1	; Bug: This clears too much data! To fix this, divid by 4.
+		move.w	#bytesToWcnt(v_lvllayout_end-v_lvllayout),d1	; Bug: This clears too much data! To fix this, change bytesToWcnt to bytesToLcnt.
 		moveq	#0,d0
 
 loc_48C4:
@@ -3981,7 +3979,7 @@ Map_Monitor:	include "_maps/Monitor.asm"
 
 ExecuteObjects:
 		lea	(v_objspace).w,a0
-		moveq	#(v_objspace_end-v_objspace)/object_size-1,d7
+		moveq	#bytesToXcnt(v_objspace_end-v_objspace,object_size),d7
 		moveq	#0,d0
 		cmpi.b	#6,(v_player+obRoutine).w	; has sonic died?
 		bhs.s	loc_8560			; if so, branch
@@ -4002,9 +4000,9 @@ loc_8556:
 ; ---------------------------------------------------------------------------
 
 loc_8560:
-		moveq	#(v_lvlobjspace-v_objspace)/object_size-1,d7
+		moveq	#bytesToXcnt(v_lvlobjspace-v_objspace,object_size),d7
 		bsr.s	sub_8546
-		moveq	#(v_lvlobjend-v_lvlobjspace)/object_size-1,d7
+		moveq	#bytesToXcnt(v_lvlobjend-v_lvlobjspace,object_size),d7
 
 loc_8566:
 		moveq	#0,d0
@@ -4340,7 +4338,8 @@ loc_8A00:
 		lea	(v_objstate).w,a2
 		move.w	#$101,(a2)+
 		; Bug: This does word when it should be doing longword and the last 2 bytes of v_objstate are not accounted for.
-		move.w	#(v_objstate_end-v_objstate-2)/2-1,d0
+		; To fix this, change bytesToWcnt to bytesToLcnt, and add "clr.w	(a2)+" after the dbf to account for the missed bytes.
+		move.w	#bytesToWcnt(v_objstate_end-v_objstate-2),d0
 
 loc_8A38:
 		clr.l	(a2)+
@@ -4500,7 +4499,7 @@ locret_8B70:
 
 FindFreeObj:
 		lea	(v_lvlobjspace).w,a1
-		move.w	#(v_lvlobjend-v_lvlobjspace)/object_size-1,d0
+		move.w	#bytesToXcnt(v_lvlobjend-v_lvlobjspace,object_size),d0
 
 loc_8B7A:
 		tst.b	obID(a1)
@@ -5712,7 +5711,7 @@ Special_AniWallsandRings:
 		move.b	(v_ssangle).w,d0
 		lsr.b	#2,d0
 		andi.w	#$F,d0
-		moveq	#($20)/2-1,d1
+		moveq	#bytesToWcnt($20),d1
 
 loc_109C2:
 		move.w	d0,(a1)
@@ -5787,7 +5786,7 @@ SS_WaRiVramSet:	dc.w $142, $142, $142, $2142
 
 sub_10ACC:
 		lea	(v_ssitembuffer).l,a2
-		move.w	#(v_ssitembuffer_end-v_ssitembuffer)/8-1,d0
+		move.w	#bytesToXcnt(v_ssitembuffer_end-v_ssitembuffer,8),d0
 
 loc_10AD6:
 		tst.b	(a2)
@@ -5801,7 +5800,7 @@ locret_10AE0:
 
 Special_AniItems:
 		lea	(v_ssitembuffer).l,a0
-		move.w	#(v_ssitembuffer_end-v_ssitembuffer)/8-1,d7
+		move.w	#bytesToXcnt(v_ssitembuffer_end-v_ssitembuffer,8),d7
 
 loc_10AEC:
 		moveq	#0,d0
@@ -5872,7 +5871,7 @@ byte_10B6A:	dc.b $1B, $1C, $1B, $1C, 0, 0
 
 SS_Load:
 		lea	(v_ssbuffer1).l,a1
-		move.w	#(v_ssbuffer2-v_ssbuffer1)/4-1,d0
+		move.w	#bytesToLcnt(v_ssbuffer2-v_ssbuffer1),d0
 
 loc_10B7A:
 		clr.l	(a1)+
@@ -5883,7 +5882,7 @@ loc_10B7A:
 		moveq	#$24-1,d1
 
 loc_10B8E:
-		moveq	#($24)/4-1,d2
+		moveq	#bytesToLcnt($24),d2
 
 loc_10B90:
 		move.l	(a0)+,(a1)+
@@ -5894,7 +5893,7 @@ loc_10B90:
 
 		lea	(v_ssblocktypes+8).l,a1
 		lea	(SS_MapIndex).l,a0
-		moveq	#(SS_MapIndex_End-SS_MapIndex)/6-1,d1
+		moveq	#bytesToXcnt(SS_MapIndex_End-SS_MapIndex,6),d1
 
 loc_10BAC:
 		move.l	(a0)+,(a1)+
@@ -5904,7 +5903,7 @@ loc_10BAC:
 		dbf	d1,loc_10BAC
 
 		lea	(v_ssitembuffer).l,a1
-		move.w	#(v_ssitembuffer_end-v_ssitembuffer)/4-1,d1
+		move.w	#bytesToLcnt(v_ssitembuffer_end-v_ssitembuffer),d1
 
 loc_10BC8:
 
@@ -5923,7 +5922,7 @@ loc_10BC8:
 		moveq	#$40-1,d1
 
 loc_10CA6:
-		moveq	#($40)/4-1,d2
+		moveq	#bytesToLcnt($40),d2
 
 loc_10CA8:
 		move.l	(a0)+,(a1)+
