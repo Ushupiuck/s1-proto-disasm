@@ -6,7 +6,7 @@
 
 ; Initialise the values
 
-oscInit:
+OscillateNumInit:
 		lea	(v_oscillate).w,a1
 		lea	(.baselines).l,a2
 		moveq	#$20,d1
@@ -39,7 +39,7 @@ oscInit:
 
 ; Oscillate values
 
-oscUpdate:
+OscillateNumDo:
 		cmpi.b	#6,(v_objspace+obRoutine).w
 		bcc.s	.end
 		lea	(v_oscillate).w,a1
