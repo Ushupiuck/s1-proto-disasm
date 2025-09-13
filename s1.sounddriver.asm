@@ -268,14 +268,12 @@ DACUpdateTrack:
 .noupdate:
 		rts
 ; ---------------------------------------------------------------------------
-
 .timpanipitch:	dc.b dpcmLoopCounter(8250)
 		dc.b dpcmLoopCounter(7600)
 		dc.b dpcmLoopCounter(6400)
 		dc.b dpcmLoopCounter(6250)
 		; the values below are invalid and will play at a very slow rate
 		dc.b $FF, $FF, $FF, $FF
-		even
 ; ---------------------------------------------------------------------------
 
 FMUpdateTrack:
@@ -497,7 +495,7 @@ FM3SpcUpdateFreq:
 		dc.b $AC, $A8
 		dc.b $AE, $AA
 		dc.b $A6, $A2
-.fm3freqs_end:	even
+.fm3freqs_end
 ; ---------------------------------------------------------------------------
 
 FMPan_Set:
@@ -577,7 +575,6 @@ loc_7457E:
 locret_745AE:
 		rts
 ; ---------------------------------------------------------------------------
-
 FM_Pan_Table:	dc.l pan_1_data
 		dc.l pan_2_data
 		dc.l pan_3_data
@@ -721,7 +718,6 @@ PlaySnd_Cmd:
 		lsl.w	#2,d7
 		jmp	Sound_ExIndex(pc,d7.w)
 ; ---------------------------------------------------------------------------
-
 Sound_ExIndex:
 ptr_flgE0:	bra.w	PlaySnd_FadeOut
 ptr_flgE1:	bra.w	StopSFX
@@ -935,11 +931,9 @@ PlaySnd_Music:
 		addq.w	#4,sp
 		rts
 ; ---------------------------------------------------------------------------
-
 FMDACInitBytes:
 		dc.b 6, 0, 1, 2, 4, 5, 6
 		even
-
 PSGInitBytes:
 		dc.b $80, $A0, $C0
 		even
@@ -1415,7 +1409,7 @@ InitMusicPlayback:
 		dbf	d0,.clearramloop
 
 		; Restore the values saved above
-		; Bug: Like above, v_soundqueue0 and the other queues are not restored
+		; Bug: Like above, v_soundqueue0 and the other queues are not restored either
 		_move.b	d1,SMPS_RAM.v_sndprio(a6)
 		move.b	d2,SMPS_RAM.f_1up_playing(a6)
 		move.b	d3,SMPS_RAM.f_speedup(a6)
