@@ -5038,7 +5038,7 @@ loc_109E0:
 		move.b	#8-1,(v_ani2_time).w
 		bra.s	loc_10A02
 ; ---------------------------------------------------------------------------
-		; unused
+; unused
 		addq.b	#1,(v_ani2_frame).w		; the GOAL blocks were meant to flash yellow
 		andi.b	#1,(v_ani2_frame).w
 
@@ -5077,7 +5077,6 @@ loc_10A26:
 		move.w	6(a0),$18(a1)
 		rts
 ; ---------------------------------------------------------------------------
-
 SS_WaRiVramSet:	dc.w $142, $142, $142, $2142
 		dc.w $142, $142, $142, $142
 		dc.w $2142, $2142, $2142, $142
@@ -5219,7 +5218,7 @@ loc_10BC8:
 
 		include "include/Special Stage Mappings & VRAM Pointers.asm"
 
-		; unused
+; unused
 ;sub_10C98:
 		lea	(v_ssblockbuffer).l,a1
 		lea	(SS_1).l,a0
