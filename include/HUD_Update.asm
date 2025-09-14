@@ -407,7 +407,7 @@ loc_119AE:
 ; ---------------------------------------------------------------------------
 
 Hud_Lives:
-		locVRAM (ArtTile_HUD+$113)*tile_size,d0
+		locVRAM (ArtTile_Lives_Counter+9)*tile_size,d0
 		moveq	#0,d1
 		move.b	(v_lives).w,d1
 		lea	(Hud_10).l,a2
