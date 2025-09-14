@@ -1879,7 +1879,7 @@ loc_2944:
 		move.w	#$C680,d3
 
 loc_2996:
-		locVRAM $EBB0
+		locVRAM vram_bg+$BB0
 		move.w	(v_levselsound).w,d0
 		addi.w	#$80,d0
 		move.b	d0,d2
