@@ -99,7 +99,7 @@ loc_8360:
 		cmpi.b	#6,d0
 		bne.s	loc_83A0
 		addi.w	#10,(v_rings).w
-		ori.b	#1,(f_extralife).w
+		ori.b	#1,(f_ringcount).w
 		cmpi.w	#50,(v_rings).w
 		bcs.s	loc_8396
 		bset	#0,(v_lifecount).w

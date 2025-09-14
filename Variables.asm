@@ -241,7 +241,7 @@ v_lives:		ds.b 1
 			ds.b 8		; unused
 v_lifecount:	ds.b 1		; lives counter value (for actual number, see "v_lives")
 f_lifecount:	ds.b 1		; lives counter update flag
-f_extralife:	ds.b 1
+f_ringcount:	ds.b 1
 f_timecount:	ds.b 1
 f_scorecount:	ds.b 1		; score counter update flag
 v_rings:		ds.b 1
