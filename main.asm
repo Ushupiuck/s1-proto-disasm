@@ -2165,7 +2165,7 @@ loc_2E9E:
 		bsr.w	ObjPosLoad
 		subq.w	#1,(v_palchgspeed).w
 		bpl.s	loc_2EC8
-		move.w	#2,(v_palchgspeed).w
+		move.w	#3-1,(v_palchgspeed).w
 		bsr.w	FadeOut_ToBlack
 
 loc_2EC8:
@@ -2262,13 +2262,13 @@ locret_30FE:
 		rts
 ; ---------------------------------------------------------------------------
 DemoDataPtr:
-		dc.l byte_614C6
-		dc.l byte_614C6
-		dc.l byte_614C6
-		dc.l byte_61434
-		dc.l byte_61578
-		dc.l byte_61578
-		dc.l byte_6161E
+		dc.l Demo_MZ
+		dc.l Demo_MZ
+		dc.l Demo_MZ
+		dc.l Demo_GHZ
+		dc.l Demo_SZ
+		dc.l Demo_SZ
+		dc.l Demo_SS
 
 		include	"demodata/Unused.asm"
 ; ---------------------------------------------------------------------------
@@ -5565,12 +5565,11 @@ byte_60BB0:	binclude "artnem/Prison Capsule.nem"
 ; ===========================================================================
 ; Demos
 ; ===========================================================================
-byte_61434:	include "demodata/Intro - GHZ.asm"	; Green Hill's demo (act 2?)
-byte_614C6:	binclude "demodata/Intro - MZ.bin"	; Marble's demo
+Demo_GHZ:	include "demodata/Intro - GHZ.asm"	; Green Hill's demo (act 2?)
+Demo_MZ:	include "demodata/Intro - MZ.asm"	; Marble's demo
+Demo_SZ:	binclude "demodata/Intro - SZ.bin"	; Sparkling's demo (?)
 		even
-byte_61578:	binclude "demodata/Intro - SZ.bin"	; Sparkling's demo (?)
-		even
-byte_6161E:	include "demodata/Intro - Special Stage.asm" ; Special stage demo
+Demo_SS:	include "demodata/Intro - Special Stage.asm" ; Special stage demo
 
 		align	$3000
 
