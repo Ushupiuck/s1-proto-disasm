@@ -108,7 +108,7 @@ loc_11788:
 		tst.b	(f_endactbonus).w
 		beq.s	locret_117B0
 		clr.b	(f_endactbonus).w
-		locVRAM (ArtTile_Title_Card-$10)*tile_size
+		locVRAM ArtTile_Bonuses*tile_size
 		moveq	#0,d1
 		move.w	(v_timebonus).w,d1
 		bsr.w	Hud_TimeRingBonus
