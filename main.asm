@@ -747,9 +747,9 @@ InitJoypads:
 		stopZ80
 		waitZ80
 		moveq	#$40,d0
-		move.b	d0,($A10009).l
-		move.b	d0,($A1000B).l
-		move.b	d0,($A1000D).l
+		move.b	d0,(z80_port_1_control+1).l
+		move.b	d0,(z80_port_2_control+1).l
+		move.b	d0,(z80_expansion_control+1).l
 		startZ80
 		rts
 ; ---------------------------------------------------------------------------
@@ -833,7 +833,7 @@ VDPSetupArray:
 		dc.w $9000+%0001
 		dc.w $9100
 		dc.w $9200
-VDPSetupArray_End:
+VDPSetupArray_End
 ; ---------------------------------------------------------------------------
 
 ClearScreen:
@@ -1274,10 +1274,10 @@ loc_1A36:
 
 PalCycSega:
 		subq.w	#1,(v_pcyc_time).w
-		bpl.s	.locret
+		bpl.s	.return
 		move.w	#4-1,(v_pcyc_time).w
 		move.w	(v_pcyc_num).w,d0	; get cycle number
-		bmi.s	.locret	; if negative, return
+		bmi.s	.return	; if negative, return
 		subq.w	#2,(v_pcyc_num).w	; subtract 2 from cycle number
 		lea	(Cyc_Sega).l,a0
 		lea	(v_palette+4).w,a1
@@ -1289,7 +1289,7 @@ PalCycSega:
 		move.l	(a0)+,(a1)+
 		move.w	(a0)+,(a1)+
 
-.locret:
+.return:
 		rts
 ; ---------------------------------------------------------------------------
 Cyc_Sega:	binclude "palette/Cycle - Sega.bin"
@@ -1511,8 +1511,8 @@ loc_2528:
 		bsr.w	PalCycSega
 		tst.w	(v_demolength).w
 		beq.s	loc_2544
-		andi.b	#btnStart,(v_jpadpress1).w
-		beq.s	loc_2528
+		andi.b	#btnStart,(v_jpadpress1).w	; is start pressed?
+		beq.s	loc_2528	; if not, loop
 
 loc_2544:
 		move.b	#id_Title,(v_gamemode).w
@@ -1918,8 +1918,38 @@ loc_29DE:
 ; ---------------------------------------------------------------------------
 
 LevelSelectText:
-		binclude "misc/Level Select Text.bin"
-		even
+		charset ' ', $FF
+		charset '0', "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09"
+		charset '$', $0A
+		charset '-', $0B
+		charset '=', $0C
+		charset '>', $0D
+		;charset '>', $0E ; there are two identical right arrows back-to-back in the menutext font, for some reason
+		charset 'Y', "\x0F\x10" ; Y and Z come before A-X
+		charset 'A', "\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x20\x21\x22\x23\x24\x25\x26\x27\x28"
+
+		dc.b "GREEN HILL ZONE STAGE 1 "
+		dc.b "                STAGE 2 "
+		dc.b "                STAGE 3 "
+		dc.b "LABYRINTH ZONE  STAGE 1 "
+		dc.b "                STAGE 2 "
+		dc.b "                STAGE 3 "
+		dc.b "MARBLE ZONE     STAGE 1 "
+		dc.b "                STAGE 2 "
+		dc.b "                STAGE 3 "
+		dc.b "STAR LIGHT ZONE STAGE 1X"
+		dc.b "                STAGE 2X"
+		dc.b "                STAGE 3X"
+		dc.b "SPARKLING ZONE  STAGE 1 "
+		dc.b "                STAGE 2 "
+		dc.b "                STAGE 3 "
+		dc.b "CLOCK WORK ZONE STAGE 1 "
+		dc.b "                STAGE 2 "
+		dc.b "                STAGE 3X"
+		dc.b "SPECIAL STAGE           "
+		dc.b "SOUND SELECT            "
+
+		charset
 
 MusicList:	
 		dc.b bgm_GHZ
