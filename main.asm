@@ -1842,11 +1842,15 @@ locret_292A:
 ; ---------------------------------------------------------------------------
 
 LevSelTextLoad:
+
+textpos:	= ($40000000+(($E210&$3FFF)<<16)+(($E210&$C000)>>14))
+					; $E210 is a VRAM address
+
 		lea	(LevelSelectText).l,a1
 		lea	(vdp_data_port).l,a6
-		move.l	#$62100003,d4
+		move.l	#textpos,d4
 		move.w	#$E680,d3
-		moveq	#$14-1,d1				; Only load 14 lines.
+		moveq	#20-1,d1	; Only load 20 lines.
 
 loc_2944:
 		move.l	d4,4(a6)
@@ -1856,7 +1860,7 @@ loc_2944:
 		moveq	#0,d0
 		move.w	(v_levselitem).w,d0
 		move.w	d0,d1
-		move.l	#$62100003,d4
+		move.l	#textpos,d4
 		lsl.w	#7,d0
 		swap	d0
 		add.l	d0,d4
@@ -1899,7 +1903,7 @@ loc_29C6:
 ; ---------------------------------------------------------------------------
 
 sub_29CC:
-		moveq	#$18-1,d2
+		moveq	#24-1,d2
 
 loc_29CE:
 		moveq	#0,d0
