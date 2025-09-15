@@ -114,7 +114,7 @@ loc_A05E:
 		bmi.s	loc_A078
 		moveq	#0,d3
 		move.b	obActWid(a0),d3
-		bsr.w	ObjectHitWallRight
+		bsr.w	ObjHitWallRight
 		tst.w	d1
 		bmi.s	loc_A08A
 		bra.s	loc_A0A0
@@ -124,7 +124,7 @@ loc_A078:
 		moveq	#0,d3
 		move.b	obActWid(a0),d3
 		not.w	d3
-		bsr.w	ObjectHitWallLeft
+		bsr.w	ObjHitWallLeft
 		tst.w	d1
 		bmi.s	loc_A08A
 		bra.s	loc_A0A0
@@ -272,7 +272,7 @@ loc_A1DE:
 		move.w	d0,-(sp)
 		moveq	#0,d3
 		move.b	obActWid(a0),d3
-		bsr.w	ObjectHitWallRight
+		bsr.w	ObjHitWallRight
 		move.w	(sp)+,d0
 		tst.w	d1
 		bmi.w	locret_A29A
@@ -289,7 +289,7 @@ loc_A222:
 		moveq	#0,d3
 		move.b	obActWid(a0),d3
 		not.w	d3
-		bsr.w	ObjectHitWallLeft
+		bsr.w	ObjHitWallLeft
 		move.w	(sp)+,d0
 		tst.w	d1
 		bmi.s	locret_A29A

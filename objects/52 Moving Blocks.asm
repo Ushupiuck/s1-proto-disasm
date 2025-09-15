@@ -91,7 +91,7 @@ locret_D6BE:
 loc_D6C0:
 		moveq	#0,d3
 		move.b	obActWid(a0),d3
-		bsr.w	ObjectHitWallRight
+		bsr.w	ObjHitWallRight
 		tst.w	d1
 		bmi.s	loc_D6DA
 		addq.w	#1,obX(a0)

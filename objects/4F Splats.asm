@@ -93,7 +93,7 @@ sub_D2DA:
 		move.b	obActWid(a0),d3
 		tst.w	obVelX(a0)
 		bmi.s	loc_D2FE
-		bsr.w	ObjectHitWallRight
+		bsr.w	ObjHitWallRight
 		tst.w	d1
 		bpl.s	loc_D308
 
@@ -104,7 +104,7 @@ loc_D2FA:
 
 loc_D2FE:
 		not.w	d3
-		bsr.w	ObjectHitWallLeft
+		bsr.w	ObjHitWallLeft
 		tst.w	d1
 		bmi.s	loc_D2FA
 

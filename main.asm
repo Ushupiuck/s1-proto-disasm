@@ -4628,7 +4628,7 @@ Sonic_HitFloor:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$D,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
@@ -4643,7 +4643,7 @@ Sonic_HitFloor:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$D,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.w	(sp)+,d0
 		move.b	#0,d2
 
@@ -4652,7 +4652,7 @@ loc_105A8:
 		cmp.w	d0,d1
 		ble.s	loc_105B6
 		move.b	(v_angle_primary).w,d3
-		move.w	d0,d1
+		move.w	d0,d1	; this line was changed to exg in the final game
 
 loc_105B6:
 		btst	#0,d3
@@ -4672,7 +4672,7 @@ loc_105C8:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$E,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.b	#0,d2
 
 loc_105E2:
@@ -4699,7 +4699,7 @@ ObjFloorDist2:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$D,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.b	(v_angle_primary).w,d3
 		btst	#0,d3
 		beq.s	locret_10626
@@ -4723,7 +4723,7 @@ loc_10628:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
+		bsr.w	FindWall
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
@@ -4738,9 +4738,9 @@ loc_10628:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
+		bsr.w	FindWall
 		move.w	(sp)+,d0
-		move.b	#$C0,d2
+		move.b	#-$40,d2
 		bra.w	loc_105A8
 ; ---------------------------------------------------------------------------
 
@@ -4754,12 +4754,12 @@ loc_10694:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
+		bsr.w	FindWall
 		move.b	#$C0,d2
 		bra.w	loc_105E2
 ; ---------------------------------------------------------------------------
 
-ObjectHitWallRight:
+ObjHitWallRight:
 		add.w	obX(a0),d3
 		move.w	obY(a0),d2
 		lea	(v_angle_primary).w,a4
@@ -4767,11 +4767,11 @@ ObjectHitWallRight:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
+		bsr.w	FindWall
 		move.b	(v_angle_primary).w,d3
 		btst	#0,d3
 		beq.s	locret_106DE
-		move.b	#$C0,d3
+		move.b	#-$40,d3
 
 locret_106DE:
 		rts
@@ -4792,7 +4792,7 @@ Sonic_NoRunningOnWalls:
 		movea.w	#-$10,a3
 		move.w	#$1000,d6
 		moveq	#$E,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
@@ -4808,7 +4808,7 @@ Sonic_NoRunningOnWalls:
 		movea.w	#-$10,a3
 		move.w	#$1000,d6
 		moveq	#$E,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.w	(sp)+,d0
 		move.b	#$80,d2
 		bra.w	loc_105A8
@@ -4824,12 +4824,12 @@ loc_10754:
 		movea.w	#-$10,a3
 		move.w	#$1000,d6
 		moveq	#$E,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.b	#$80,d2
 		bra.w	loc_105E2
 ; ---------------------------------------------------------------------------
 
-ObjectHitCeiling:
+ObjHitCeiling:
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
 		moveq	#0,d0
@@ -4841,7 +4841,7 @@ ObjectHitCeiling:
 		movea.w	#-$10,a3
 		move.w	#$1000,d6
 		moveq	#$E,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.b	(v_angle_primary).w,d3
 		btst	#0,d3
 		beq.s	locret_107AC
@@ -4866,7 +4866,7 @@ loc_107AE:
 		movea.w	#-$10,a3
 		move.w	#$800,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
+		bsr.w	FindWall
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
@@ -4882,7 +4882,7 @@ loc_107AE:
 		movea.w	#-$10,a3
 		move.w	#$800,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
+		bsr.w	FindWall
 		move.w	(sp)+,d0
 		move.b	#$40,d2
 		bra.w	loc_105A8
@@ -4899,20 +4899,24 @@ loc_10822:
 		movea.w	#-$10,a3
 		move.w	#$800,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
+		bsr.w	FindWall
 		move.b	#$40,d2
 		bra.w	loc_105E2
 ; ---------------------------------------------------------------------------
 
-ObjectHitWallLeft:
+ObjHitWallLeft:
 		add.w	obX(a0),d3
 		move.w	obY(a0),d2
+		; Engine bug: colliding with left walls is erratic with this function.
+		; The cause is this: a missing instruction to flip collision on the found
+		; 16x16 block; this one:
+		;eori.w	#$F,d3
 		lea	(v_angle_primary).w,a4
 		move.b	#0,(a4)
 		movea.w	#-$10,a3
 		move.w	#$800,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
+		bsr.w	FindWall
 		move.b	(v_angle_primary).w,d3
 		btst	#0,d3
 		beq.s	locret_10870
@@ -5354,70 +5358,70 @@ Nem_Flash:	binclude "artnem/Flash.nem"
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - GHZ stuff
 ; ---------------------------------------------------------------------------
-byte_27400:	binclude "artnem/ghz flower stalk.nem"
+Nem_Stalk:	binclude "artnem/GHZ Flower Stalk.nem"
 		even
-byte_2744A:	binclude "artnem/GHZ Swinging Platform.nem"
+Nem_Swing:	binclude "artnem/GHZ Swinging Platform.nem"
 		even
-ArtBridge:	binclude "artnem/GHZ Bridge.nem"
+Nem_Bridge:	binclude "artnem/GHZ Bridge.nem"
 		even
-byte_27698:	binclude "artnem/GHZ Giant Ball.nem"
+Nem_Ball:	binclude "artnem/GHZ Giant Ball.nem"
 		even
-ArtSpikes:	binclude "artnem/Spikes.nem"
+Nem_Spikes:	binclude "artnem/Spikes.nem"
 		even
-ArtSpikeLogs:	binclude "artnem/GHZ Spiked Log.nem"
+Nem_SpikePole:	binclude "artnem/GHZ Spiked Log.nem"
 		even
-ArtPurpleRock:	binclude "artnem/GHZ Purple Rock.nem"
+Nem_PplRock:	binclude "artnem/GHZ Purple Rock.nem"
 		even
-ArtSmashWall:	binclude "artnem/GHZ Breakable Wall.nem"
+Nem_GhzWall1:	binclude "artnem/GHZ Breakable Wall.nem"
 		even
-ArtWall:	binclude "artnem/GHZ Edge Wall.nem"
+Nem_GhzWall2:	binclude "artnem/GHZ Edge Wall.nem"
 		even
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - MZ stuff
 ; ---------------------------------------------------------------------------
-ArtChainPtfm:	binclude "artnem/MZ Metal Blocks.nem"
+Nem_MzMetal:	binclude "artnem/MZ Metal Blocks.nem"
 		even
-ArtButtonMZ:	binclude "artnem/MZ Switch.nem"
+Nem_MzSwitch:	binclude "artnem/MZ Switch.nem"
 		even
-byte_2816E:	binclude "artnem/MZ Green Glass Block.nem"
+Nem_MzGlass:	binclude "artnem/MZ Green Glass Block.nem"
 		even
 		binclude "artnem/Unused - Grass.nem"
 		even
-byte_2827A:	binclude "artnem/Fireballs.nem"
+Nem_MzFire:	binclude "artnem/Fireballs.nem"
 		even
-byte_28558:	binclude "artnem/mz lava.nem"
+Nem_Lava:	binclude "artnem/MZ Lava.nem"
 		even
-byte_28E6E:	binclude "artnem/MZ Green Pushable Block.nem"
+Nem_MzBlock:	binclude "artnem/MZ Green Pushable Block.nem"
 		even
 		binclude "artnem/Unused - MZ Background.nem"
 		even
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - SLZ stuff
 ; ---------------------------------------------------------------------------
-ArtSeesaw:	binclude "artnem/SLZ Seesaw.nem"
+Nem_Seesaw:	binclude "artnem/SLZ Seesaw.nem"
 		even
-ArtFan:	binclude "artnem/SLZ Fan.nem"
+Nem_Fan:	binclude "artnem/SLZ Fan.nem"
 		even
 byte_294DA:	binclude "artnem/SLZ Breakable Wall.nem"
 		even
-byte_2953C:	binclude "artnem/slz girders.nem"
+Nem_Pylon:	binclude "artnem/SLZ Pylon.nem"
 		even
-byte_2961E:	binclude "artnem/SLZ Swinging Platform.nem"
+Nem_SlzSwing:	binclude "artnem/SLZ Swinging Platform.nem"
 		even
 Nem_SLZ_Platfm:	binclude "artnem/SLZ Platforms.nem"
 		even
-byte_29D4A:	binclude "artnem/SLZ 32x32 Block.nem"
+Nem_SlzBlock:	binclude "artnem/SLZ 32x32 Block.nem"
 		even
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - SZ stuff
 ; ---------------------------------------------------------------------------
-ArtBumper:	binclude "artnem/SZ Bumper.nem"
+Nem_Bumper:	binclude "artnem/SZ Bumper.nem"
 		even
-byte_29FC0:	binclude "artnem/SZ Small Spikeball.nem"
+Nem_SyzSpike2:	binclude "artnem/SZ Small Spikeball.nem"
 		even
-ArtButton:	binclude "artnem/Switch.nem"
+Nem_Switch:	binclude "artnem/Switch.nem"
 		even
-byte_2A104:	binclude "artnem/SZ Large Spikeball.nem"
+Nem_SyzSpike1:	binclude "artnem/SZ Large Spikeball.nem"
 		even
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - enemies
@@ -5427,14 +5431,14 @@ byte_2A104:	binclude "artnem/SZ Large Spikeball.nem"
 		even
 Nem_Crabmeat:	binclude "artnem/Enemy Crabmeat.nem"
 		even
-Nem_Buzzbomber:	binclude "artnem/Enemy Buzz Bomber.nem"
+Nem_Buzz:	binclude "artnem/Enemy Buzz Bomber.nem"
 		even
 ;Nem_Ball_Explosion:
 		binclude "artnem/Unused - Ball Hog's Bomb Explosion.nem"
 		even
 Nem_Burrobot:	binclude "artnem/Enemy Burrobot.nem"
 		even
-ArtChopper:	binclude "artnem/Enemy Chopper.nem"
+Nem_Chopper:	binclude "artnem/Enemy Chopper.nem"
 		even
 Nem_Jaws:	binclude "artnem/Enemy Jaws.nem"
 		even
@@ -5443,15 +5447,15 @@ Nem_Jaws:	binclude "artnem/Enemy Jaws.nem"
 		even
 Nem_Roller:	binclude "artnem/Enemy Roller.nem"
 		even
-ArtMotobug:	binclude "artnem/Enemy Motobug.nem"
+Nem_Motobug:	binclude "artnem/Enemy Motobug.nem"
 		even
-ArtNewtron:	binclude "artnem/Enemy Newtron.nem"
+Nem_Newtron:	binclude "artnem/Enemy Newtron.nem"
 		even
-ArtYardin:	binclude "artnem/Enemy Yadrin.nem"
+Nem_Yadrin:	binclude "artnem/Enemy Yadrin.nem"
 		even
-ArtBasaran:	binclude "artnem/Enemy Basaran.nem"
+Nem_Basaran:	binclude "artnem/Enemy Basaran.nem"
 		even
-ArtSplats:	binclude "artnem/Enemy Splats.nem"
+Nem_Splats:	binclude "artnem/Enemy Splats.nem"
 		even
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - various
@@ -5466,34 +5470,34 @@ Nem_Ring:	binclude "artnem/Rings.nem"
 		even
 Nem_Monitors:	binclude "artnem/Monitors.nem"
 		even
-ArtExplosions:	binclude "artnem/Explosion.nem"
+Nem_Explode:	binclude "artnem/Explosion.nem"
 		even
-Nem_Points:	binclude "artnem/score points.nem"
+Nem_Points:	binclude "artnem/Points.nem"
 		even
-ArtGameOver:	binclude "artnem/Game Over.nem"
+Nem_GameOver:	binclude "artnem/Game Over.nem"
 		even
-ArtSpringHoriz:	binclude "artnem/Spring Horizontal.nem"
+Nem_HSpring:	binclude "artnem/Spring Horizontal.nem"
 		even
-ArtSpringVerti:	binclude "artnem/Spring Vertical.nem"
+Nem_VSpring:	binclude "artnem/Spring Vertical.nem"
 		even
-ArtSignPost:	binclude "artnem/Signpost.nem"
+Nem_SignPost:	binclude "artnem/Signpost.nem"
 		even
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - animals
 ; ---------------------------------------------------------------------------
-ArtAnimalPocky:	binclude "artnem/Animal Rabbit.nem"
+Nem_Rabbit:	binclude "artnem/Animal Rabbit.nem"
 		even
-ArtAnimalCucky:	binclude "artnem/Animal Chicken.nem"
+Nem_Chicken:	binclude "artnem/Animal Chicken.nem"
 		even
-ArtAnimalPecky:	binclude "artnem/Animal Blackbird.nem"
+Nem_Penguin:	binclude "artnem/Animal Blackbird.nem"
 		even
-ArtAnimalRocky:	binclude "artnem/Animal Seal.nem"
+Nem_Seal:	binclude "artnem/Animal Seal.nem"
 		even
-ArtAnimalPicky:	binclude "artnem/Animal Pig.nem"
+Nem_Pig:	binclude "artnem/Animal Pig.nem"
 		even
-ArtAnimalFlicky:binclude "artnem/Animal Flicky.nem"
+Nem_Flicky:	binclude "artnem/Animal Flicky.nem"
 		even
-ArtAnimalRicky:	binclude "artnem/Animal Squirrel.nem"
+Nem_Squirrel:	binclude "artnem/Animal Squirrel.nem"
 		even
 
 		align	$1000
@@ -5556,11 +5560,11 @@ Blk256_CWZ:	binclude "level/map256/CWZ.kos"
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - bosses and ending sequence
 ; ---------------------------------------------------------------------------
-byte_60000:	binclude "artnem/Boss - Main.nem"
+Nem_Eggman:	binclude "artnem/Boss - Main.nem"
 		even
-byte_60864:	binclude "artnem/Boss - Weapons.nem"
+Nem_Weapons:	binclude "artnem/Boss - Weapons.nem"
 		even
-byte_60BB0:	binclude "artnem/Prison Capsule.nem"
+Nem_Prison:	binclude "artnem/Prison Capsule.nem"
 		even
 ; ===========================================================================
 ; Demos
@@ -5587,35 +5591,35 @@ Eni_SSBg2:	binclude "tilemaps/SS Background 2.eni"
 		even
 Nem_SSBgCloud:	binclude "artnem/Special Clouds.nem"
 		even
-ArtSpecialGoal:	binclude "artnem/Special GOAL.nem"
+Nem_SSGOAL:	binclude "artnem/Special GOAL.nem"
 		even
-ArtSpecialR:	binclude "artnem/Special R.nem"
+Nem_SSRBlock:	binclude "artnem/Special R.nem"
 		even
-ArtSpecialSkull:binclude "artnem/Special Skull.nem"
+Nem_SSSkull:	binclude "artnem/Special Skull.nem"
 		even
-ArtSpecialU:	binclude "artnem/Special U.nem"
+Nem_SSUBlock:	binclude "artnem/Special U.nem"
 		even
-ArtSpecial1up:	binclude "artnem/Special 1UP.nem"
+Nem_SS1UpBlock:	binclude "artnem/Special 1UP.nem"
 		even
-ArtSpecialStars:binclude "artnem/Art Stars.nem"
+Nem_SSEmStars:	binclude "artnem/Special Emerald Twinkle.nem"
 		even
-byte_65432:	binclude "artnem/Special Red-White.nem"
+Nem_SSRedWhite:	binclude "artnem/Special Red-White.nem"
 		even
-ArtSpecialZone1:binclude "artnem/Special ZONE1.nem"
+Nem_SSZone1:	binclude "artnem/Special ZONE1.nem"
 		even
-ArtSpecialZone2:binclude "artnem/Special ZONE2.nem"
+Nem_SSZone2:	binclude "artnem/Special ZONE2.nem"
 		even
-ArtSpecialZone3:binclude "artnem/Special ZONE3.nem"
+Nem_SSZone3:	binclude "artnem/Special ZONE3.nem"
 		even
-ArtSpecialZone4:binclude "artnem/Special ZONE4.nem"
+Nem_SSZone4:	binclude "artnem/Special ZONE4.nem"
 		even
-ArtSpecialZone5:binclude "artnem/Special ZONE5.nem"
+Nem_SSZone5:	binclude "artnem/Special ZONE5.nem"
 		even
-ArtSpecialZone6:binclude "artnem/Special ZONE6.nem"
+Nem_SSZone6:	binclude "artnem/Special ZONE6.nem"
 		even
-ArtSpecialUpDown:binclude "artnem/Special UP-DOWN.nem"
+Nem_SSUpDown:	binclude "artnem/Special UP-DOWN.nem"
 		even
-ArtSpecialEmerald:binclude "artnem/Special Emeralds.nem"
+Nem_SSEmerald:	binclude "artnem/Special Emeralds.nem"
 		even
 
 		align	$4000

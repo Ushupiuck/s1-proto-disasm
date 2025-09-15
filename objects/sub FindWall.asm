@@ -1,6 +1,6 @@
 ; ---------------------------------------------------------------------------
 
-FindFloor:
+FindWall:
 		bsr.w	Floor_ChkTile
 		move.w	(a1),d0
 		move.w	d0,d4
