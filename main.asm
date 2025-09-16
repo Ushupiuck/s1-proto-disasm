@@ -504,7 +504,7 @@ ErrorPrintAddr:
 		move.w	d0,d1
 		andi.w	#$F,d1
 		cmpi.w	#$A,d1
-		bcs.s	.chars0to9
+		blo.s	.chars0to9
 		addq.w	#7,d1		; add 7 for characters A-F
 
 .chars0to9:
@@ -1610,7 +1610,7 @@ loc_26AE:
 		addq.w	#2,d0	; set object scroll right speed
 		move.w	d0,(v_objslot0+obX).w	; move sonic to the right
 		cmpi.w	#$1C00,d0	; has object passed $1C00?
-		bcs.s	loc_26E4	; if not, branch
+		blo.s	loc_26E4	; if not, branch
 		move.b	#id_Sega,(v_gamemode).w	; go to Sega Screen
 		rts
 ; ---------------------------------------------------------------------------
@@ -1652,9 +1652,9 @@ LevelSelect:
 		move.w	(v_levselsound).w,d0
 		addi.w	#$80,d0
 		cmpi.w	#bgm__Last+2,d0	; There's no pointer for music $92 or $93
-		bcs.s	loc_277A	; So the game crashes when played
+		blo.s	loc_277A	; So the game crashes when played
 		cmpi.w	#sfx__First,d0
-		bcs.s	LevelSelect
+		blo.s	LevelSelect
 
 loc_277A:
 		bsr.w	PlaySound_Special
@@ -1728,7 +1728,7 @@ loc_27FE:
 		addq.w	#2,d0
 		move.w	d0,(v_objslot0+obX).w
 		cmpi.w	#$1C00,d0
-		bcs.s	loc_282C
+		blo.s	loc_282C
 		move.b	#id_Sega,(v_gamemode).w
 		rts
 ; ---------------------------------------------------------------------------
@@ -1745,7 +1745,7 @@ loc_282C:
 		move.w	d0,(v_zone).w
 		addq.w	#1,(v_demonum).w
 		cmpi.w	#6,(v_demonum).w
-		bcs.s	loc_2860
+		blo.s	loc_2860
 		move.w	#0,(v_demonum).w
 
 loc_2860:
@@ -2405,7 +2405,7 @@ loc_347A:
 		move.b	#8-1,(v_ani2_time).w
 		addq.b	#1,(v_ani2_frame).w
 		cmpi.b	#6,(v_ani2_frame).w
-		bcs.s	loc_3498
+		blo.s	loc_3498
 		move.b	#0,(v_ani2_frame).w
 
 loc_3498:
@@ -2631,7 +2631,7 @@ locret_37B4:
 loc_37B6:
 		move.w	(unk_FFF79E).w,d1
 		cmpi.w	#$8A,d0
-		bcs.s	loc_37C2
+		blo.s	loc_37C2
 		addq.w	#1,d1
 
 loc_37C2:
@@ -2650,7 +2650,7 @@ loc_37E6:
 		adda.w	#$C,a1
 		lea	(v_palette+$5A).w,a2
 		cmpi.w	#$A,d0
-		bcs.s	loc_37FC
+		blo.s	loc_37FC
 		subi.w	#$A,d0
 		lea	(v_palette+$7A).w,a2
 
@@ -2869,11 +2869,11 @@ LoadLevelData:
 		moveq	#0,d0
 		move.b	(v_lives).w,d1
 		cmpi.b	#2,d1
-		bcs.s	loc_4876
+		blo.s	loc_4876
 		move.b	d1,d0
 		subq.b	#1,d0
 		cmpi.b	#5,d0
-		bcs.s	loc_4876
+		blo.s	loc_4876
 		move.b	#4,d0
 
 loc_4876:
@@ -2888,7 +2888,7 @@ sub_489E:
 		moveq	#0,d3
 		moveq	#4-1,d1
 		sub.w	d0,d1
-		bcs.s	loc_48AC
+		blo.s	loc_48AC
 
 loc_48A6:
 		move.l	d3,(a6)
@@ -2897,7 +2897,7 @@ loc_48A6:
 loc_48AC:
 		move.w	d0,d1
 		subq.w	#1,d1
-		bcs.s	locret_48B8
+		blo.s	locret_48B8
 
 loc_48B2:
 		move.l	d2,(a6)
@@ -3007,7 +3007,7 @@ PtfmNormal3:
 		sub.w	d1,d0
 		bhi.w	locret_5048
 		cmpi.w	#-$10,d0
-		bcs.w	locret_5048
+		blo.w	locret_5048
 		cmpi.b	#6,obRoutine(a1)
 		bhs.w	locret_5048
 		add.w	d0,d2
@@ -3111,7 +3111,7 @@ PtfmCheckExit2:
 		add.w	d1,d0
 		bmi.s	loc_510A
 		cmp.w	d2,d0
-		bcs.s	locret_511C
+		blo.s	locret_511C
 
 loc_510A:
 		bclr	#3,obStatus(a1)
@@ -3616,7 +3616,7 @@ loc_8830:
 		sub.w	obMap(a1),d2
 		addi.w	#128,d2
 		cmpi.w	#320/2-64,d2
-		bcs.s	loc_886E
+		blo.s	loc_886E
 		cmpi.w	#320+64,d2
 		bhs.s	loc_886E
 
@@ -3881,7 +3881,7 @@ loc_8A44:
 		move.w	d6,(v_opl_screen).w
 		movea.l	(v_opl_data+4).w,a0
 		subi.w	#$80,d6
-		bcs.s	loc_8A96
+		blo.s	loc_8A96
 
 loc_8A6A:
 		cmp.w	-6(a0),d6
@@ -3950,7 +3950,7 @@ loc_8ADA:
 		move.l	a0,(v_opl_data).w
 		movea.l	(v_opl_data+4).w,a0
 		subi.w	#$300,d6
-		bcs.s	loc_8AFA
+		blo.s	loc_8AFA
 
 loc_8AE8:
 		cmp.w	(a0),d6
@@ -3975,7 +3975,7 @@ loc_8B00:
 		addi.w	#$200,d0
 		andi.w	#-$80,d0
 		cmp.w	(a0),d0
-		bcs.s	locret_8B20
+		blo.s	locret_8B20
 		bsr.w	sub_8B22
 		move.l	a0,(v_opl_data+8).w
 		bra.w	loc_8B00
@@ -4041,7 +4041,7 @@ FindNextFreeObj:
 		sub.w	a0,d0
 		lsr.w	#object_size_bits,d0
 		subq.w	#1,d0
-		bcs.s	locret_8BA2
+		blo.s	locret_8BA2
 
 loc_8B96:
 		tst.b	obID(a1)
@@ -5006,13 +5006,13 @@ loc_10934:
 		move.w	(a4),d3
 		addi.w	#$120,d3
 		cmpi.w	#$70,d3
-		bcs.s	loc_10986
+		blo.s	loc_10986
 		cmpi.w	#$1D0,d3
 		bhs.s	loc_10986
 		move.w	2(a4),d2
 		addi.w	#$F0,d2
 		cmpi.w	#$70,d2
-		bcs.s	loc_10986
+		blo.s	loc_10986
 		cmpi.w	#$170,d2
 		bhs.s	loc_10986
 		lea	(v_ssbuffer2).l,a5
@@ -5295,7 +5295,7 @@ ScoreAdd:
 loc_1166E:
 		move.l	(a3),d0
 		cmp.l	(a2),d0
-		bcs.w	locret_11678
+		blo.w	locret_11678
 		move.l	d0,(a2)
 
 locret_11678:
