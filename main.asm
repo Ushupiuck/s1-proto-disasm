@@ -1823,13 +1823,13 @@ loc_28F0:
 		beq.s	loc_2912
 		subq.w	#1,d0
 		bhs.s	loc_2912
-		moveq	#$4F,d0
+		moveq	#sfx__Last-$80,d0
 
 loc_2912:
 		btst	#bitR,d1
 		beq.s	loc_2922
 		addq.w	#1,d0
-		cmpi.w	#$50,d0
+		cmpi.w	#spec__First-$80,d0
 		blo.s	loc_2922
 		moveq	#0,d0
 
