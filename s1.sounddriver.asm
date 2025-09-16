@@ -2720,3 +2720,5 @@ SoundD1:	include "sound/sfx/SndD1.asm"
 		even
 SoundD2:	include "sound/sfx/SndD2.asm"
 		even
+SoundD3:	include "sound/sfx/SndD3.asm"
+		even

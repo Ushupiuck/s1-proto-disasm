@@ -1803,7 +1803,7 @@ loc_28D6:
 		beq.s	loc_28E6
 		addq.w	#1,d0
 		cmpi.w	#$14,d0
-		bcs.s	loc_28E6
+		blo.s	loc_28E6
 		moveq	#0,d0
 
 loc_28E6:
@@ -1830,7 +1830,7 @@ loc_2912:
 		beq.s	loc_2922
 		addq.w	#1,d0
 		cmpi.w	#$50,d0
-		bcs.s	loc_2922
+		blo.s	loc_2922
 		moveq	#0,d0
 
 loc_2922:
