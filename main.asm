@@ -1893,7 +1893,7 @@ loc_2996:
 sub_29B8:
 		andi.w	#$F,d0
 		cmpi.b	#$A,d0
-		bcs.s	loc_29C6
+		blo.s	loc_29C6
 		addi.b	#7,d0
 
 loc_29C6:

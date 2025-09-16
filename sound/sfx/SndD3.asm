@@ -13,7 +13,7 @@ SndD3_PSG3:
 
 SndD3_Loop00:
 	dc.b	nD3, $01
-	dc.b	$FB, $01
+	smpsAlterPitch		$01
 	smpsLoop			$00, $1A, SndD3_Loop00
 
 SndD3_Jump00:
