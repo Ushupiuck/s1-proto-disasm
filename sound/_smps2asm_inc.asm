@@ -405,7 +405,7 @@ smpsNop macro val
 		dc.b	$E2,val
 	endif
 	endm
-	
+
 ; E3xx - Global Modulation (Specific to Sonic 1 Prototype)
 smpsGlobalMod macro val
 	dc.b	$E3,val
