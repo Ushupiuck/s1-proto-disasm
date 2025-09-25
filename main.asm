@@ -1691,7 +1691,7 @@ loc_27AA:
 		bsr.w	PlaySound_Special
 		rts
 ; ---------------------------------------------------------------------------
-LevSelOrder:	
+LevSelOrder:
 		dc.b id_GHZ,0	; GHZ1
 		dc.b id_GHZ,1	; GHZ2
 		dc.b id_GHZ,2	; GHZ3
@@ -1955,7 +1955,7 @@ LevelSelectText:
 
 		charset
 
-MusicList:	
+MusicList:
 		dc.b bgm_GHZ
 		dc.b bgm_LZ
 		dc.b bgm_MZ
@@ -5331,7 +5331,7 @@ Nem_TitleFg:	binclude "artnem/Title Screen Foreground.nem"
 		even
 Nem_TitleSonic:	binclude "artnem/Title Screen Sonic.nem"
 		even
-		
+
 		align	$4000
 Map_Sonic:	include "_maps/Sonic.asm"
 SonicDynPLC:	include "_maps/Sonic - Dynamic Gfx Script.asm"
@@ -5553,7 +5553,7 @@ Blk256_CWZ:	binclude "level/map256/CWZ.kos"
 		dc.w $F89F, $F0, 0, 0, 0, 0, 0, 0
 ; and a duplicate of a duplicate end of chunk data pointer
 		dc.w $F89F, $F0, 0, 0, 0, 0, 0, 0
-		
+
 ;0x5711C
 		binclude "unknown/5711C.dat"
 		even
