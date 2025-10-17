@@ -12,6 +12,8 @@
 
 	cpu 68000
 
+FixBugs	= 0
+;	| If 1, fixes a handful of bugs in the game
 zeroOffsetOptimization = 0
 ;	| If 1, makes a handful of zero-offset instructions smaller
 
@@ -843,8 +845,13 @@ ClearScreen:
 		move.l	#0,(v_scrposy_dup).w
 		move.l	#0,(v_scrposx_dup).w
 
+	if FixBugs
+		clearRAM v_spritetablebuffer,v_spritetablebuffer_end
+		clearRAM v_hscrolltablebuffer,v_hscrolltablebuffer_end_padded
+	else
 		clearRAM v_spritetablebuffer,v_spritetablebuffer_end+4	; This clears too much RAM, but this won't effect much since water palettes don't exist.
 		clearRAM v_hscrolltablebuffer,v_hscrolltablebuffer_end_padded+4	; This clears too much RAM, leading to a slight bug (first bit of the Sonic object's RAM is cleared)
+	endif
 
 		rts
 ; ---------------------------------------------------------------------------
@@ -1023,7 +1030,9 @@ RunPLC:
 
 loc_1404:
 		andi.w	#$7FFF,d2
+	if ~~FixBugs
 		move.w	d2,(f_plc_execute).w
+	endif
 		bsr.w	NemDec_BuildCodeTable
 		move.b	(a0)+,d5
 		asl.w	#8,d5
@@ -1037,6 +1046,9 @@ loc_1404:
 		move.l	d0,(v_plc_buffer_regC).w
 		move.l	d5,(v_plc_buffer_reg10).w
 		move.l	d6,(v_plc_buffer_reg14).w
+	if FixBugs
+		move.w	d2,(f_plc_execute).w
+	endif
 
 locret_1436:
 		rts
@@ -1490,7 +1502,7 @@ GM_Sega:
 		bsr.w	NemDec
 		lea	(v_start&$FFFFFF).l,a1
 		lea	(Eni_SegaLogo).l,a0
-		move.w	#0,d0
+		move.w	#make_art_tile(0,0,0),d0
 		bsr.w	EniDec
 
 		copyTilemap	v_start&$FFFFFF,vram_fg+$61C,12,4
@@ -2248,7 +2260,11 @@ loc_30C4:
 		move.b	(a1),d0
 		lea	(v_jpadhold1).w,a0
 		move.b	d0,d1
+	if FixBugs
+		move.b	v_jpadhold2-v_jpadhold1(a0),d2
+	else
 		move.b	(a0),d2
+	endif
 		eor.b	d2,d0
 		move.b	d1,(a0)+
 		and.b	d1,d0
@@ -2909,7 +2925,12 @@ locret_48B8:
 
 LevelLayoutLoad:
 		lea	(v_lvllayout).w,a3
-		move.w	#bytesToWcnt(v_lvllayout_end-v_lvllayout),d1	; Bug: This clears too much data! To fix this, change bytesToWcnt to bytesToLcnt.
+	if FixBugs
+		move.w	#bytesToLcnt(v_lvllayout_end-v_lvllayout),d1
+	else
+		; Bug: This clears too much data!
+		move.w	#bytesToWcnt(v_lvllayout_end-v_lvllayout),d1
+	endif
 		moveq	#0,d0
 
 loc_48C4:
@@ -3861,13 +3882,19 @@ loc_8A00:
 		move.l	a1,(v_opl_data+$C).w
 		lea	(v_objstate).w,a2
 		move.w	#$101,(a2)+
+	if FixBugs
+		move.w	#bytesToLcnt(v_objstate_end-v_objstate-2),d0
+	else
 		; Bug: This does word when it should be doing longword and the last 2 bytes of v_objstate are not accounted for.
-		; To fix this, change bytesToWcnt to bytesToLcnt, and add "clr.w	(a2)+" after the dbf to account for the missed bytes.
 		move.w	#bytesToWcnt(v_objstate_end-v_objstate-2),d0
+	endif
 
 loc_8A38:
 		clr.l	(a2)+
 		dbf	d0,loc_8A38
+	if FixBugs
+		clr.w	(a2)+
+	endif
 		move.w	#-1,(v_opl_screen).w
 
 loc_8A44:
@@ -4755,7 +4782,7 @@ loc_10694:
 		move.w	#0,d6
 		moveq	#$E,d5
 		bsr.w	FindWall
-		move.b	#$C0,d2
+		move.b	#-$40,d2
 		bra.w	loc_105E2
 ; ---------------------------------------------------------------------------
 
@@ -4907,10 +4934,12 @@ loc_10822:
 ObjHitWallLeft:
 		add.w	obX(a0),d3
 		move.w	obY(a0),d2
+	if FixBugs
 		; Engine bug: colliding with left walls is erratic with this function.
 		; The cause is this: a missing instruction to flip collision on the found
 		; 16x16 block; this one:
-		;eori.w	#$F,d3
+		eori.w	#$F,d3
+	endif
 		lea	(v_angle_primary).w,a4
 		move.b	#0,(a4)
 		movea.w	#-$10,a3

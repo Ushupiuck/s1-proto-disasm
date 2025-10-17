@@ -52,21 +52,31 @@ loc_DFC2:
 
 loc_DFE6:
 		lsr.w	#3,d0
+	if FixBugs
+		andi.w	#1,d0
+	else
 		; There is a bug in which Act 2 has 2 platforms, one with a subtype of $14, and another with a subtype of $7A.
 		; This results in the objects reading code rather than data, which results in a garbled mess.
-		; What causes this is that the table for Elev_Var1 reads beyond the intended list and into Elev_Var2.
+		; What causes this is that the table for Elev_Var1 reads beyond the entry list and into Elev_Var2.
+		; The subtype $14 goes beyond both variable tables, reading the instructions at loc_DFC2 as if they were object variables.
 		; The line below is the root cause of the issue, as it does not limit the table to be 1.
 		; What's the most strange part about this (in my opinion) is that this bug technically still persists in the
 		; final game, but the issue never actually got fixed.
 		; Perhaps they were planning on different types of platforms? Who knows!
 		andi.w	#$1E,d0
+	endif
 		lea	Elev_Var1(pc,d0.w),a2
 		move.b	(a2)+,obActWid(a0)
 		move.b	(a2)+,obFrame(a0)
 		moveq	#0,d0
 		move.b	obSubtype(a0),d0
 		add.w	d0,d0
+	if FixBugs
+		andi.w	#$F,d0
+	else
+		; This is also just as bugged as the previous AND.
 		andi.w	#$1E,d0
+	endif
 		lea	Elev_Var2(pc,d0.w),a2
 		move.b	(a2)+,d0
 		lsl.w	#2,d0
