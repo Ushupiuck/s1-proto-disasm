@@ -61,13 +61,13 @@ PLC_Main2end:
 ; Pattern load cues - explosion
 ; ---------------------------------------------------------------------------
 PLC_Explode:	dc.w ((PLC_Explodeend-PLC_Explode-2)/6)-1
-		plcm    ArtExplosions, ArtTile_Explosion ; explosion
+		plcm    Nem_Explode, ArtTile_Explosion ; explosion
 PLC_Explodeend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - game/time	over
 ; ---------------------------------------------------------------------------
 PLC_GameOver:	dc.w ((PLC_GameOverend-PLC_GameOver-2)/6)-1
-		plcm    ArtGameOver, ArtTile_Game_Over ; game/time over
+		plcm    Nem_GameOver, ArtTile_Game_Over ; game/time over
 PLC_GameOverend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Green Hill
@@ -75,24 +75,24 @@ PLC_GameOverend:
 PLC_GHZ:	dc.w ((PLC_GHZ2-PLC_GHZ-2)/6)-1
 		plcm    Nem_GHZ_1st, ArtTile_Level
 		plcm    Nem_GHZ_2nd, ArtTile_Level+$1CD
-		plcm    byte_27400, ArtTile_GHZ_Flower_Stalk
-		plcm    ArtPurpleRock, ArtTile_GHZ_Purple_Rock
+		plcm    Nem_Stalk, ArtTile_GHZ_Flower_Stalk
+		plcm    Nem_PplRock, ArtTile_GHZ_Purple_Rock
 		plcm    Nem_Crabmeat, ArtTile_Crabmeat
-		plcm    Nem_Buzzbomber, ArtTile_Buzz_Bomber
-		plcm    ArtChopper, ArtTile_Chopper
-		plcm    ArtNewtron, ArtTile_Newtron
-		plcm    ArtMotobug, ArtTile_Moto_Bug
-		plcm    ArtSpikes, ArtTile_Spikes
-		plcm    ArtSpringHoriz, ArtTile_Spring_Horizontal
-		plcm    ArtSpringVerti, ArtTile_Spring_Vertical
+		plcm    Nem_Buzz, ArtTile_Buzz_Bomber
+		plcm    Nem_Chopper, ArtTile_Chopper
+		plcm    Nem_Newtron, ArtTile_Newtron
+		plcm    Nem_Motobug, ArtTile_Moto_Bug
+		plcm    Nem_Spikes, ArtTile_Spikes
+		plcm    Nem_HSpring, ArtTile_Spring_Horizontal
+		plcm    Nem_VSpring, ArtTile_Spring_Vertical
 
 PLC_GHZ2:	dc.w ((PLC_GHZ2end-PLC_GHZ2-2)/6)-1
-		plcm    byte_2744A, ArtTile_GHZ_MZ_Swing
-		plcm    ArtBridge, ArtTile_GHZ_Bridge
-		plcm    ArtSpikeLogs, ArtTile_GHZ_Spike_Pole
-		plcm    byte_27698, ArtTile_GHZ_Giant_Ball
-		plcm    ArtSmashWall, ArtTile_GHZ_SLZ_Smashable_Wall
-		plcm    ArtWall, ArtTile_GHZ_Edge_Wall
+		plcm    Nem_Swing, ArtTile_GHZ_MZ_Swing
+		plcm    Nem_Bridge, ArtTile_GHZ_Bridge
+		plcm    Nem_SpikePole, ArtTile_GHZ_Spike_Pole
+		plcm    Nem_Ball, ArtTile_GHZ_Giant_Ball
+		plcm    Nem_GhzWall1, ArtTile_GHZ_SLZ_Smashable_Wall
+		plcm    Nem_GhzWall2, ArtTile_GHZ_Edge_Wall
 PLC_GHZ2end:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Labyrinth
@@ -108,44 +108,44 @@ PLC_LZ2end:
 ; ---------------------------------------------------------------------------
 PLC_MZ:		dc.w ((PLC_MZ2-PLC_MZ-2)/6)-1
 		plcm    Nem_MZ, ArtTile_Level
-		plcm    ArtChainPtfm, ArtTile_MZ_Spike_Stomper
-		plcm    byte_2827A, ArtTile_MZ_Fireball
-		plcm    byte_2744A, ArtTile_GHZ_MZ_Swing
-		plcm    byte_2816E, ArtTile_MZ_Glass_Pillar
-		plcm    byte_28558, ArtTile_MZ_Lava
-		plcm    Nem_Buzzbomber, ArtTile_Buzz_Bomber
-		plcm    ArtYardin, ArtTile_Yadrin
-		plcm    ArtBasaran, ArtTile_Basaran
-		plcm    ArtSplats, ArtTile_Splats
+		plcm    Nem_MzMetal, ArtTile_MZ_Spike_Stomper
+		plcm    Nem_MzFire, ArtTile_MZ_Fireball
+		plcm    Nem_Swing, ArtTile_GHZ_MZ_Swing
+		plcm    Nem_MzGlass, ArtTile_MZ_Glass_Pillar
+		plcm    Nem_Lava, ArtTile_MZ_Lava
+		plcm    Nem_Buzz, ArtTile_Buzz_Bomber
+		plcm    Nem_Yadrin, ArtTile_Yadrin
+		plcm    Nem_Basaran, ArtTile_Basaran
+		plcm    Nem_Splats, ArtTile_Splats
 
 PLC_MZ2:	dc.w ((PLC_MZ2end-PLC_MZ2-2)/6)-1
-		plcm    ArtButtonMZ, ArtTile_Button+4
-		plcm    ArtSpikes, ArtTile_Spikes
-		plcm    ArtSpringHoriz, ArtTile_Spring_Horizontal
-		plcm    ArtSpringVerti, ArtTile_Spring_Vertical
-		plcm    byte_28E6E, ArtTile_MZ_Block
+		plcm    Nem_MzSwitch, ArtTile_Button+4
+		plcm    Nem_Spikes, ArtTile_Spikes
+		plcm    Nem_HSpring, ArtTile_Spring_Horizontal
+		plcm    Nem_VSpring, ArtTile_Spring_Vertical
+		plcm    Nem_MzBlock, ArtTile_MZ_Block
 PLC_MZ2end:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Star Light
 ; ---------------------------------------------------------------------------
 PLC_SLZ:	dc.w ((PLC_SLZ2-PLC_SLZ-2)/6)-1
 		plcm    Nem_SLZ, ArtTile_Level
-		plcm    byte_2827A, ArtTile_SLZ_Fireball
+		plcm    Nem_MzFire, ArtTile_SLZ_Fireball
 		plcm    Nem_Crabmeat, ArtTile_Crabmeat
-		plcm    Nem_Buzzbomber, ArtTile_Buzz_Bomber
+		plcm    Nem_Buzz, ArtTile_Buzz_Bomber
 		plcm    Nem_SLZ_Platfm, ArtTile_SLZ_Platform
-		plcm    byte_29D4A, ArtTile_SLZ_Smashable_Wall
-		plcm    ArtMotobug, ArtTile_Moto_Bug
+		plcm    Nem_SlzBlock, ArtTile_SLZ_Smashable_Wall
+		plcm    Nem_Motobug, ArtTile_Moto_Bug
 		plcm    byte_294DA, ArtTile_SLZ_Fireball_Launcher
-		plcm    ArtSpikes, ArtTile_Spikes
-		plcm    ArtSpringHoriz, ArtTile_Spring_Horizontal
-		plcm    ArtSpringVerti, ArtTile_Spring_Vertical
+		plcm    Nem_Spikes, ArtTile_Spikes
+		plcm    Nem_HSpring, ArtTile_Spring_Horizontal
+		plcm    Nem_VSpring, ArtTile_Spring_Vertical
 
 PLC_SLZ2:	dc.w ((PLC_SLZ2end-PLC_SLZ2-2)/6)-1
-		plcm    ArtSeesaw, ArtTile_SLZ_Seesaw
-		plcm    ArtFan, ArtTile_SLZ_Fan
-		plcm    byte_2953C, ArtTile_SLZ_Pylon
-		plcm    byte_2961E, ArtTile_SLZ_Swing
+		plcm    Nem_Seesaw, ArtTile_SLZ_Seesaw
+		plcm    Nem_Fan, ArtTile_SLZ_Fan
+		plcm    Nem_Pylon, ArtTile_SLZ_Pylon
+		plcm    Nem_SlzSwing, ArtTile_SLZ_Swing
 PLC_SLZ2end:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Sparkling
@@ -153,18 +153,18 @@ PLC_SLZ2end:
 PLC_SZ:		dc.w ((PLC_SZ2-PLC_SZ-2)/6)-1
 		plcm    Nem_SZ, ArtTile_Level
 		plcm    Nem_Crabmeat, ArtTile_Crabmeat
-		plcm    Nem_Buzzbomber, ArtTile_Buzz_Bomber
-		plcm    ArtYardin, ArtTile_Yadrin
+		plcm    Nem_Buzz, ArtTile_Buzz_Bomber
+		plcm    Nem_Yadrin, ArtTile_Yadrin
 		plcm    Nem_Roller, ArtTile_Roller
 
 PLC_SZ2:	dc.w ((PLC_SZ2end-PLC_SZ2-2)/6)-1
-		plcm    ArtBumper, ArtTile_SYZ_Bumper
-		plcm    byte_2A104, ArtTile_SYZ_Big_Spikeball
-		plcm    byte_29FC0, ArtTile_SYZ_Spikeball_Chain
-		plcm    ArtButton, ArtTile_Button
-		plcm    ArtSpikes, ArtTile_Spikes
-		plcm    ArtSpringHoriz, ArtTile_Spring_Horizontal
-		plcm    ArtSpringVerti, ArtTile_Spring_Vertical
+		plcm    Nem_Bumper, ArtTile_SYZ_Bumper
+		plcm    Nem_SyzSpike1, ArtTile_SYZ_Big_Spikeball
+		plcm    Nem_SyzSpike2, ArtTile_SYZ_Spikeball_Chain
+		plcm    Nem_Switch, ArtTile_Button
+		plcm    Nem_Spikes, ArtTile_Spikes
+		plcm    Nem_HSpring, ArtTile_Spring_Horizontal
+		plcm    Nem_VSpring, ArtTile_Spring_Vertical
 PLC_SZ2end:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Clock Work
@@ -185,15 +185,15 @@ PLC_TitleCardend:
 ; Pattern load cues - act 3 boss
 ; ---------------------------------------------------------------------------
 PLC_Boss:	dc.w ((PLC_Bossend-PLC_Boss-2)/6)-1
-		plcm    byte_60000, ArtTile_Eggman
-		plcm    byte_60864, ArtTile_Eggman_Weapons
-		plcm    byte_60BB0, ArtTile_Prison_Capsule
+		plcm    Nem_Eggman, ArtTile_Eggman
+		plcm    Nem_Weapons, ArtTile_Eggman_Weapons
+		plcm    Nem_Prison, ArtTile_Prison_Capsule
 PLC_Bossend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - act 1/2 signpost
 ; ---------------------------------------------------------------------------
 PLC_Signpost:	dc.w ((PLC_Signpostend-PLC_Signpost-2)/6)-1
-		plcm    ArtSignPost, ArtTile_Signpost
+		plcm    Nem_SignPost, ArtTile_Signpost
 PLC_Signpostend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - special stage warp effect
@@ -208,64 +208,64 @@ PLC_SpecialStage:	dc.w ((PLC_SpeStageend-PLC_SpecialStage-2)/6)-1
 		plcm    Nem_SSBgCloud, ArtTile_SS_Background_Clouds
 		plcm    Nem_SSBgFish, ArtTile_SS_Background_Fish
 		plcm    Nem_SSWalls, ArtTile_SS_Wall
-		plcm    ArtBumper, ArtTile_SS_Bumper
-		plcm    ArtSpecialGoal, ArtTile_SS_Goal
-		plcm    ArtSpecialUpDown, ArtTile_SS_Up_Down
-		plcm    ArtSpecialR, ArtTile_SS_R_Block
-		plcm    ArtSpecial1up, ArtTile_SS_Extra_Life
-		plcm    ArtSpecialStars, ArtTile_SS_Emerald_Sparkle
-		plcm    byte_65432, ArtTile_SS_Red_White_Block
-		plcm    ArtSpecialSkull, ArtTile_SS_Skull_Block
-		plcm    ArtSpecialU, ArtTile_SS_U_Block
+		plcm    Nem_Bumper, ArtTile_SS_Bumper
+		plcm    Nem_SSGOAL, ArtTile_SS_Goal
+		plcm    Nem_SSUpDown, ArtTile_SS_Up_Down
+		plcm    Nem_SSRBlock, ArtTile_SS_R_Block
+		plcm    Nem_SS1UpBlock, ArtTile_SS_Extra_Life
+		plcm    Nem_SSEmStars, ArtTile_SS_Emerald_Sparkle
+		plcm    Nem_SSRedWhite, ArtTile_SS_Red_White_Block
+		plcm    Nem_SSSkull, ArtTile_SS_Skull_Block
+		plcm    Nem_SSUBlock, ArtTile_SS_U_Block
 PLC_SpeStageend:
-		plcm    ArtSpecialEmerald, 0
-		plcm    ArtSpecialZone1, 0
-		plcm    ArtSpecialZone2, 0
-		plcm    ArtSpecialZone3, 0
-		plcm    ArtSpecialZone4, 0
-		plcm    ArtSpecialZone5, 0
-		plcm    ArtSpecialZone6, 0
+		plcm    Nem_SSEmerald, 0
+		plcm    Nem_SSZone1, 0
+		plcm    Nem_SSZone2, 0
+		plcm    Nem_SSZone3, 0
+		plcm    Nem_SSZone4, 0
+		plcm    Nem_SSZone5, 0
+		plcm    Nem_SSZone6, 0
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - GHZ animals
 ; ---------------------------------------------------------------------------
 PLC_GHZAnimals:	dc.w ((PLC_GHZAnimalsend-PLC_GHZAnimals-2)/6)-1
-		plcm    ArtAnimalPocky, ArtTile_Animal_1
-		plcm    ArtAnimalCucky, ArtTile_Animal_2
+		plcm    Nem_Rabbit, ArtTile_Animal_1
+		plcm    Nem_Chicken, ArtTile_Animal_2
 PLC_GHZAnimalsend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - LZ animals
 ; ---------------------------------------------------------------------------
 PLC_LZAnimals:	dc.w ((PLC_LZAnimalsend-PLC_LZAnimals-2)/6)-1
-		plcm    ArtAnimalPecky, ArtTile_Animal_1
-		plcm    ArtAnimalRocky, ArtTile_Animal_2
+		plcm    Nem_Penguin, ArtTile_Animal_1
+		plcm    Nem_Seal, ArtTile_Animal_2
 PLC_LZAnimalsend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - MZ animals
 ; ---------------------------------------------------------------------------
 PLC_MZAnimals:	dc.w ((PLC_MZAnimalsend-PLC_MZAnimals-2)/6)-1
-		plcm    ArtAnimalPicky, ArtTile_Animal_1
-		plcm    ArtAnimalFlicky, ArtTile_Animal_2
+		plcm    Nem_Pig, ArtTile_Animal_1
+		plcm    Nem_Flicky, ArtTile_Animal_2
 PLC_MZAnimalsend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - SLZ animals
 ; ---------------------------------------------------------------------------
 PLC_SLZAnimals:	dc.w ((PLC_SLZAnimalsend-PLC_SLZAnimals-2)/6)-1
-		plcm    ArtAnimalRicky, ArtTile_Animal_1
-		plcm    ArtAnimalRocky, ArtTile_Animal_2
+		plcm    Nem_Squirrel, ArtTile_Animal_1
+		plcm    Nem_Seal, ArtTile_Animal_2
 PLC_SLZAnimalsend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - SZ animals
 ; ---------------------------------------------------------------------------
 PLC_SZAnimals:	dc.w ((PLC_SZAnimalsend-PLC_SZAnimals-2)/6)-1
-		plcm    ArtAnimalPicky, ArtTile_Animal_1
-		plcm    ArtAnimalCucky, ArtTile_Animal_2
+		plcm    Nem_Pig, ArtTile_Animal_1
+		plcm    Nem_Chicken, ArtTile_Animal_2
 PLC_SZAnimalsend:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - CWZ animals
 ; ---------------------------------------------------------------------------
 PLC_CWZAnimals:	dc.w ((PLC_CWZAnimalsend-PLC_CWZAnimals-2)/6)-1
-		plcm    ArtAnimalPocky, ArtTile_Animal_1
-		plcm    ArtAnimalFlicky, ArtTile_Animal_2
+		plcm    Nem_Rabbit, ArtTile_Animal_1
+		plcm    Nem_Flicky, ArtTile_Animal_2
 PLC_CWZAnimalsend:
 		even
                 

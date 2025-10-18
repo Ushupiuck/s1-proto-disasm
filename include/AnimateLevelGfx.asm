@@ -34,7 +34,7 @@ AniArt_GHZ_Waterfall:
 		subq.b	#1,(v_lani0_time).w
 		bpl.s	AniArt_GHZ_Bigflower
 
-		move.b	#5,(v_lani0_time).w
+		move.b	#6-1,(v_lani0_time).w
 		lea	(Art_GhzWater).l,a1
 		move.b	(v_lani0_frame).w,d0
 		addq.b	#1,(v_lani0_frame).w
@@ -52,7 +52,7 @@ AniArt_GHZ_Bigflower:
 		subq.b	#1,(v_lani1_time).w
 		bpl.s	AniArt_GHZ_Smallflower
 
-		move.b	#$F,(v_lani1_time).w
+		move.b	#16-1,(v_lani1_time).w
 		lea	(Art_GhzFlower1).l,a1
 		move.b	(v_lani1_frame).w,d0
 		addq.b	#1,(v_lani1_frame).w
@@ -70,7 +70,7 @@ AniArt_GHZ_Smallflower:
 		subq.b	#1,(v_lani2_time).w
 		bpl.s	.end
 
-		move.b	#7,(v_lani2_time).w
+		move.b	#8-1,(v_lani2_time).w
 		move.b	(v_lani2_frame).w,d0
 		addq.b	#1,(v_lani2_frame).w
 		andi.w	#3,d0
@@ -104,7 +104,7 @@ AniArt_MZ_Lava:
 		subq.b	#1,(v_lani0_time).w
 		bpl.s	AniArt_MZ_Magma
 
-		move.b	#$13,(v_lani0_time).w
+		move.b	#20-1,(v_lani0_time).w
 		lea	(Art_MzLava1).l,a1
 		moveq	#0,d0
 		move.b	(v_lani0_frame).w,d0
@@ -125,7 +125,7 @@ AniArt_MZ_Magma:
 		subq.b	#1,(v_lani1_time).w
 		bpl.s	AniArt_MZ_Saturns
 
-		move.b	#1,(v_lani1_time).w
+		move.b	#2-1,(v_lani1_time).w
 		moveq	#0,d0
 		move.b	(v_lani0_frame).w,d0
 		lea	(Art_MzLava2).l,a4
@@ -146,7 +146,7 @@ AniArt_MZ_Magma:
 		move.w	(a3,d0.w),d0
 		lea	(a3,d0.w),a3
 		movea.l	a4,a1
-		move.w	#$1F,d1
+		move.w	#$20-1,d1
 		jsr	(a3)
 		addq.w	#4,d3
 		dbf	d2,.loop
@@ -156,14 +156,19 @@ AniArt_MZ_Magma:
 AniArt_MZ_Saturns:
 		subq.b	#1,(v_lani2_time).w
 		bpl.w	locret_11480
-		move.b	#7,(v_lani2_time).w
+		move.b	#8-1,(v_lani2_time).w
 		lea	(Art_MzSaturns).l,a1
 		moveq	#0,d0
 		move.b	(v_lani2_frame).w,d0
 		addq.b	#1,d0
-		cmpi.b	#5,d0				; are we on frame 5? (this check should be 6, causing one of the frames for the saturns to be skipped)
+	if FixBugs
+		cmpi.b	#6,d0				; are we on frame 6?
+	else
+		; Bug: This misses the last frame of animation
+		cmpi.b	#5,d0				; are we on frame 5?
+	endif
 		bne.s	AniArt_MZ_Torch			; if not, then we move onto the MZ Torch
-		moveq	#0,d0
+		moveq	#0,d0				; set back to frame 0
 
 AniArt_MZ_Torch:
 		move.b	d0,(v_lani2_frame).w

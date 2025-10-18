@@ -76,7 +76,7 @@ loc_BDE4:
 
 loc_BDF2:
 		bsr.w	ObjectFall
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		tst.w	d1
 		bpl.s	locret_BE36
 		add.w	d1,obY(a0)
@@ -102,7 +102,7 @@ loc_BE38:
 		bsr.w	SpeedToPos
 
 loc_BE3C:
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		cmpi.w	#-8,d1
 		blt.s	loc_BE52
 		cmpi.w	#$C,d1

@@ -12,6 +12,8 @@
 
 	cpu 68000
 
+FixBugs	= 0
+;	| If 1, fixes a handful of bugs in the game
 zeroOffsetOptimization = 0
 ;	| If 1, makes a handful of zero-offset instructions smaller
 
@@ -183,15 +185,15 @@ loc_28E:
 		disable_ints
 		bra.s	loc_306
 ; ---------------------------------------------------------------------------
-SetupValues:	dc.l $8000				; VDP register start number
-		dc.l (v_end-v_start)/4-1		; size of RAM\4
-		dc.l $100				; VDP register diff
+SetupValues:	dc.l $8000			; VDP register start number
+		dc.l bytesToLcnt(v_end-v_start)		; size of RAM divided by 4
+		dc.l $100					; VDP register diff
 
 		dc.l z80_ram				; start of Z80 RAM
-		dc.l z80_bus_request			; Z80 bus request
+		dc.l z80_bus_request		; Z80 bus request
 		dc.l z80_reset				; Z80 reset
 		dc.l vdp_data_port			; VDP data
-		dc.l vdp_control_port			; VDP control
+		dc.l vdp_control_port		; VDP control
 
 VDPInitValues:
 		dc.b 4			; VDP $80 - 8-colour mode
@@ -259,75 +261,82 @@ zStartupCodeEndLoc:
 Z80StartupCodeEnd:
 
 PSGInitValues:
-		dc.b $9F,$BF,$DF,$FF			; values for PSG channel volumes
+		dc.b $9F,$BF,$DF,$FF		; values for PSG channel volumes
 PSGInitValues_End:
 ; ---------------------------------------------------------------------------
 
 loc_306:
 		btst	#6,(z80_expansion_control+1).l
-		beq.s	DoChecksum
-		cmpi.l	#"init",(v_init).w
-		beq.w	loc_36A
+		beq.s	CheckSumCheck
+		cmpi.l	#"init",(v_init).w ; has checksum routine already run?
+		beq.w	GameInit	; if yes, branch
 
-DoChecksum:
-		movea.l	#EndOfHeader,a0
-		movea.l	#RomEndLoc,a1
+CheckSumCheck:
+		movea.l	#EndOfHeader,a0	; start checking bytes after the header ($200)
+		movea.l	#RomEndLoc,a1	; stop at end of ROM
 		move.l	(a1),d0
 		moveq	#0,d1
 
-loc_32C:
+.loop:
 		add.w	(a0)+,d1
 		cmp.l	a0,d0
-		bhs.s	loc_32C
-		movea.l	#Checksum,a1
-		cmp.w	(a1),d1
+		bhs.s	.loop
+		movea.l	#Checksum,a1	; read the checksum
+		cmp.w	(a1),d1		; compare checksum in header to ROM
+	if 0
+		bne.w	CheckSumError	; if they don't match, branch
+	else
+		nop	; removed the branch to the checksum error, so the checksum will not throw an error regardless of the value
 		nop
-		nop
+	endif
 		lea	(v_crossresetram).w,a6
 		moveq	#0,d7
 		move.w	#bytesToLcnt(v_end-v_crossresetram),d6
 
-loc_348:
+.clearRAM:
 		move.l	d7,(a6)+
-		dbf	d6,loc_348
+		dbf	d6,.clearRAM
 		move.b	(z80_version).l,d0
 		andi.b	#$C0,d0
-		move.b	d0,(v_megadrive).w
-		move.w	#1,(word_FFFFE0).w
-		move.l	#"init",(v_init).w
+		move.b	d0,(v_megadrive).w	; get region setting
+		move.w	#1,(word_FFFFE0).w	; set an unused flag to 1
+		move.l	#"init",(v_init).w	; set flag so checksum won't run again
 
-loc_36A:
+GameInit:
 		lea	(v_start&$FFFFFF).l,a6
 		moveq	#0,d7
 		move.w	#bytesToLcnt(v_crossresetram-v_start),d6
 
-loc_376:
+.clearRAM:
 		move.l	d7,(a6)+
-		dbf	d6,loc_376
+		dbf	d6,.clearRAM
 		bsr.w	VDPSetupGame
 		bsr.w	SoundDriverLoad
 		bsr.w	InitJoypads
 		move.b	#id_Sega,(v_gamemode).w
 
-ScreensLoop:
-		move.b	(v_gamemode).w,d0
-		andi.w	#$1C,d0
-		jsr	GameModeArray(pc,d0.w)
-		bra.s	ScreensLoop
+MainGameLoop:
+		move.b	(v_gamemode).w,d0 ; load Game Mode
+		andi.w	#$1C,d0	; limit Game Mode value to $1C max (change to a maximum of 7C to add more game modes)
+		jsr	GameModeArray(pc,d0.w) ; jump to apt location in ROM
+		bra.s	MainGameLoop	; loop indefinitely
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Main game mode array
 ; ---------------------------------------------------------------------------
 
 GameModeArray:
 
 ptr_GM_Sega:	bra.w	GM_Sega
-; ---------------------------------------------------------------------------
+
 ptr_GM_Title:	bra.w	GM_Title
-; ---------------------------------------------------------------------------
+
 ptr_GM_Demo:	bra.w	GM_Level
-; ---------------------------------------------------------------------------
+
 ptr_GM_Level:	bra.w	GM_Level
-; ---------------------------------------------------------------------------
+
 ptr_GM_Special:	bra.w	GM_Special
-; ---------------------------------------------------------------------------
+
 		rts
 ; ---------------------------------------------------------------------------
 
@@ -340,7 +349,9 @@ ChecksumError:
 .palette:
 		move.w	#cRed,(vdp_data_port).l		; Write red to data
 		dbf	d7,.palette
-		bra.s	*
+
+.endlessloop:
+		bra.s	.endlessloop
 ; ---------------------------------------------------------------------------
 
 BusError:
@@ -423,7 +434,7 @@ ErrorNormal:
 		bsr.w	ErrorPrintAddr
 
 loc_472:
-		bsr.w	ErrorWaitInput
+		bsr.w	ErrorWaitForC
 		movem.l	(v_regbuffer).w,d0-sp
 		enable_ints
 		rte
@@ -433,7 +444,7 @@ ErrorPrint:
 		lea	(vdp_data_port).l,a6
 		locVRAM	ArtTile_Error_Handler_Font*tile_size
 		lea	(Art_Text).l,a0
-		move.w	#bytesToWcnt(Art_Text_end-Art_Text-tile_size),d1
+		move.w	#bytesToWcnt(Art_Text_End-Art_Text-tile_size),d1
 
 .loadart:
 		move.w	(a0)+,(a6)
@@ -443,7 +454,7 @@ ErrorPrint:
 		move.w	Error_Text(pc,d0.w),d0
 		lea	Error_Text(pc,d0.w),a0
 		locVRAM vram_fg+$604
-		moveq	#$13-1,d1
+		moveq	#19-1,d1
 
 .loadtext:
 		moveq	#0,d0
@@ -481,37 +492,42 @@ Error_Text:
 ; ---------------------------------------------------------------------------
 
 ErrorPrintAddr:
-		move.w	#ArtTile_Error_Handler_Font+10,(a6)
+		move.w	#ArtTile_Error_Handler_Font+10,(a6)	; display "$" symbol
 		moveq	#8-1,d2
 
-loc_5BA:
+.loop:
 		rol.l	#4,d0
-		bsr.s	sub_5C4
-		dbf	d2,loc_5BA
+		bsr.s	.shownumber	; display 8 numbers
+		dbf	d2,.loop
 		rts
 ; ---------------------------------------------------------------------------
 
-sub_5C4:
+.shownumber:
 		move.w	d0,d1
 		andi.w	#$F,d1
 		cmpi.w	#$A,d1
-		bcs.s	loc_5D2
-		addq.w	#7,d1
+		blo.s	.chars0to9
+		addq.w	#7,d1		; add 7 for characters A-F
 
-loc_5D2:
+.chars0to9:
 		addi.w	#ArtTile_Error_Handler_Font,d1
 		move.w	d1,(a6)
 		rts
 ; ---------------------------------------------------------------------------
 
-ErrorWaitInput:
+ErrorWaitForC:
 		bsr.w	ReadJoypads
-		cmpi.b	#btnC,(v_jpadpress1).w
-		bne.w	ErrorWaitInput
+		cmpi.b	#btnC,(v_jpadpress1).w	; is button C pressed?
+		bne.w	ErrorWaitForC	; if not, branch
 		rts
 ; ---------------------------------------------------------------------------
+
 Art_Text:	binclude "artunc/menutext.bin"
-Art_Text_end:	even
+Art_Text_End:
+
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Vertical interrupt
 ; ---------------------------------------------------------------------------
 
 VBlank:
@@ -571,7 +587,7 @@ VBla_02:
 VBla_04:
 		bsr.w	sub_E78
 		bsr.w	LoadTilesAsYouMove_BGOnly
-		bsr.w	sub_1438
+		bsr.w	ProcessDPLC2
 		tst.w	(v_demolength).w
 		beq.w	.end
 		subq.w	#1,(v_demolength).w
@@ -667,7 +683,7 @@ VBla_0C:
 		bsr.w	LoadTilesAsYouMove
 		jsr	(AnimateLevelGfx).l
 		jsr	(UpdateHUD).l
-		bsr.w	sub_1438
+		bsr.w	ProcessDPLC2
 		rts
 ; ---------------------------------------------------------------------------
 
@@ -682,7 +698,7 @@ VBla_0E:
 
 VBla_12:
 		bsr.w	sub_E78
-		bra.w	sub_1438
+		bra.w	ProcessDPLC2
 ; ---------------------------------------------------------------------------
 
 sub_E78:
@@ -733,9 +749,9 @@ InitJoypads:
 		stopZ80
 		waitZ80
 		moveq	#$40,d0
-		move.b	d0,($A10009).l
-		move.b	d0,($A1000B).l
-		move.b	d0,($A1000D).l
+		move.b	d0,(z80_port_1_control+1).l
+		move.b	d0,(z80_port_2_control+1).l
+		move.b	d0,(z80_expansion_control+1).l
 		startZ80
 		rts
 ; ---------------------------------------------------------------------------
@@ -819,8 +835,7 @@ VDPSetupArray:
 		dc.w $9000+%0001
 		dc.w $9100
 		dc.w $9200
-VDPSetupArray_End:
-		even
+VDPSetupArray_End
 ; ---------------------------------------------------------------------------
 
 ClearScreen:
@@ -830,8 +845,13 @@ ClearScreen:
 		move.l	#0,(v_scrposy_dup).w
 		move.l	#0,(v_scrposx_dup).w
 
+	if FixBugs
+		clearRAM v_spritetablebuffer,v_spritetablebuffer_end
+		clearRAM v_hscrolltablebuffer,v_hscrolltablebuffer_end_padded
+	else
 		clearRAM v_spritetablebuffer,v_spritetablebuffer_end+4	; This clears too much RAM, but this won't effect much since water palettes don't exist.
 		clearRAM v_hscrolltablebuffer,v_hscrolltablebuffer_end_padded+4	; This clears too much RAM, leading to a slight bug (first bit of the Sonic object's RAM is cleared)
+	endif
 
 		rts
 ; ---------------------------------------------------------------------------
@@ -877,7 +897,6 @@ SoundDriverLoad:
 		dc.b 0
 		dc.b 0
 		dc.b 0
-		even
 ; ---------------------------------------------------------------------------
 
 PlaySound:
@@ -990,9 +1009,9 @@ ClearPLC:
 		lea	(v_plc_buffer).w,a2		; PLC buffer space in RAM
 		moveq	#bytesToLcnt(v_plc_buffer_end-v_plc_buffer),d0
 
-.clearram:
+.clearRAM:
 		clr.l	(a2)+
-		dbf	d0,.clearram
+		dbf	d0,.clearRAM
 		rts
 ; End of function ClearPLC
 ; ---------------------------------------------------------------------------
@@ -1011,7 +1030,9 @@ RunPLC:
 
 loc_1404:
 		andi.w	#$7FFF,d2
+	if ~~FixBugs
 		move.w	d2,(f_plc_execute).w
+	endif
 		bsr.w	NemDec_BuildCodeTable
 		move.b	(a0)+,d5
 		asl.w	#8,d5
@@ -1025,12 +1046,16 @@ loc_1404:
 		move.l	d0,(v_plc_buffer_regC).w
 		move.l	d5,(v_plc_buffer_reg10).w
 		move.l	d6,(v_plc_buffer_reg14).w
+	if FixBugs
+		move.w	d2,(f_plc_execute).w
+	endif
 
 locret_1436:
 		rts
 ; ---------------------------------------------------------------------------
 
-sub_1438:
+; sub_1438:
+ProcessDPLC2:
 		tst.w	(f_plc_execute).w
 		beq.w	locret_14D0
 		move.w	#9,(v_plc_buffer_reg1A).w
@@ -1103,7 +1128,7 @@ QuickPLC:
 		lea	(a1,d0.w),a1
 		move.w	(a1)+,d1
 
-loc_14F4:
+Qplc_Loop:
 		movea.l	(a1)+,a0
 		moveq	#0,d0
 		move.w	(a1)+,d0
@@ -1113,7 +1138,7 @@ loc_14F4:
 		swap	d0
 		move.l	d0,(vdp_control_port).l
 		bsr.w	NemDec
-		dbf	d1,loc_14F4
+		dbf	d1,Qplc_Loop
 		rts
 ; ---------------------------------------------------------------------------
 
@@ -1122,19 +1147,12 @@ loc_14F4:
 		include "include/PaletteCycle.asm"
 
 Cyc_Title:	binclude "palette/Cycle - Title.bin"
-		even
 Cyc_GHZ:	binclude "palette/Cycle - GHZ.bin"
-		even
 Cyc_LZ:	binclude "palette/Cycle - LZ (Unused).bin"
-		even
 Cyc_MZ:	binclude "palette/Cycle - MZ (Unused).bin"
-		even
 Cyc_SLZ:	binclude "palette/Cycle - SLZ.bin"
-		even
 Cyc_SZ1:	binclude "palette/Cycle - SZ1.bin"
-		even
 Cyc_SZ2:	binclude "palette/Cycle - SZ2.bin"
-		even
 ; ---------------------------------------------------------------------------
 
 PaletteWhiteIn:
@@ -1268,11 +1286,11 @@ loc_1A36:
 
 PalCycSega:
 		subq.w	#1,(v_pcyc_time).w
-		bpl.s	.locret
-		move.w	#3,(v_pcyc_time).w
-		move.w	(v_pcyc_num).w,d0
-		bmi.s	.locret
-		subq.w	#2,(v_pcyc_num).w
+		bpl.s	.return
+		move.w	#4-1,(v_pcyc_time).w
+		move.w	(v_pcyc_num).w,d0	; get cycle number
+		bmi.s	.return	; if negative, return
+		subq.w	#2,(v_pcyc_num).w	; subtract 2 from cycle number
 		lea	(Cyc_Sega).l,a0
 		lea	(v_palette+4).w,a1
 		adda.w	d0,a0
@@ -1283,11 +1301,10 @@ PalCycSega:
 		move.l	(a0)+,(a1)+
 		move.w	(a0)+,(a1)+
 
-.locret:
+.return:
 		rts
 ; ---------------------------------------------------------------------------
 Cyc_Sega:	binclude "palette/Cycle - Sega.bin"
-		even
 ; ---------------------------------------------------------------------------
 
 PalLoad1:
@@ -1321,29 +1338,17 @@ PalLoad2:
 		include "include/Palette Pointers.asm"
 
 Pal_SegaBG:	binclude "palette/Sega Screen.bin"
-		even
 Pal_Title:	binclude "palette/Title Screen.bin"
-		even
 Pal_LevelSel:	binclude "palette/Level Select.bin"
-		even
 Pal_Sonic:	binclude "palette/Sonic.bin"
-		even
 Pal_GHZ:	binclude "palette/Green Hill Zone.bin"
-		even
 Pal_LZ:	binclude "palette/Labyrinth Zone.bin"
-		even
 Pal_Ending:	binclude "palette/Ending.bin"
-		even
 Pal_MZ:	binclude "palette/Marble Zone.bin"
-		even
 Pal_SLZ:	binclude "palette/Star Light Zone.bin"
-		even
 Pal_SZ:	binclude "palette/Sparkling Zone.bin"
-		even
 Pal_CWZ:	binclude "palette/Clock Work Zone.bin"
-		even
 Pal_Special:	binclude "palette/Special Stage.bin"
-		even
 ; ---------------------------------------------------------------------------
 
 WaitForVBla:
@@ -1385,7 +1390,6 @@ CalcSine:
 		rts
 ; ---------------------------------------------------------------------------
 SineTable:	binclude "misc/sinewave.bin"
-		even
 ; ---------------------------------------------------------------------------
 
 ;GetSqrt:						; Leftover in the final game (REV00 only)
@@ -1498,14 +1502,14 @@ GM_Sega:
 		bsr.w	NemDec
 		lea	(v_start&$FFFFFF).l,a1
 		lea	(Eni_SegaLogo).l,a0
-		move.w	#0,d0
+		move.w	#make_art_tile(0,0,0),d0
 		bsr.w	EniDec
 
 		copyTilemap	v_start&$FFFFFF,vram_fg+$61C,12,4
 
 		moveq	#palid_SegaBG,d0
 		bsr.w	PalLoad2
-		move.w	#$28,(v_pcyc_num).w
+		move.w	#40,(v_pcyc_num).w	; set cycle number to 40
 		move.w	#0,(v_pal_buffer+$12).w
 		move.w	#0,(v_pal_buffer+$10).w
 		move.w	#180,(v_demolength).w
@@ -1519,8 +1523,8 @@ loc_2528:
 		bsr.w	PalCycSega
 		tst.w	(v_demolength).w
 		beq.s	loc_2544
-		andi.b	#btnStart,(v_jpadpress1).w
-		beq.s	loc_2528
+		andi.b	#btnStart,(v_jpadpress1).w	; is start pressed?
+		beq.s	loc_2528	; if not, loop
 
 loc_2544:
 		move.b	#id_Title,(v_gamemode).w
@@ -1554,7 +1558,7 @@ GM_Title:
 		lea	(vdp_data_port).l,a6
 		locVRAM ArtTile_Level_Select_Font*tile_size,vdp_control_port-vdp_data_port(a6)
 		lea	(Art_Text).l,a5
-		move.w	#bytesToWcnt(Art_Text_end-Art_Text),d1
+		move.w	#bytesToWcnt(Art_Text_End-Art_Text),d1
 
 loc_25D8:
 		move.w	(a5)+,(a6)
@@ -1618,7 +1622,7 @@ loc_26AE:
 		addq.w	#2,d0	; set object scroll right speed
 		move.w	d0,(v_objslot0+obX).w	; move sonic to the right
 		cmpi.w	#$1C00,d0	; has object passed $1C00?
-		bcs.s	loc_26E4	; if not, branch
+		blo.s	loc_26E4	; if not, branch
 		move.b	#id_Sega,(v_gamemode).w	; go to Sega Screen
 		rts
 ; ---------------------------------------------------------------------------
@@ -1660,9 +1664,9 @@ LevelSelect:
 		move.w	(v_levselsound).w,d0
 		addi.w	#$80,d0
 		cmpi.w	#bgm__Last+2,d0	; There's no pointer for music $92 or $93
-		bcs.s	loc_277A	; So the game crashes when played
+		blo.s	loc_277A	; So the game crashes when played
 		cmpi.w	#sfx__First,d0
-		bcs.s	LevelSelect
+		blo.s	LevelSelect
 
 loc_277A:
 		bsr.w	PlaySound_Special
@@ -1721,7 +1725,6 @@ LevSelOrder:
 		dc.b id_SS,0	; SS
 		dc.b id_SS,0	; SS (Sound Select)
 		dc.w $8000
-		even
 ; ---------------------------------------------------------------------------
 
 loc_27F8:
@@ -1737,7 +1740,7 @@ loc_27FE:
 		addq.w	#2,d0
 		move.w	d0,(v_objslot0+obX).w
 		cmpi.w	#$1C00,d0
-		bcs.s	loc_282C
+		blo.s	loc_282C
 		move.b	#id_Sega,(v_gamemode).w
 		rts
 ; ---------------------------------------------------------------------------
@@ -1754,7 +1757,7 @@ loc_282C:
 		move.w	d0,(v_zone).w
 		addq.w	#1,(v_demonum).w
 		cmpi.w	#6,(v_demonum).w
-		bcs.s	loc_2860
+		blo.s	loc_2860
 		move.w	#0,(v_demonum).w
 
 loc_2860:
@@ -1786,7 +1789,6 @@ DemoLevels:
 		dc.b	(id_SS-1),0
 		dc.b	id_SZ,0
 		dc.b	(id_SS-1),0
-		even
 ; ---------------------------------------------------------------------------
 
 sub_28A6:
@@ -1813,7 +1815,7 @@ loc_28D6:
 		beq.s	loc_28E6
 		addq.w	#1,d0
 		cmpi.w	#$14,d0
-		bcs.s	loc_28E6
+		blo.s	loc_28E6
 		moveq	#0,d0
 
 loc_28E6:
@@ -1833,14 +1835,14 @@ loc_28F0:
 		beq.s	loc_2912
 		subq.w	#1,d0
 		bhs.s	loc_2912
-		moveq	#$4F,d0
+		moveq	#sfx__Last-$80,d0
 
 loc_2912:
 		btst	#bitR,d1
 		beq.s	loc_2922
 		addq.w	#1,d0
-		cmpi.w	#$50,d0
-		bcs.s	loc_2922
+		cmpi.w	#spec__First-$80,d0
+		blo.s	loc_2922
 		moveq	#0,d0
 
 loc_2922:
@@ -1852,11 +1854,15 @@ locret_292A:
 ; ---------------------------------------------------------------------------
 
 LevSelTextLoad:
+
+textpos:	= ($40000000+(($E210&$3FFF)<<16)+(($E210&$C000)>>14))
+					; $E210 is a VRAM address
+
 		lea	(LevelSelectText).l,a1
 		lea	(vdp_data_port).l,a6
-		move.l	#$62100003,d4
+		move.l	#textpos,d4
 		move.w	#$E680,d3
-		moveq	#$14-1,d1				; Only load 14 lines.
+		moveq	#20-1,d1	; Only load 20 lines.
 
 loc_2944:
 		move.l	d4,4(a6)
@@ -1866,7 +1872,7 @@ loc_2944:
 		moveq	#0,d0
 		move.w	(v_levselitem).w,d0
 		move.w	d0,d1
-		move.l	#$62100003,d4
+		move.l	#textpos,d4
 		lsl.w	#7,d0
 		swap	d0
 		add.l	d0,d4
@@ -1885,7 +1891,7 @@ loc_2944:
 		move.w	#$C680,d3
 
 loc_2996:
-		locVRAM $EBB0
+		locVRAM vram_bg+$BB0
 		move.w	(v_levselsound).w,d0
 		addi.w	#$80,d0
 		move.b	d0,d2
@@ -1899,7 +1905,7 @@ loc_2996:
 sub_29B8:
 		andi.w	#$F,d0
 		cmpi.b	#$A,d0
-		bcs.s	loc_29C6
+		blo.s	loc_29C6
 		addi.b	#7,d0
 
 loc_29C6:
@@ -1909,7 +1915,7 @@ loc_29C6:
 ; ---------------------------------------------------------------------------
 
 sub_29CC:
-		moveq	#$18-1,d2
+		moveq	#24-1,d2
 
 loc_29CE:
 		moveq	#0,d0
@@ -1928,8 +1934,38 @@ loc_29DE:
 ; ---------------------------------------------------------------------------
 
 LevelSelectText:
-		binclude "misc/Level Select Text.bin"
-		even
+		charset ' ', $FF
+		charset '0', "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09"
+		charset '$', $0A
+		charset '-', $0B
+		charset '=', $0C
+		charset '>', $0D
+		;charset '>', $0E ; there are two identical right arrows back-to-back in the menutext font, for some reason
+		charset 'Y', "\x0F\x10" ; Y and Z come before A-X
+		charset 'A', "\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x20\x21\x22\x23\x24\x25\x26\x27\x28"
+
+		dc.b "GREEN HILL ZONE STAGE 1 "
+		dc.b "                STAGE 2 "
+		dc.b "                STAGE 3 "
+		dc.b "LABYRINTH ZONE  STAGE 1 "
+		dc.b "                STAGE 2 "
+		dc.b "                STAGE 3 "
+		dc.b "MARBLE ZONE     STAGE 1 "
+		dc.b "                STAGE 2 "
+		dc.b "                STAGE 3 "
+		dc.b "STAR LIGHT ZONE STAGE 1X"
+		dc.b "                STAGE 2X"
+		dc.b "                STAGE 3X"
+		dc.b "SPARKLING ZONE  STAGE 1 "
+		dc.b "                STAGE 2 "
+		dc.b "                STAGE 3 "
+		dc.b "CLOCK WORK ZONE STAGE 1 "
+		dc.b "                STAGE 2 "
+		dc.b "                STAGE 3X"
+		dc.b "SPECIAL STAGE           "
+		dc.b "SOUND SELECT            "
+
+		charset
 
 MusicList:
 		dc.b bgm_GHZ
@@ -1998,7 +2034,7 @@ loc_2C92:
 		tst.l	(v_plc_buffer).w
 		bne.s	loc_2C92
 		bsr.w	DebugPosLoadArt
-		jsr	(sub_117C6).l
+		jsr	(Hud_Base).l
 		moveq	#palid_Sonic,d0
 		bsr.w	PalLoad1
 		bsr.w	LoadLevelBounds
@@ -2007,31 +2043,31 @@ loc_2C92:
 		bsr.w	LoadAnimatedBlocks
 		bsr.w	LoadAnimatedChunks
 		bsr.w	LoadTilesFromStart
-		jsr	(LogCollision).l
-		move.l	#colGHZ,(v_collindex).w		; Load Green Hill's collision - what follows are some C style conditional statements, really unnecessary and replaced with a table in the final game
+		jsr	(ConvertCollisionArray).l
+		move.l	#Col_GHZ,(v_collindex).w		; Load Green Hill's collision - what follows are some C style conditional statements, really unnecessary and replaced with a table in the final game
 		cmpi.b	#id_LZ,(v_zone).w		; Is the current zone Labyrinth?
 		bne.s	loc_2CFA			; If not, go to the next condition
-		move.l	#colLZ,(v_collindex).w		; Load Labyrinth's collision
+		move.l	#Col_LZ,(v_collindex).w		; Load Labyrinth's collision
 
 loc_2CFA:
 		cmpi.b	#id_MZ,(v_zone).w		; Is the current zone Marble?
 		bne.s	loc_2D0A			; If not, go to the next condition
-		move.l	#colMZ,(v_collindex).w		; Load Marble's collision
+		move.l	#Col_MZ,(v_collindex).w		; Load Marble's collision
 
 loc_2D0A:
 		cmpi.b	#id_SLZ,(v_zone).w		; Is the current zone Star Light?
 		bne.s	loc_2D1A			; If not, go to the next condition
-		move.l	#colSLZ,(v_collindex).w		; Load Star Light's collision
+		move.l	#Col_SLZ,(v_collindex).w		; Load Star Light's collision
 
 loc_2D1A:
 		cmpi.b	#id_SZ,(v_zone).w		; Is the current zone Sparkling?
 		bne.s	loc_2D2A			; If not, go to the last condition
-		move.l	#colSZ,(v_collindex).w		; Load Sparkling's collision
+		move.l	#Col_SZ,(v_collindex).w		; Load Sparkling's collision
 
 loc_2D2A:
 		cmpi.b	#id_CWZ,(v_zone).w		; Is the current zone Clock Work?
 		bne.s	loc_2D3A			; If not, then just skip loading collision
-		move.l	#colCWZ,(v_collindex).w		; Load Clock Work's collision
+		move.l	#Col_CWZ,(v_collindex).w		; Load Clock Work's collision
 
 loc_2D3A:
 		move.b	#id_SonicPlayer,(v_player).w
@@ -2057,9 +2093,9 @@ loc_2D54:
 		move.w	d0,(v_debuguse).w
 		move.w	d0,(f_restart).w
 		move.w	d0,(v_framecount).w
-		bsr.w	oscInit
+		bsr.w	OscillateNumInit
 		move.b	#1,(f_scorecount).w
-		move.b	#1,(f_extralife).w
+		move.b	#1,(f_ringcount).w
 		move.b	#1,(f_timecount).w
 		move.w	#0,(v_btnpushtime1).w
 		lea	(DemoDataPtr).l,a1
@@ -2101,7 +2137,7 @@ loc_2E2E:
 		bsr.w	ObjPosLoad
 		bsr.w	PaletteCycle
 		bsr.w	RunPLC
-		bsr.w	oscUpdate
+		bsr.w	OscillateNumDo
 		bsr.w	UpdateTimers
 		bsr.w	LoadSignpostPLC
 		cmpi.b	#id_Demo,(v_gamemode).w
@@ -2142,7 +2178,7 @@ loc_2E9E:
 		bsr.w	ObjPosLoad
 		subq.w	#1,(v_palchgspeed).w
 		bpl.s	loc_2EC8
-		move.w	#2,(v_palchgspeed).w
+		move.w	#3-1,(v_palchgspeed).w
 		bsr.w	FadeOut_ToBlack
 
 loc_2EC8:
@@ -2161,7 +2197,7 @@ loc_2EC8:
 		lea	(v_ngfx_buffer).w,a0
 		move.w	(f_water).w,d2
 		move.w	#$9100,d3
-		move.w	#$100-1,d7
+		move.w	#bytesToWcnt($200),d7
 
 loc_3028:
 		move.w	d2,d0
@@ -2180,7 +2216,6 @@ loc_3034:
 		rts
 
 		include "include/LZWaterFeatures.asm"
-
 ; ---------------------------------------------------------------------------
 
 DemoPlayback:
@@ -2226,7 +2261,11 @@ loc_30C4:
 		move.b	(a1),d0
 		lea	(v_jpadhold1).w,a0
 		move.b	d0,d1
+	if FixBugs
+		move.b	v_jpadhold2-v_jpadhold1(a0),d2
+	else
 		move.b	(a0),d2
+	endif
 		eor.b	d2,d0
 		move.b	d1,(a0)+
 		and.b	d1,d0
@@ -2239,41 +2278,16 @@ loc_30C4:
 locret_30FE:
 		rts
 ; ---------------------------------------------------------------------------
-
 DemoDataPtr:
-		dc.l byte_614C6
-		dc.l byte_614C6
-		dc.l byte_614C6
-		dc.l byte_61434
-		dc.l byte_61578
-		dc.l byte_61578
-		dc.l byte_6161E
+		dc.l Demo_MZ
+		dc.l Demo_MZ
+		dc.l Demo_MZ
+		dc.l Demo_GHZ
+		dc.l Demo_SZ
+		dc.l Demo_SZ
+		dc.l Demo_SS
 
-		dc.b 0, 139
-		dc.b btnR, 55
-		dc.b 0, 66
-		dc.b btnR, 92
-		dc.b 0, 106
-		dc.b btnR, 95
-		dc.b 0, 47
-		dc.b btnR, 44
-		dc.b 0, 33
-		dc.b btnR, 3
-		dc.b btnR+btnC, 48
-		dc.b btnR, 8
-		dc.b 0, 46
-		dc.b btnR, 21
-		dc.b 0, 15
-		dc.b btnR, 70
-		dc.b 0, 26
-		dc.b btnR, 255
-		dc.b btnR, 202
-		dc.b 0, 0
-		dc.b 0, 0
-		dc.b 0, 0
-		dc.b 0, 0
-		dc.b 0, 0
-		even
+		include	"demodata/Unused.asm"
 ; ---------------------------------------------------------------------------
 
 LoadAnimatedChunks:
@@ -2286,7 +2300,7 @@ LoadAnimatedChunks:
 
 sub_3166:
 		lea	(Anim256Unk1).l,a0
-		move.w	#bytesToWcnt(Anim256Unk1_end-Anim256Unk1),d1
+		move.w	#bytesToWcnt(Anim256Unk1_End-Anim256Unk1),d1
 
 .loadchunks:
 		move.w	(a0)+,(a1)+
@@ -2299,7 +2313,7 @@ locret_3176:
 sub_3178:
 		lea	(v_256x256&$FFFFFF).l,a1
 		lea	(Anim256Unk2).l,a0
-		move.w	#bytesToWcnt(Anim256Unk2_end-Anim256Unk2),d1
+		move.w	#bytesToWcnt(Anim256Unk2_End-Anim256Unk2),d1
 
 .loadchunks2:
 		move.w	(a0)+,d0
@@ -2308,9 +2322,9 @@ sub_3178:
 		rts
 ; ---------------------------------------------------------------------------
 Anim256Unk1:	binclude "level/map256/Anim Unknown 1.bin"
-Anim256Unk1_end:	even
+Anim256Unk1_End:
 Anim256Unk2:	binclude "level/map256/Anim Unknown 2.bin"
-Anim256Unk2_end:	even
+Anim256Unk2_End:
 ; ---------------------------------------------------------------------------
 
 LoadAnimatedBlocks:
@@ -2324,7 +2338,7 @@ LoadAnimatedBlocks:
 .isslz:
 		lea	(v_16x16+$1790).w,a1	; load ROM address for animated blocks to load in the main block RAM into a1.
 		lea	(Anim16GHZ).l,a0	; load animated GHZ blocks into a0.
-		move.w	#bytesToWcnt(Anim16GHZ_end-Anim16GHZ),d1	; load approximate size of the blocks into d1.
+		move.w	#bytesToWcnt(Anim16GHZ_End-Anim16GHZ),d1	; load approximate size of the blocks into d1.
 
 .loadghz:
 		move.w	(a0)+,(a1)+
@@ -2337,7 +2351,7 @@ LoadAnimatedBlocks:
 .ismz:
 		lea	(v_16x16+$17A0).w,a1	; load ROM address for animated blocks to load in the main block RAM into a1.
 		lea	(Anim16MZ).l,a0	; load animated MZ blocks into a0.
-		move.w	#bytesToWcnt(Anim16MZ_end-Anim16MZ),d1	; load approximate size of the blocks into d1.
+		move.w	#bytesToWcnt(Anim16MZ_End-Anim16MZ),d1	; load approximate size of the blocks into d1.
 
 .loadmz:
 		move.w	(a0)+,(a1)+
@@ -2345,9 +2359,9 @@ LoadAnimatedBlocks:
 		rts
 ; ---------------------------------------------------------------------------
 Anim16GHZ:	binclude "level/map16/Anim GHZ.bin"
-Anim16GHZ_end:	even
+Anim16GHZ_End:
 Anim16MZ:	binclude "level/map16/Anim MZ.bin"
-Anim16MZ_end:	even
+Anim16MZ_End:
 ; ---------------------------------------------------------------------------
 
 DebugPosLoadArt:
@@ -2355,11 +2369,11 @@ DebugPosLoadArt:
 ; ---------------------------------------------------------------------------
 		locVRAM $4F0*tile_size
 		lea	(Art_Text).l,a0
-		move.w	#bytesToWcnt(Art_Text_end-Art_Text-tile_size*$1F),d1
+		move.w	#bytesToWcnt(Art_Text_End-Art_Text-tile_size*$1F),d1
 		bsr.s	.loadtext
 		lea	(Art_Text).l,a0
 		adda.w	#$11*tile_size,a0
-		move.w	#bytesToWcnt(Art_Text_end-Art_Text-tile_size*$23),d1
+		move.w	#bytesToWcnt(Art_Text_End-Art_Text-tile_size*$23),d1
 
 .loadtext:
 		move.w	(a0)+,(vdp_data_port).l
@@ -2384,12 +2398,9 @@ DebugPosLoadArt:
 		dbf	d1,.loadtext
 		rts
 ; ---------------------------------------------------------------------------
-
 .1bpp:	dc.b 0, 6, $60, $66
-		even
 
 		include "include/Oscillatory Routines.asm"
-
 ; ---------------------------------------------------------------------------
 
 UpdateTimers:
@@ -2412,7 +2423,7 @@ loc_347A:
 		move.b	#7,(v_ani2_time).w
 		addq.b	#1,(v_ani2_frame).w
 		cmpi.b	#6,(v_ani2_frame).w
-		bcs.s	loc_3498
+		blo.s	loc_3498
 		move.b	#0,(v_ani2_frame).w
 
 loc_3498:
@@ -2434,8 +2445,8 @@ locret_34BA:
 LoadSignpostPLC:
 		tst.w	(v_debuguse).w
 		bne.w	locret_34FA
-		cmpi.w	#id_MZ<<8+2,(v_zone).w
-		beq.s	loc_34D4
+		cmpi.w	#id_MZ<<8+2,(v_zone).w	; are we on Marble Zone Act 3?
+		beq.s	loc_34D4	; if so, load the signpost
 		cmpi.b	#2,(v_act).w
 		beq.s	locret_34FA
 
@@ -2624,7 +2635,7 @@ loc_3760:
 		moveq	#0,d0
 		move.b	(a0)+,d0
 		bmi.s	loc_37B6
-		lea	(dword_3898).l,a1
+		lea	(Pal_SSCyc1).l,a1
 		adda.w	d0,a1
 		lea	(v_palette+$4E).w,a2
 		move.l	(a1)+,(a2)+
@@ -2638,12 +2649,12 @@ locret_37B4:
 loc_37B6:
 		move.w	(unk_FFF79E).w,d1
 		cmpi.w	#$8A,d0
-		bcs.s	loc_37C2
+		blo.s	loc_37C2
 		addq.w	#1,d1
 
 loc_37C2:
 		mulu.w	#$2A,d1
-		lea	(word_38E0).l,a1
+		lea	(Pal_SSCyc2).l,a1
 		adda.w	d1,a1
 		andi.w	#$7F,d0
 		bclr	#0,d0
@@ -2657,7 +2668,7 @@ loc_37E6:
 		adda.w	#$C,a1
 		lea	(v_palette+$5A).w,a2
 		cmpi.w	#$A,d0
-		bcs.s	loc_37FC
+		blo.s	loc_37FC
 		subi.w	#$A,d0
 		lea	(v_palette+$7A).w,a2
 
@@ -2670,30 +2681,73 @@ loc_37FC:
 		move.w	(a1)+,(a2)+
 		rts
 ; ---------------------------------------------------------------------------
+SSBGData:	macro time,anim,vram,index,flag1,flag2
+		dc.b	(time), (anim), ((vram)*tile_size)>>13
+	if flag1
+		dc.b	(index)|$80|(flag2)
+	else
+		dc.b	(index)*12
+	endif
+		endm
 
-byte_380A:	dc.b 3, 0, 7, $92, 3, 0, 7, $90, 3, 0, 7, $8E, 3, 0, 7
-		dc.b $8C, 3, 0, 7, $8B, 3, 0, 7, $80, 3, 0, 7, $82, 3
-		dc.b 0, 7, $84, 3, 0, 7, $86, 3, 0, 7, $88, 7, 8, 7, 0
-		dc.b 7, $A, 7, $C, $FF, $C, 7, $18, $FF, $C, 7, $18, 7
-		dc.b $A, 7, $C, 7, 8, 7, 0, 3, 0, 6, $88, 3, 0, 6, $86
-		dc.b 3, 0, 6, $84, 3, 0, 6, $82, 3, 0, 6, $81, 3, 0, 6
-		dc.b $8A, 3, 0, 6, $8C, 3, 0, 6, $8E, 3, 0, 6, $90, 3
-		dc.b 0, 6, $92, 7, 2, 6, $24, 7, 4, 6, $30, $FF, 6, 6
-		dc.b $3C, $FF, 6, 6, $3C, 7, 4, 6, $30, 7, 2, 6, $24
+byte_380A:
+		; Time, anim, BG VRAM, palette cycle index & flags
+		SSBGData  3,  0, ArtTile_SS_Plane_6, 18, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_6, 16, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_6, 14, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_6, 12, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_6, 10, TRUE , TRUE
+
+		SSBGData  3,  0, ArtTile_SS_Plane_6,  0, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_6,  2, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_6,  4, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_6,  6, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_6,  8, TRUE , FALSE
+
+
+		SSBGData  7,  8, ArtTile_SS_Plane_6,  0, FALSE, FALSE
+		SSBGData  7, 10, ArtTile_SS_Plane_6,  1, FALSE, FALSE
+		SSBGData -1, 12, ArtTile_SS_Plane_6,  2, FALSE, FALSE
+		SSBGData -1, 12, ArtTile_SS_Plane_6,  2, FALSE, FALSE
+		SSBGData  7, 10, ArtTile_SS_Plane_6,  1, FALSE, FALSE
+		SSBGData  7,  8, ArtTile_SS_Plane_6,  0, FALSE, FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_5,  8, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_5,  6, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_5,  4, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_5,  2, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_5,  0, TRUE , TRUE
+
+		SSBGData  3,  0, ArtTile_SS_Plane_5, 10, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_5, 12, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_5, 14, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_5, 16, TRUE , FALSE
+		SSBGData  3,  0, ArtTile_SS_Plane_5, 18, TRUE , FALSE
+
+		SSBGData  7,  2, ArtTile_SS_Plane_5,  3, FALSE, FALSE
+		SSBGData  7,  4, ArtTile_SS_Plane_5,  4, FALSE, FALSE
+		SSBGData -1,  6, ArtTile_SS_Plane_5,  5, FALSE, FALSE
+		SSBGData -1,  6, ArtTile_SS_Plane_5,  5, FALSE, FALSE
+		SSBGData  7,  4, ArtTile_SS_Plane_5,  4, FALSE, FALSE
+		SSBGData  7,  2, ArtTile_SS_Plane_5,  3, FALSE, FALSE
 		even
 
-byte_388A:	dc.b $10, 1, $18, 0, $18, 1, $20, 0, $20, 1, $28, 0, $28
-		dc.b 1
+SSFGData:	macro vram,y
+		dc.b ((vram)*tile_size)>>10, (y)>>8
+		endm
+
+byte_388A:
+		; FG VRAM, Y coordinate
+		SSFGData ArtTile_SS_Plane_1, $100
+		SSFGData ArtTile_SS_Plane_2,    0
+		SSFGData ArtTile_SS_Plane_2, $100
+		SSFGData ArtTile_SS_Plane_3,    0
+		SSFGData ArtTile_SS_Plane_3, $100
+		SSFGData ArtTile_SS_Plane_4,    0
+		SSFGData ArtTile_SS_Plane_4, $100
 		even
 
-dword_3898:	dc.l $4000600, $6200624, $6640666, $6000820, $A640A68
-		dc.l $AA60AAA, $8000C42, $E860ECA, $EEC0EEE, $4000420
-		dc.l $6200620, $8640666, $4200620, $8420842, $A860AAA
-		dc.l $6200842, $A640C86, $EA80EEE
-		even
-
-word_38E0:	binclude "palette/Cycle - SS.bin"
-		even
+Pal_SSCyc1:	binclude "palette/Cycle - Special Stage 1.bin"
+Pal_SSCyc2:	binclude "palette/Cycle - Special Stage 2.bin"
 ; ---------------------------------------------------------------------------
 
 SpecialAnimateBG:
@@ -2783,557 +2837,17 @@ loc_3A72:
 		dbf	d3,loc_3A68
 		rts
 ; ---------------------------------------------------------------------------
-
 byte_3A86:	dc.b 9, $28, $18, $10, $28, $18, $10, $30, $18, 8, $10
 		even
-
 byte_3A92:	dc.b 6, $30, $30, $30, $28, $18, $18, $18
 		even
-
 byte_3A9A:	dc.b 8, 2, 4, $FF, 2, 3, 8, $FF, 4, 2, 2, 3, 8, $FD, 4
 		dc.b 2, 2, 3, 2, $FF
 		even
 ; ---------------------------------------------------------------------------
 		include "include/LevelSizeLoad & BgScrollSpeed.asm"
 		include "include/DeformLayers.asm"
-; ---------------------------------------------------------------------------
-
-; sub_43B6:
-LoadTilesAsYouMove_BGOnly:
-		lea	(vdp_control_port).l,a5
-		lea	(vdp_data_port).l,a6
-		lea	(v_bg1_scroll_flags).w,a2
-		lea	(v_bgscreenposx).w,a3
-		lea	(v_lvllayoutbg).w,a4
-		move.w	#$6000,d2
-		bsr.w	DrawBGScrollBlock1
-		lea	(v_bg2_scroll_flags).w,a2
-		lea	(v_bg2screenposx).w,a3
-		bra.w	DrawBGScrollBlock2
-; ---------------------------------------------------------------------------
-
-LoadTilesAsYouMove:
-		lea	(vdp_control_port).l,a5
-		lea	(vdp_data_port).l,a6
-		lea	(v_bg1_scroll_flags).w,a2
-		lea	(v_bgscreenposx).w,a3
-		lea	(v_lvllayoutbg).w,a4
-		move.w	#$6000,d2
-		bsr.w	DrawBGScrollBlock1
-		lea	(v_bg2_scroll_flags).w,a2
-		lea	(v_bg2screenposx).w,a3
-		bsr.w	DrawBGScrollBlock2
-		lea	(v_fg_scroll_flags).w,a2
-		lea	(v_screenposx).w,a3
-		lea	(v_lvllayout).w,a4
-		move.w	#$4000,d2
-		tst.b	(a2)
-		beq.s	locret_4482
-		bclr	#0,(a2)
-		beq.s	loc_4438
-		moveq	#-16,d4
-		moveq	#-16,d5
-		bsr.w	Calc_VRAM_Pos
-		moveq	#-16,d4
-		moveq	#-16,d5
-		bsr.w	DrawBlocks_LR
-
-loc_4438:
-		bclr	#1,(a2)
-		beq.s	loc_4452
-		move.w	#224,d4
-		moveq	#-16,d5
-		bsr.w	Calc_VRAM_Pos
-		move.w	#224,d4
-		moveq	#-16,d5
-		bsr.w	DrawBlocks_LR
-
-loc_4452:
-		bclr	#2,(a2)
-		beq.s	loc_4468
-		moveq	#-16,d4
-		moveq	#-16,d5
-		bsr.w	Calc_VRAM_Pos
-		moveq	#-16,d4
-		moveq	#-16,d5
-		bsr.w	DrawBlocks_TB
-
-loc_4468:
-		bclr	#3,(a2)
-		beq.s	locret_4482
-		moveq	#-16,d4
-		move.w	#320,d5
-		bsr.w	Calc_VRAM_Pos
-		moveq	#-16,d4
-		move.w	#320,d5
-		bsr.w	DrawBlocks_TB
-
-locret_4482:
-		rts
-; ---------------------------------------------------------------------------
-
-DrawBGScrollBlock1:
-		tst.b	(a2)
-		beq.w	locret_4522
-		bclr	#0,(a2)
-		beq.s	loc_44A2
-		moveq	#-16,d4
-		moveq	#-16,d5
-		bsr.w	Calc_VRAM_Pos
-		moveq	#-16,d4
-		moveq	#-16,d5
-		moveq	#(512/16)-1,d6
-		bsr.w	DrawBlocks_LR_2
-
-loc_44A2:
-		bclr	#1,(a2)
-		beq.s	loc_44BE
-		move.w	#224,d4
-		moveq	#-16,d5
-		bsr.w	Calc_VRAM_Pos
-		move.w	#224,d4
-		moveq	#-16,d5
-		moveq	#(512/16)-1,d6
-		bsr.w	DrawBlocks_LR_2
-
-loc_44BE:
-		bclr	#2,(a2)
-		beq.s	loc_44EE
-		moveq	#-16,d4
-		moveq	#-16,d5
-		bsr.w	Calc_VRAM_Pos
-		moveq	#-16,d4
-		moveq	#-16,d5
-		move.w	(v_scroll_block_1_size).w,d6
-		move.w	4(a3),d1
-		andi.w	#-16,d1
-		sub.w	d1,d6
-		blt.s	loc_44EE
-		lsr.w	#4,d6
-		cmpi.w	#((224+16+16)/16)-1,d6
-		bcs.s	loc_44EA
-		moveq	#((224+16+16)/16)-1,d6
-
-loc_44EA:
-		bsr.w	DrawBlocks_TB_2
-
-loc_44EE:
-		bclr	#3,(a2)
-		beq.s	locret_4522
-		moveq	#-16,d4
-		move.w	#320,d5
-		bsr.w	Calc_VRAM_Pos
-		moveq	#-16,d4
-		move.w	#320,d5
-		move.w	(v_scroll_block_1_size).w,d6
-		move.w	4(a3),d1
-		andi.w	#-16,d1
-		sub.w	d1,d6
-		blt.s	locret_4522
-		lsr.w	#4,d6
-		cmpi.w	#((224+16+16)/16)-1,d6
-		bcs.s	loc_451E
-		moveq	#((224+16+16)/16)-1,d6
-
-loc_451E:
-		bsr.w	DrawBlocks_TB_2
-
-locret_4522:
-		rts
-; ---------------------------------------------------------------------------
-
-DrawBGScrollBlock2:
-		tst.b	(a2)
-		beq.w	locret_45B0
-		bclr	#2,(a2)
-		beq.s	loc_456E
-		cmpi.w	#16,(a3)
-		bcs.s	loc_456E
-		move.w	(v_scroll_block_1_size).w,d4
-		move.w	4(a3),d1
-		andi.w	#-16,d1
-		sub.w	d1,d4
-		move.w	d4,-(sp)
-		moveq	#-16,d5
-		bsr.w	Calc_VRAM_Pos
-		move.w	(sp)+,d4
-		moveq	#-16,d5
-		move.w	(v_scroll_block_1_size).w,d6
-		move.w	4(a3),d1
-		andi.w	#-16,d1
-		sub.w	d1,d6
-		blt.s	loc_456E
-		lsr.w	#4,d6
-		subi.w	#((224+16)/16)-1,d6
-		bhs.s	loc_456E
-		neg.w	d6
-		bsr.w	DrawBlocks_TB_2
-
-loc_456E:
-		bclr	#3,(a2)
-		beq.s	locret_45B0
-		move.w	(v_scroll_block_1_size).w,d4
-		move.w	4(a3),d1
-		andi.w	#-16,d1
-		sub.w	d1,d4
-		move.w	d4,-(sp)
-		move.w	#320,d5
-		bsr.w	Calc_VRAM_Pos
-		move.w	(sp)+,d4
-		move.w	#320,d5
-		move.w	(v_scroll_block_1_size).w,d6
-		move.w	4(a3),d1
-		andi.w	#-16,d1
-		sub.w	d1,d6
-		blt.s	locret_45B0
-		lsr.w	#4,d6
-		subi.w	#((224+16)/16)-1,d6
-		bhs.s	locret_45B0
-		neg.w	d6
-		bsr.w	DrawBlocks_TB_2
-
-locret_45B0:
-		rts
-; ---------------------------------------------------------------------------
-		tst.b	(a2)
-		beq.s	locret_4606
-		bclr	#2,(a2)
-		beq.s	loc_45DC
-		move.w	#224-16,d4
-		move.w	4(a3),d1
-		andi.w	#-16,d1
-		sub.w	d1,d4
-		move.w	d4,-(sp)
-		moveq	#-16,d5
-		bsr.w	Calc_VRAM_Pos_Unknown
-		move.w	(sp)+,d4
-		moveq	#-16,d5
-		moveq	#2,d6
-		bsr.w	DrawBlocks_TB_2
-
-loc_45DC:
-		bclr	#3,(a2)
-		beq.s	locret_4606
-		move.w	#224-16,d4
-		move.w	4(a3),d1
-		andi.w	#-16,d1
-		sub.w	d1,d4
-		move.w	d4,-(sp)
-		move.w	#320,d5
-		bsr.w	Calc_VRAM_Pos_Unknown
-		move.w	(sp)+,d4
-		move.w	#320,d5
-		moveq	#2,d6
-		bsr.w	DrawBlocks_TB_2
-
-locret_4606:
-		rts
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-; Don't be fooled by the name: this function's for drawing from left to right
-; when the camera's moving up or down
-; DrawTiles_LR:
-DrawBlocks_LR:
-		moveq	#((320+16+16)/16)-1,d6	; Draw the entire width of the screen + two extra columns
-; DrawTiles_LR_2:
-DrawBlocks_LR_2:
-		move.l	#$800000,d7	; Delta between rows of tiles
-		move.l	d0,d1
-
-.loop:
-		movem.l	d4-d5,-(sp)
-		bsr.w	GetBlockData
-		move.l	d1,d0
-		bsr.w	DrawBlock
-		addq.b	#4,d1		; Two tiles ahead
-		andi.b	#$7F,d1		; Wrap around row
-		movem.l	(sp)+,d4-d5
-		addi.w	#16,d5		; Move X coordinate one block ahead
-		dbf	d6,.loop
-		rts
-; End of function DrawBlocks_LR
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-; Don't be fooled by the name: this function's for drawing from top to bottom
-; when the camera's moving left or right
-; DrawTiles_TB:
-DrawBlocks_TB:
-		moveq	#((224+16+16)/16)-1,d6	; Draw the entire height of the screen + two extra rows
-; DrawTiles_TB_2:
-DrawBlocks_TB_2:
-		move.l	#$800000,d7	; Delta between rows of tiles
-		move.l	d0,d1
-
-.loop:
-		movem.l	d4-d5,-(sp)
-		bsr.w	GetBlockData
-		move.l	d1,d0
-		bsr.w	DrawBlock
-		addi.w	#$100,d1	; Two rows ahead
-		andi.w	#$FFF,d1	; Wrap around plane
-		movem.l	(sp)+,d4-d5
-		addi.w	#16,d4		; Move X coordinate one block ahead
-		dbf	d6,.loop
-		rts
-; End of function DrawBlocks_TB_2
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-; Draws a block's worth of tiles
-; Parameters:
-; a0 = Pointer to block metadata (block index and X/Y flip)
-; a1 = Pointer to block
-; a5 = Pointer to VDP command port
-; a6 = Pointer to VDP data port
-; d0 = VRAM command to access plane
-; d2 = VRAM plane A/B specifier
-; d7 = Plane row delta
-; DrawTiles:
-DrawBlock:
-		or.w	d2,d0	; OR in that plane A/B specifier to the VRAM command
-		swap	d0
-		btst	#4,(a0)	; Check Y-flip bit
-		bne.s	DrawFlipY
-		btst	#3,(a0)	; Check X-flip bit
-		bne.s	DrawFlipX
-		move.l	d0,(a5)
-		move.l	(a1)+,(a6)	; Write top two tiles
-		add.l	d7,d0		; Next row
-		move.l	d0,(a5)
-		move.l	(a1)+,(a6)	; Write bottom two tiles
-		rts
-; ===========================================================================
-
-DrawFlipX:
-		move.l	d0,(a5)
-		move.l	(a1)+,d4
-		eori.l	#$8000800,d4	; Invert X-flip bits of each tile
-		swap	d4		; Swap the tiles around
-		move.l	d4,(a6)		; Write top two tiles
-		add.l	d7,d0		; Next row
-		move.l	d0,(a5)
-		move.l	(a1)+,d4
-		eori.l	#$8000800,d4
-		swap	d4
-		move.l	d4,(a6)		; Write bottom two tiles
-		rts
-; ===========================================================================
-
-DrawFlipY:
-		btst	#3,(a0)
-		bne.s	DrawFlipXY
-		move.l	d0,(a5)
-		move.l	(a1)+,d5
-		move.l	(a1)+,d4
-		eori.l	#$10001000,d4
-		move.l	d4,(a6)
-		add.l	d7,d0
-		move.l	d0,(a5)
-		eori.l	#$10001000,d5
-		move.l	d5,(a6)
-		rts
-; ===========================================================================
-
-DrawFlipXY:
-		move.l	d0,(a5)
-		move.l	(a1)+,d5
-		move.l	(a1)+,d4
-		eori.l	#$18001800,d4
-		swap	d4
-		move.l	d4,(a6)
-		add.l	d7,d0
-		move.l	d0,(a5)
-		eori.l	#$18001800,d5
-		swap	d5
-		move.l	d5,(a6)
-		rts
-; End of function DrawBlocks
-
-; ---------------------------------------------------------------------------
-; unused garbage
-; This is interesting. It draws a block, but not before
-; incrementing its palette lines by 1. This may have been
-; a debug function to discolour mirrored tiles, to test
-; if they're loading properly.
-		rts
-		move.l	d0,(a5)
-		move.w	#$2000,d5
-		move.w	(a1)+,d4
-		add.w	d5,d4
-		move.w	d4,(a6)
-		move.w	(a1)+,d4
-		add.w	d5,d4
-		move.w	d4,(a6)
-		add.l	d7,d0
-		move.l	d0,(a5)
-		move.w	(a1)+,d4
-		add.w	d5,d4
-		move.w	d4,(a6)
-		move.w	(a1)+,d4
-		add.w	d5,d4
-		move.w	d4,(a6)
-		rts
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-; Gets address of block at a certain coordinate
-; Parameters:
-; a4 = Pointer to level layout
-; d4 = Relative Y coordinate
-; d5 = Relative X coordinate
-; Returns:
-; a0 = Address of block metadata
-; a1 = Address of block
-; DrawBlocks:
-GetBlockData:
-		lea	(v_16x16).w,a1
-		add.w	4(a3),d4	; Add camera Y coordinate to relative coordinate
-		add.w	(a3),d5		; Add camera X coordinate to relative coordinate
-		; Turn Y coordinate into index into level layout
-		move.w	d4,d3
-		lsr.w	#1,d3
-		andi.w	#$380,d3
-		; Turn X coordinate into index into level layout
-		lsr.w	#3,d5
-		move.w	d5,d0
-		lsr.w	#5,d0
-		andi.w	#$7F,d0
-		; Get chunk from level layout
-		add.w	d3,d0
-		moveq	#-1,d3
-		move.b	(a4,d0.w),d3
-		andi.b	#$7F,d3
-		beq.s	locret_4750	; If chunk is 80, just return a pointer to the first block (expected to be empty)
-		; Turn chunk ID into index into chunk table
-		subq.b	#1,d3
-		ext.w	d3
-		ror.w	#7,d3
-		; Turn Y coordinate into index into chunk
-		add.w	d4,d4
-		andi.w	#$1E0,d4
-		; Turn X coordinate into index into chunk
-		andi.w	#$1E,d5
-		; Get block metadata from chunk
-		add.w	d4,d3
-		add.w	d5,d3
-		movea.l	d3,a0
-		move.w	(a0),d3
-		; Turn block ID into address
-		andi.w	#$3FF,d3
-		lsl.w	#3,d3
-		adda.w	d3,a1
-
-locret_4750:
-		rts
-; End of function GetBlockData
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-; Produces a VRAM plane access command from coordinates
-; Parameters:
-; d4 = Relative Y coordinate
-; d5 = Relative X coordinate
-; Returns VDP command in d0
-Calc_VRAM_Pos:
-		add.w	4(a3),d4	; Add camera Y coordinate
-		add.w	(a3),d5		; Add camera X coordinate
-		; Floor the coordinates to the nearest pair of tiles (the size of a block).
-		; Also note that this wraps the value to the size of the plane:
-		; The plane is 64*8 wide, so wrap at $100, and it's 32*8 tall, so wrap at $200
-		andi.w	#$F0,d4
-		andi.w	#$1F0,d5
-		; Transform the adjusted coordinates into a VDP command
-		lsl.w	#4,d4
-		lsr.w	#2,d5
-		add.w	d5,d4
-		moveq	#3,d0	; Highest bits of plane VRAM address
-		swap	d0
-		move.w	d4,d0
-		rts
-; End of function Calc_VRAM_Pos
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-; not used
-
-; This is just like Calc_VRAM_Pos, but seemingly for an earlier
-; VRAM layout: the only difference is the high bits of the
-; plane's VRAM address, which are 10 instead of 11.
-; Both the foreground and background are at $C000 and $E000
-; respectively, so this one starting at $8000 makes no sense.
-; sub_6C3C:
-Calc_VRAM_Pos_Unknown:
-		add.w	4(a3),d4
-		add.w	(a3),d5
-		andi.w	#$F0,d4
-		andi.w	#$1F0,d5
-		lsl.w	#4,d4
-		lsr.w	#2,d5
-		add.w	d5,d4
-		moveq	#2,d0
-		swap	d0
-		move.w	d4,d0
-		rts
-; End of function Calc_VRAM_Pos_Unknown
-
-; ---------------------------------------------------------------------------
-; Subroutine to	load tiles as soon as the level	appears
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-
-LoadTilesFromStart:
-		lea	(vdp_control_port).l,a5
-		lea	(vdp_data_port).l,a6
-		lea	(v_screenposx).w,a3
-		lea	(v_lvllayout).w,a4
-		move.w	#$4000,d2
-		bsr.s	DrawChunks
-		lea	(v_bgscreenposx).w,a3
-		lea	(v_lvllayoutbg).w,a4
-		move.w	#$6000,d2
-; End of function LoadTilesFromStart
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-DrawChunks:
-		moveq	#-16,d4
-		moveq	#((224+16+16)/16)-1,d6
-
-.loop:
-		movem.l	d4-d6,-(sp)
-		moveq	#0,d5
-		move.w	d4,d1
-		bsr.w	Calc_VRAM_Pos
-		move.w	d1,d4
-		moveq	#0,d5
-		moveq	#(512/16)-1,d6
-		bsr.w	DrawBlocks_LR_2
-		movem.l	(sp)+,d4-d6
-		addi.w	#16,d4
-		dbf	d6,.loop
-		rts
-; ---------------------------------------------------------------------------
-;loc_47D8:
-		lea	(v_bg3screenposx).w,a3
-		move.w	#$6000,d2
-		move.w	#(320/2)+16,d4
-		moveq	#3-1,d6
-
-loc_47E6:
-		movem.l	d4-d6,-(sp)
-		moveq	#0,d5
-		move.w	d4,d1
-		bsr.w	Calc_VRAM_Pos_Unknown
-		move.w	d1,d4
-		moveq	#0,d5
-		moveq	#(512/16)-1,d6
-		bsr.w	DrawBlocks_LR_2
-		movem.l	(sp)+,d4-d6
-		addi.w	#16,d4
-		dbf	d6,loc_47E6
-		rts
+		include	"include/Level Drawing.asm"
 ; ---------------------------------------------------------------------------
 
 LoadLevelData:
@@ -3363,21 +2877,21 @@ LoadLevelData:
 		addq.w	#4,a2
 		moveq	#0,d0
 		move.b	(a2),d0
-		beq.s	.locret
+		beq.s	.skipPLC
 		bsr.w	AddPLC
 
-.locret:
+.skipPLC:
 		rts
 ; ---------------------------------------------------------------------------
 ;sub_485C:
 		moveq	#0,d0
 		move.b	(v_lives).w,d1
 		cmpi.b	#2,d1
-		bcs.s	loc_4876
+		blo.s	loc_4876
 		move.b	d1,d0
 		subq.b	#1,d0
 		cmpi.b	#5,d0
-		bcs.s	loc_4876
+		blo.s	loc_4876
 		move.b	#4,d0
 
 loc_4876:
@@ -3392,7 +2906,7 @@ sub_489E:
 		moveq	#0,d3
 		moveq	#4-1,d1
 		sub.w	d0,d1
-		bcs.s	loc_48AC
+		blo.s	loc_48AC
 
 loc_48A6:
 		move.l	d3,(a6)
@@ -3401,7 +2915,7 @@ loc_48A6:
 loc_48AC:
 		move.w	d0,d1
 		subq.w	#1,d1
-		bcs.s	locret_48B8
+		blo.s	locret_48B8
 
 loc_48B2:
 		move.l	d2,(a6)
@@ -3415,7 +2929,12 @@ LevelLayoutLoad:
 		; Bug: This clears too much data.
 		; To fix this, change bytesToWcnt to bytesToLcnt.
 		lea	(v_lvllayout).w,a3
+	if FixBugs
+		move.w	#bytesToLcnt(v_lvllayout_end-v_lvllayout),d1
+	else
+		; Bug: This clears too much data!
 		move.w	#bytesToWcnt(v_lvllayout_end-v_lvllayout),d1
+	endif
 		moveq	#0,d0
 
 loc_48C4:
@@ -3513,7 +3032,7 @@ PtfmNormal3:
 		sub.w	d1,d0
 		bhi.w	locret_5048
 		cmpi.w	#-$10,d0
-		bcs.w	locret_5048
+		blo.w	locret_5048
 		cmpi.b	#6,obRoutine(a1)
 		bhs.w	locret_5048
 		add.w	d0,d2
@@ -3617,7 +3136,7 @@ PtfmCheckExit2:
 		add.w	d1,d0
 		bmi.s	loc_510A
 		cmp.w	d2,d0
-		bcs.s	locret_511C
+		blo.s	locret_511C
 
 loc_510A:
 		bclr	#3,obStatus(a1)
@@ -3703,7 +3222,7 @@ loc_61A8:
 
 CFlo_Data1:	dc.b $1C, $18, $14, $10, $1A, $16, $12, $E, $A, 6, $18
 		dc.b $14, $10, $C, 8, 4, $16, $12, $E, $A, 6, 2, $14, $10
-		dc.b $C, 0
+		dc.b $C
 		even
 CFlo_Data2:	dc.b $1E, $16, $E, 6, $1A, $12, $A, 2
 		even
@@ -4009,7 +3528,7 @@ Map_Monitor:	include "_maps/Monitor.asm"
 
 ExecuteObjects:
 		lea	(v_objspace).w,a0
-		moveq	#(v_objspace_end-v_objspace)/object_size-1,d7
+		moveq	#bytesToXcnt(v_objspace_end-v_objspace,object_size),d7
 		moveq	#0,d0
 		cmpi.b	#6,(v_player+obRoutine).w	; has sonic died?
 		bhs.s	loc_8560			; if so, branch
@@ -4030,9 +3549,9 @@ loc_8556:
 ; ---------------------------------------------------------------------------
 
 loc_8560:
-		moveq	#(v_lvlobjspace-v_objspace)/object_size-1,d7
+		moveq	#bytesToXcnt(v_lvlobjspace-v_objspace,object_size),d7
 		bsr.s	sub_8546
-		moveq	#(v_lvlobjend-v_lvlobjspace)/object_size-1,d7
+		moveq	#bytesToXcnt(v_lvlobjend-v_lvlobjspace,object_size),d7
 
 loc_8566:
 		moveq	#0,d0
@@ -4122,7 +3641,7 @@ loc_8830:
 		sub.w	obMap(a1),d2
 		addi.w	#128,d2
 		cmpi.w	#320/2-64,d2
-		bcs.s	loc_886E
+		blo.s	loc_886E
 		cmpi.w	#320+64,d2
 		bhs.s	loc_886E
 
@@ -4367,12 +3886,19 @@ loc_8A00:
 		move.l	a1,(v_opl_data+$C).w
 		lea	(v_objstate).w,a2
 		move.w	#$101,(a2)+
+	if FixBugs
+		move.w	#bytesToLcnt(v_objstate_end-v_objstate-2),d0
+	else
 		; Bug: This does word when it should be doing longword and the last 2 bytes of v_objstate are not accounted for.
 		move.w	#bytesToWcnt(v_objstate_end-v_objstate-2),d0
+	endif
 
 loc_8A38:
 		clr.l	(a2)+
 		dbf	d0,loc_8A38
+	if FixBugs
+		clr.w	(a2)+
+	endif
 		move.w	#-1,(v_opl_screen).w
 
 loc_8A44:
@@ -4386,7 +3912,7 @@ loc_8A44:
 		move.w	d6,(v_opl_screen).w
 		movea.l	(v_opl_data+4).w,a0
 		subi.w	#$80,d6
-		bcs.s	loc_8A96
+		blo.s	loc_8A96
 
 loc_8A6A:
 		cmp.w	-6(a0),d6
@@ -4455,7 +3981,7 @@ loc_8ADA:
 		move.l	a0,(v_opl_data).w
 		movea.l	(v_opl_data+4).w,a0
 		subi.w	#$300,d6
-		bcs.s	loc_8AFA
+		blo.s	loc_8AFA
 
 loc_8AE8:
 		cmp.w	(a0),d6
@@ -4480,7 +4006,7 @@ loc_8B00:
 		addi.w	#$200,d0
 		andi.w	#-$80,d0
 		cmp.w	(a0),d0
-		bcs.s	locret_8B20
+		blo.s	locret_8B20
 		bsr.w	sub_8B22
 		move.l	a0,(v_opl_data+8).w
 		bra.w	loc_8B00
@@ -4528,7 +4054,7 @@ locret_8B70:
 
 FindFreeObj:
 		lea	(v_lvlobjspace).w,a1
-		move.w	#(v_lvlobjend-v_lvlobjspace)/object_size-1,d0
+		move.w	#bytesToXcnt(v_lvlobjend-v_lvlobjspace,object_size),d0
 
 loc_8B7A:
 		tst.b	obID(a1)
@@ -4546,7 +4072,7 @@ FindNextFreeObj:
 		sub.w	a0,d0
 		lsr.w	#object_size_bits,d0
 		subq.w	#1,d0
-		bcs.s	locret_8BA2
+		blo.s	locret_8BA2
 
 loc_8B96:
 		tst.b	obID(a1)
@@ -4764,7 +4290,6 @@ ObjSmashWall_FragRight:
 		dc.w $800, -$200
 		dc.w $800, $200
 		dc.w $600, $600
-		even
 
 ObjSmashWall_FragLeft:
 		dc.w -$600, -$600
@@ -4775,7 +4300,6 @@ ObjSmashWall_FragLeft:
 		dc.w -$600, -$100
 		dc.w -$600, $100
 		dc.w -$400, $500
-		even
 
 MapSmashWall:	include "_maps/Smashable Walls.asm"
 
@@ -4898,7 +4422,6 @@ ObjSmashBlock_Frag:
 		dc.w -$100, -$100
 		dc.w $200, -$200
 		dc.w $100, -$100
-		even
 
 MapSmashBlock:	include "_maps/Smashable Green Block.asm"
 
@@ -4950,218 +4473,8 @@ ObjSeeSaw_SlopeLine:dc.b $15, $15, $15, $15, $15, $15, $15, $15, $15, $15
 		even
 
 Map_Seesaw:	include "_maps/Seesaw.asm"
-; ---------------------------------------------------------------------------
 
-SonicPlayer:
-		tst.w	(v_debuguse).w
-		bne.w	DebugMode
-		moveq	#0,d0
-		move.b	obRoutine(a0),d0
-		move.w	off_E826(pc,d0.w),d1
-		jmp	off_E826(pc,d1.w)
-; ---------------------------------------------------------------------------
-
-off_E826:	dc.w loc_E830-off_E826
-		dc.w loc_E872-off_E826
-		dc.w Sonic_Hurt-off_E826
-		dc.w Sonic_Death-off_E826
-		dc.w Sonic_ResetLevel-off_E826
-; ---------------------------------------------------------------------------
-
-loc_E830:
-		addq.b	#2,obRoutine(a0)
-		move.b	#$13,obHeight(a0)
-		move.b	#9,obWidth(a0)
-		move.l	#Map_Sonic,obMap(a0)
-		move.w	#make_art_tile(ArtTile_Sonic,0,0),obGfx(a0)
-		move.b	#2,obPriority(a0)
-		move.b	#$18,obActWid(a0)
-		move.b	#4,obRender(a0)
-		move.w	#$600,(v_sonspeedmax).w
-		move.w	#$C,(v_sonspeedacc).w
-		move.w	#$40,(v_sonspeeddec).w
-
-loc_E872:
-		andi.w	#$7FF,obY(a0)
-		andi.w	#$7FF,(v_screenposy).w
-		tst.w	(f_debugmode).w
-		beq.s	loc_E892
-		btst	#bitB,(v_jpadpress2).w
-		beq.s	loc_E892
-		move.w	#1,(v_debuguse).w
-
-loc_E892:
-		moveq	#0,d0
-		move.b	obStatus(a0),d0
-		andi.w	#6,d0
-		move.w	off_E8C8(pc,d0.w),d1
-		jsr	off_E8C8(pc,d1.w)
-		bsr.s	sub_E8D6
-		bsr.w	sub_E952
-		move.b	(v_angle_primary).w,objoff_36(a0)
-		move.b	(v_angle_secondary).w,objoff_37(a0)
-		bsr.w	Sonic_Animate
-		bsr.w	TouchObjects
-		bsr.w	Sonic_SpecialChunk
-		bsr.w	Sonic_DynTiles
-		rts
-; ---------------------------------------------------------------------------
-
-off_E8C8:	dc.w sub_E96C-off_E8C8
-		dc.w sub_E98E-off_E8C8
-		dc.w loc_E9A8-off_E8C8
-		dc.w loc_E9C6-off_E8C8
-
-MusicList2:	dc.b bgm_GHZ
-		dc.b bgm_LZ
-		dc.b bgm_MZ
-		dc.b bgm_SLZ
-		dc.b bgm_SZ
-		dc.b bgm_CWZ
-		even
-
-		include "objects/Sonic Display.asm"
-		include "objects/Sonic RecordPosition.asm"
-; ---------------------------------------------------------------------------
-
-sub_E96C:
-		bsr.w	Sonic_Jump
-		bsr.w	Sonic_SlopeResist
-		bsr.w	Sonic_Move
-		bsr.w	Sonic_Roll
-		bsr.w	Sonic_LevelBound
-		bsr.w	SpeedToPos
-		bsr.w	Sonic_AnglePos
-		bsr.w	Sonic_SlopeRepel
-		rts
-; ---------------------------------------------------------------------------
-
-sub_E98E:
-		bsr.w	Sonic_JumpHeight
-		bsr.w	Sonic_ChgJumpDirection
-		bsr.w	Sonic_LevelBound
-		bsr.w	ObjectFall
-		bsr.w	Sonic_JumpAngle
-		bsr.w	Sonic_Floor
-		rts
-; ---------------------------------------------------------------------------
-
-loc_E9A8:
-		bsr.w	Sonic_Jump
-		bsr.w	Sonic_RollRepel
-		bsr.w	Sonic_RollSpeed
-		bsr.w	Sonic_LevelBound
-		bsr.w	SpeedToPos
-		bsr.w	Sonic_AnglePos
-		bsr.w	Sonic_SlopeRepel
-		rts
-; ---------------------------------------------------------------------------
-
-loc_E9C6:
-		bsr.w	Sonic_JumpHeight
-		bsr.w	Sonic_ChgJumpDirection
-		bsr.w	Sonic_LevelBound
-		bsr.w	ObjectFall
-		bsr.w	Sonic_JumpAngle
-		bsr.w	Sonic_Floor
-		rts
-
-		include "objects/Sonic Move.asm"
-		include "objects/Sonic RollSpeed.asm"
-		include "objects/Sonic JumpDirection.asm"
-; ---------------------------------------------------------------------------
-		; unused
-;Sonic_Squish:
-		move.b	obAngle(a0),d0
-		addi.b	#$20,d0
-		andi.b	#$C0,d0
-		bne.s	locret_EDF8
-		bsr.w	Sonic_NoRunningOnWalls
-		tst.w	d1
-		bpl.s	locret_EDF8
-		move.w	#0,obInertia(a0)
-		move.w	#0,obVelX(a0)
-		move.w	#0,obVelY(a0)
-		move.b	#id_Warp3,obAnim(a0)
-
-locret_EDF8:
-		rts
-
-		include "objects/Sonic LevelBound.asm"
-		include "objects/Sonic Roll.asm"
-		include "objects/Sonic Jump.asm"
-		include "objects/Sonic JumpHeight.asm"
-		include "objects/Sonic SlopeResist.asm"
-		include "objects/Sonic RollRepel.asm"
-		include "objects/Sonic SlopeRepel.asm"
-		include "objects/Sonic JumpAngle.asm"
-		include "objects/Sonic Floor.asm"
-		include "objects/Sonic ResetOnFloor.asm"
-; ---------------------------------------------------------------------------
-		; unused
-;loc_F26A:
-		lea	(v_objslot10).w,a1
-		move.w	obX(a0),d0
-		bsr.w	sub_F290
-		lea	(v_objslot14).w,a1
-		move.w	obY(a0),d0
-		bsr.w	sub_F290
-		lea	(v_objslot18).w,a1
-		move.w	obInertia(a0),d0
-		bsr.w	sub_F290
-		rts
-; ---------------------------------------------------------------------------
-
-sub_F290:
-		swap	d0
-		rol.l	#4,d0
-		andi.b	#$F,d0
-		move.b	d0,obFrame(a1)
-		rol.l	#4,d0
-		andi.b	#$F,d0
-		move.b	d0,object_size+obFrame(a1)
-		rol.l	#4,d0
-		andi.b	#$F,d0
-		move.b	d0,object_size*2+obFrame(a1)
-		rol.l	#4,d0
-		andi.b	#$F,d0
-		move.b	d0,object_size*3+obFrame(a1)
-		rts
-
-		include "objects/Sonic (part 2).asm"
-; ---------------------------------------------------------------------------
-		; unused
-		dc.b $12
-		dc.b 9
-		dc.b $A
-		dc.b $12
-		dc.b 9
-		dc.b $A
-		dc.b $12
-		dc.b 9
-		dc.b $A
-		dc.b $12
-		dc.b 9
-		dc.b $A
-		dc.b $12
-		dc.b 9
-		dc.b $A
-		dc.b $12
-		dc.b 9
-		dc.b $12
-		dc.b $E
-		dc.b 7
-		dc.b $A
-		dc.b $E
-		dc.b 7
-		dc.b $A
-		even
-
-		include "objects/Sonic Loops.asm"
-		include "objects/Sonic Animate.asm"
-; ---------------------------------------------------------------------------
-Ani_Sonic:	include "_anim/Sonic.asm"
-		include "objects/Sonic LoadGfx.asm"
+		include	"objects/01 Sonic.asm"
 
 		include "objects/38 Shield and Invincibility.asm"
 		include "objects/4A Giant Ring.asm"
@@ -5180,85 +4493,113 @@ Map_Vanish:	include "_maps/Special Stage Entry (Unused).asm"
 		include "objects/sub FindFloor.asm"
 		include "objects/sub FindWall.asm"
 ; ---------------------------------------------------------------------------
+; This subroutine takes 'raw' bitmap-like collision block data as input and
+; converts it into the proper collision arrays (ColArray and ColArray2).
+; Pointers to said raw data are dummied out.
+; Curiously, an example of the original 'raw' data that this was intended
+; to process can be found in the J2ME version, in a file called 'blkcol.bct'.
+; ---------------------------------------------------------------------------
 
-LogCollision:
+RawColBlocks		equ CollArray1
+ConvRowColBlocks	equ CollArray1
+
+; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
+
+
+ConvertCollisionArray:
 		rts
 ; ---------------------------------------------------------------------------
-		; unused
-		lea	(colWidth).l,a1
-		lea	(colWidth).l,a2
-		move.w	#$100-1,d3
+		; The raw format stores the collision data column by column for the normal collision array.
+		; This makes a copy of the data, but stored row by row, for the rotated collision array.
+		lea	(RawColBlocks).l,a1	; Source location of raw collision block data
+		lea	(ConvRowColBlocks).l,a2	; Destinatation location for row-converted collision block data
 
-loc_1044E:
-		moveq	#$10,d5
-		move.w	#$10-1,d2
+		move.w	#$100-1,d3		; Number of blocks in collision data
 
-loc_10454:
+.blockLoop:
+		moveq	#16,d5			; Start on the 16th bit (the leftmost pixel)
+
+		move.w	#16-1,d2		; Width of a block in pixels
+
+.columnLoop:
 		moveq	#0,d4
-		move.w	#$10-1,d1
 
-loc_1045A:
-		move.w	(a1)+,d0
-		lsr.l	d5,d0
-		addx.w	d4,d4
-		dbf	d1,loc_1045A
-		move.w	d4,(a2)+
-		suba.w	#$20,a1
-		subq.w	#1,d5
-		dbf	d2,loc_10454
-		adda.w	#$20,a1
-		dbf	d3,loc_1044E
-		lea	(colWidth).l,a1
-		lea	(colHeight).l,a2
-		bsr.s	sub_10492
-		lea	(colWidth).l,a1
-		lea	(colWidth).l,a2
-; ---------------------------------------------------------------------------
+		move.w	#16-1,d1		; Height of a block in pixels
 
-sub_10492:
-		move.w	#$FFF,d3
+.rowLoop:
+		move.w	(a1)+,d0		; Get row of collision bits
+		lsr.l	d5,d0			; Push the selected bit of this row into the 'eXtend' flag
+		addx.w	d4,d4			; Shift d4 to the left, and insert the selected bit into bit 0
+		dbf	d1,.rowLoop		; Loop for each row of pixels in a block
 
-loc_10496:
+		move.w	d4,(a2)+		; Store column of collision bits
+		suba.w	#2*16,a1		; Back to the start of the block
+		subq.w	#1,d5			; Get next bit in the row
+		dbf	d2,.columnLoop		; Loop for each column of pixels in a block
+
+		adda.w	#2*16,a1		; Next block
+		dbf	d3,.blockLoop		; Loop for each block in the raw collision block data
+
+		; This then converts the collision data into the final collision arrays
+		lea	(ConvRowColBlocks).l,a1
+		lea	(CollArray2).l,a2	; Convert the row-converted collision block data into final rotated collision array
+		bsr.s	.convertArray
+		lea	(RawColBlocks).l,a1
+		lea	(CollArray1).l,a2	; Convert the raw collision block data into final normal collision array
+
+
+.convertArray:
+		move.w	#$1000-1,d3		; Size of the collision array
+
+.processLoop:
 		moveq	#0,d2
-		move.w	#$10-1,d1
-		move.w	(a1)+,d0
-		beq.s	loc_104C4
-		bmi.s	loc_104AE
+		move.w	#$F,d1
+		move.w	(a1)+,d0		; Get current column of collision pixels
+		beq.s	.noCollision		; Branch if there's no collision in this column
+		bmi.s	.topPixelSolid		; Branch if top pixel of collision is solid
 
-loc_104A2:
+	; Here we count, starting from the bottom, how many pixels tall
+	; the collision in this column is.
+.processColumnLoop1:
 		lsr.w	#1,d0
-		bhs.s	loc_104A8
+		bhs.s	.pixelNotSolid1
 		addq.b	#1,d2
 
-loc_104A8:
-		dbf	d1,loc_104A2
-		bra.s	loc_104C6
-; ---------------------------------------------------------------------------
+.pixelNotSolid1:
+		dbf	d1,.processColumnLoop1
 
-loc_104AE:
-		cmpi.w	#-1,d0
-		beq.s	loc_104C0
+		bra.s	.columnProcessed
+; ===========================================================================
 
-loc_104B4:
+.topPixelSolid:
+		cmpi.w	#$FFFF,d0		; Is entire column solid?
+		beq.s	.entireColumnSolid	; Branch if so
+
+	; Here we count, starting from the top, how many pixels tall
+	; the collision in this column is (the resulting number is negative).
+.processColumnLoop2:
 		lsl.w	#1,d0
-		bhs.s	loc_104BA
+		bhs.s	.pixelNotSolid2
 		subq.b	#1,d2
 
-loc_104BA:
-		dbf	d1,loc_104B4
-		bra.s	loc_104C6
-; ---------------------------------------------------------------------------
+.pixelNotSolid2:
+		dbf	d1,.processColumnLoop2
 
-loc_104C0:
+		bra.s	.columnProcessed
+; ===========================================================================
+
+.entireColumnSolid:
 		move.w	#$10,d0
 
-loc_104C4:
+.noCollision:
 		move.w	d0,d2
 
-loc_104C6:
-		move.b	d2,(a2)+
-		dbf	d3,loc_10496
+.columnProcessed:
+		move.b	d2,(a2)+		; Store column collision height
+		dbf	d3,.processLoop
+
 		rts
+; End of function ConvertCollisionArray
 ; ---------------------------------------------------------------------------
 
 Sonic_WalkSpeed:
@@ -5318,7 +4659,7 @@ Sonic_HitFloor:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$D,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
@@ -5333,7 +4674,7 @@ Sonic_HitFloor:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$D,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.w	(sp)+,d0
 		move.b	#0,d2
 
@@ -5342,7 +4683,7 @@ loc_105A8:
 		cmp.w	d0,d1
 		ble.s	loc_105B6
 		move.b	(v_angle_primary).w,d3
-		move.w	d0,d1
+		move.w	d0,d1	; this line was changed to exg in the final game
 
 loc_105B6:
 		btst	#0,d3
@@ -5362,7 +4703,7 @@ loc_105C8:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$E,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.b	#0,d2
 
 loc_105E2:
@@ -5375,10 +4716,10 @@ locret_105EE:
 		rts
 ; ---------------------------------------------------------------------------
 
-ObjectHitFloor:
+ObjFloorDist:
 		move.w	obX(a0),d3
 
-ObjectHitFloor2:
+ObjFloorDist2:
 		move.w	obY(a0),d2
 		moveq	#0,d0
 		move.b	obHeight(a0),d0
@@ -5389,7 +4730,7 @@ ObjectHitFloor2:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$D,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.b	(v_angle_primary).w,d3
 		btst	#0,d3
 		beq.s	locret_10626
@@ -5413,7 +4754,7 @@ loc_10628:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
+		bsr.w	FindWall
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
@@ -5428,9 +4769,9 @@ loc_10628:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
+		bsr.w	FindWall
 		move.w	(sp)+,d0
-		move.b	#$C0,d2
+		move.b	#-$40,d2
 		bra.w	loc_105A8
 ; ---------------------------------------------------------------------------
 
@@ -5444,12 +4785,12 @@ loc_10694:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
-		move.b	#$C0,d2
+		bsr.w	FindWall
+		move.b	#-$40,d2
 		bra.w	loc_105E2
 ; ---------------------------------------------------------------------------
 
-ObjectHitWallRight:
+ObjHitWallRight:
 		add.w	obX(a0),d3
 		move.w	obY(a0),d2
 		lea	(v_angle_primary).w,a4
@@ -5457,11 +4798,11 @@ ObjectHitWallRight:
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
+		bsr.w	FindWall
 		move.b	(v_angle_primary).w,d3
 		btst	#0,d3
 		beq.s	locret_106DE
-		move.b	#$C0,d3
+		move.b	#-$40,d3
 
 locret_106DE:
 		rts
@@ -5482,7 +4823,7 @@ Sonic_NoRunningOnWalls:
 		movea.w	#-$10,a3
 		move.w	#$1000,d6
 		moveq	#$E,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
@@ -5498,7 +4839,7 @@ Sonic_NoRunningOnWalls:
 		movea.w	#-$10,a3
 		move.w	#$1000,d6
 		moveq	#$E,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.w	(sp)+,d0
 		move.b	#$80,d2
 		bra.w	loc_105A8
@@ -5514,12 +4855,12 @@ loc_10754:
 		movea.w	#-$10,a3
 		move.w	#$1000,d6
 		moveq	#$E,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.b	#$80,d2
 		bra.w	loc_105E2
 ; ---------------------------------------------------------------------------
 
-ObjectHitCeiling:
+ObjHitCeiling:
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
 		moveq	#0,d0
@@ -5531,7 +4872,7 @@ ObjectHitCeiling:
 		movea.w	#-$10,a3
 		move.w	#$1000,d6
 		moveq	#$E,d5
-		bsr.w	sub_101BE
+		bsr.w	FindFloor
 		move.b	(v_angle_primary).w,d3
 		btst	#0,d3
 		beq.s	locret_107AC
@@ -5556,7 +4897,7 @@ loc_107AE:
 		movea.w	#-$10,a3
 		move.w	#$800,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
+		bsr.w	FindWall
 		move.w	d1,-(sp)
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
@@ -5572,7 +4913,7 @@ loc_107AE:
 		movea.w	#-$10,a3
 		move.w	#$800,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
+		bsr.w	FindWall
 		move.w	(sp)+,d0
 		move.b	#$40,d2
 		bra.w	loc_105A8
@@ -5589,20 +4930,26 @@ loc_10822:
 		movea.w	#-$10,a3
 		move.w	#$800,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
+		bsr.w	FindWall
 		move.b	#$40,d2
 		bra.w	loc_105E2
 ; ---------------------------------------------------------------------------
 
-ObjectHitWallLeft:
+ObjHitWallLeft:
 		add.w	obX(a0),d3
 		move.w	obY(a0),d2
+	if FixBugs
+		; Engine bug: colliding with left walls is erratic with this function.
+		; The cause is this: a missing instruction to flip collision on the found
+		; 16x16 block; this one:
+		eori.w	#$F,d3
+	endif
 		lea	(v_angle_primary).w,a4
 		move.b	#0,(a4)
 		movea.w	#-$10,a3
 		move.w	#$800,d6
 		moveq	#$E,d5
-		bsr.w	FindFloor
+		bsr.w	FindWall
 		move.b	(v_angle_primary).w,d3
 		btst	#0,d3
 		beq.s	locret_10870
@@ -5692,13 +5039,13 @@ loc_10934:
 		move.w	(a4),d3
 		addi.w	#$120,d3
 		cmpi.w	#$70,d3
-		bcs.s	loc_10986
+		blo.s	loc_10986
 		cmpi.w	#$1D0,d3
 		bhs.s	loc_10986
 		move.w	2(a4),d2
 		addi.w	#$F0,d2
 		cmpi.w	#$70,d2
-		bcs.s	loc_10986
+		blo.s	loc_10986
 		cmpi.w	#$170,d2
 		bhs.s	loc_10986
 		lea	(v_ssbuffer2).l,a5
@@ -5740,7 +5087,7 @@ Special_AniWallsandRings:
 		move.b	(v_ssangle).w,d0
 		lsr.b	#2,d0
 		andi.w	#$F,d0
-		moveq	#$10-1,d1
+		moveq	#bytesToWcnt($20),d1
 
 loc_109C2:
 		move.w	d0,(a1)
@@ -5762,7 +5109,7 @@ loc_109E0:
 		move.b	#7,(v_ani2_time).w
 		bra.s	loc_10A02
 ; ---------------------------------------------------------------------------
-		; unused
+; unused
 		addq.b	#1,(v_ani2_frame).w		; the GOAL blocks were meant to flash yellow
 		andi.b	#1,(v_ani2_frame).w
 
@@ -5801,7 +5148,6 @@ loc_10A26:
 		move.w	6(a0),$18(a1)
 		rts
 ; ---------------------------------------------------------------------------
-
 SS_WaRiVramSet:	dc.w $142, $142, $142, $2142
 		dc.w $142, $142, $142, $142
 		dc.w $2142, $2142, $2142, $142
@@ -5810,7 +5156,6 @@ SS_WaRiVramSet:	dc.w $142, $142, $142, $2142
 		dc.w $4142, $4142, $4142, $4142
 		dc.w $6142, $6142, $6142, $2142
 		dc.w $6142, $6142, $6142, $6142
-		even
 ; ---------------------------------------------------------------------------
 
 sub_10ACC:
@@ -5944,7 +5289,7 @@ loc_10BC8:
 
 		include "include/Special Stage Mappings & VRAM Pointers.asm"
 
-		; unused
+; unused
 ;sub_10C98:
 		lea	(v_ssblockbuffer).l,a1
 		lea	(SS_1).l,a0
@@ -5983,462 +5328,17 @@ ScoreAdd:
 loc_1166E:
 		move.l	(a3),d0
 		cmp.l	(a2),d0
-		bcs.w	locret_11678
+		blo.w	locret_11678
 		move.l	d0,(a2)
 
 locret_11678:
 		rts
 ; ---------------------------------------------------------------------------
-; Subroutine to	update the HUD
-; ---------------------------------------------------------------------------
 
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-UpdateHUD:
-		tst.w	(f_debugmode).w
-		bne.w	loc_11746
-		tst.b	(f_scorecount).w
-		beq.s	loc_1169A
-		clr.b	(f_scorecount).w
-		locVRAM (ArtTile_HUD+$1A)*tile_size,d0
-		move.l	(v_score).w,d1
-		bsr.w	sub_1187E
-
-loc_1169A:
-		tst.b	(f_extralife).w
-		beq.s	loc_116BA
-		bpl.s	loc_116A6
-		bsr.w	sub_117B2
-
-loc_116A6:
-		clr.b	(f_extralife).w
-		locVRAM (ArtTile_HUD+$30)*tile_size,d0
-		moveq	#0,d1
-		move.w	(v_rings).w,d1
-		bsr.w	sub_11874
-
-loc_116BA:
-		tst.b	(f_timecount).w
-		beq.s	loc_1170E
-		tst.w	(f_pause).w
-		bmi.s	loc_1170E
-		lea	(v_score).w,a1
-		addq.b	#1,-(a1)
-		cmpi.b	#60,(a1)
-		bcs.s	loc_1170E
-		move.b	#0,(a1)
-		addq.b	#1,-(a1)
-		cmpi.b	#60,(a1)
-		bcs.s	loc_116EE
-		move.b	#0,(a1)
-		addq.b	#1,-(a1)
-		cmpi.b	#9,(a1)
-		bcs.s	loc_116EE
-		move.b	#9,(a1)
-
-loc_116EE:
-		locVRAM (ArtTile_HUD+$28)*tile_size,d0
-		moveq	#0,d1
-		move.b	(v_timemin).w,d1
-		bsr.w	sub_118F4
-		locVRAM (ArtTile_HUD+$2C)*tile_size,d0
-		moveq	#0,d1
-		move.b	(v_timesec).w,d1
-		bsr.w	sub_118FE
-
-loc_1170E:
-		tst.b	(f_lifecount).w
-		beq.s	loc_1171C
-		clr.b	(f_lifecount).w
-		bsr.w	sub_119BA
-
-loc_1171C:
-		tst.b	(f_endactbonus).w
-		beq.s	locret_11744
-		clr.b	(f_endactbonus).w
-		locVRAM (ArtTile_Title_Card-$10)*tile_size
-		moveq	#0,d1
-		move.w	(v_timebonus).w,d1
-		bsr.w	sub_11958
-		moveq	#0,d1
-		move.w	(v_ringbonus).w,d1
-		bsr.w	sub_11958
-
-locret_11744:
-		rts
-; ---------------------------------------------------------------------------
-
-loc_11746:
-		bsr.w	sub_1181E
-		tst.b	(f_extralife).w
-		beq.s	loc_1176A
-		bpl.s	loc_11756
-		bsr.w	sub_117B2
-
-loc_11756:
-		clr.b	(f_extralife).w
-		locVRAM (ArtTile_HUD+$30)*tile_size,d0
-		moveq	#0,d1
-		move.w	(v_rings).w,d1
-		bsr.w	sub_11874
-
-loc_1176A:
-		locVRAM (ArtTile_HUD+$2C)*tile_size,d0
-		moveq	#0,d1
-		move.b	(v_spritecount).w,d1
-		bsr.w	sub_118FE
-		tst.b	(f_lifecount).w
-		beq.s	loc_11788
-		clr.b	(f_lifecount).w
-		bsr.w	sub_119BA
-
-loc_11788:
-		tst.b	(f_endactbonus).w
-		beq.s	locret_117B0
-		clr.b	(f_endactbonus).w
-		locVRAM (ArtTile_Title_Card-$10)*tile_size
-		moveq	#0,d1
-		move.w	(v_timebonus).w,d1
-		bsr.w	sub_11958
-		moveq	#0,d1
-		move.w	(v_ringbonus).w,d1
-		bsr.w	sub_11958
-
-locret_117B0:
-		rts
-; ---------------------------------------------------------------------------
-
-sub_117B2:
-		locVRAM (ArtTile_HUD+$30)*tile_size
-		lea	byte_1181A(pc),a2
-		move.w	#3-1,d2
-		bra.s	loc_117E2
-; ---------------------------------------------------------------------------
-
-sub_117C6:
-		lea	(vdp_data_port).l,a6
-		bsr.w	sub_119BA
-		locVRAM (ArtTile_HUD+$18)*tile_size
-		lea	byte_1180E(pc),a2
-		move.w	#15-1,d2
-
-loc_117E2:
-		lea	byte_11A26(pc),a1
-
-loc_117E6:
-		move.w	#16-1,d1
-		move.b	(a2)+,d0
-		bmi.s	loc_11802
-		ext.w	d0
-		lsl.w	#5,d0
-		lea	(a1,d0.w),a3
-
-loc_117F6:
-		move.l	(a3)+,(a6)
-		dbf	d1,loc_117F6
-
-loc_117FC:
-		dbf	d2,loc_117E6
-		rts
-; ---------------------------------------------------------------------------
-
-loc_11802:
-		move.l	#0,(a6)
-		dbf	d1,loc_11802
-		bra.s	loc_117FC
-; ---------------------------------------------------------------------------
-
-byte_1180E:	dc.b $16, $FF, $FF, $FF, $FF, $FF, $FF, 0, 0, $14, 0, 0
-		even
-byte_1181A:	dc.b $FF, $FF, 0, 0
-		even
-; ---------------------------------------------------------------------------
-
-sub_1181E:
-		locVRAM (ArtTile_HUD+$18)*tile_size
-		move.w	(v_screenposx).w,d1
-		swap	d1
-		move.w	(v_player+obX).w,d1
-		bsr.s	sub_1183E
-		move.w	(v_screenposy).w,d1
-		swap	d1
-		move.w	(v_player+obY).w,d1
-
-sub_1183E:
-		moveq	#8-1,d6
-		lea	(Art_Text).l,a1
-
-loc_11846:
-		rol.w	#4,d1
-		move.w	d1,d2
-		andi.w	#$F,d2
-		cmpi.w	#$A,d2
-		bcs.s	loc_11856
-		addq.w	#7,d2
-
-loc_11856:
-		lsl.w	#5,d2
-		lea	(a1,d2.w),a3
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		swap	d1
-		dbf	d6,loc_11846
-		rts
-; ---------------------------------------------------------------------------
-
-sub_11874:
-		lea	(Hud_100).l,a2
-		moveq	#3-1,d6
-		bra.s	loc_11886
-; ---------------------------------------------------------------------------
-
-sub_1187E:
-		lea	(Hud_100000).l,a2
-		moveq	#6-1,d6
-
-loc_11886:
-		moveq	#0,d4
-		lea	byte_11A26(pc),a1
-
-loc_1188C:
-		moveq	#0,d2
-		move.l	(a2)+,d3
-
-loc_11890:
-		sub.l	d3,d1
-		bcs.s	loc_11898
-		addq.w	#1,d2
-		bra.s	loc_11890
-; ---------------------------------------------------------------------------
-
-loc_11898:
-		add.l	d3,d1
-		tst.w	d2
-		beq.s	loc_118A2
-		move.w	#1,d4
-
-loc_118A2:
-		tst.w	d4
-		beq.s	loc_118D0
-		lsl.w	#6,d2
-		move.l	d0,4(a6)
-		lea	(a1,d2.w),a3
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-
-loc_118D0:
-		addi.l	#$400000,d0
-		dbf	d6,loc_1188C
-		rts
-; ---------------------------------------------------------------------------
-
-Hud_100000:	dc.l 100000
-Hud_10000:	dc.l 10000
-Hud_1000:	dc.l 1000
-Hud_100:	dc.l 100
-Hud_10:		dc.l 10
-Hud_1:		dc.l 1
-; ---------------------------------------------------------------------------
-
-sub_118F4:
-		lea	(Hud_1).l,a2
-		moveq	#1-1,d6
-		bra.s	loc_11906
-; ---------------------------------------------------------------------------
-
-sub_118FE:
-		lea	(Hud_10).l,a2
-		moveq	#2-1,d6
-
-loc_11906:
-		moveq	#0,d4
-		lea	byte_11A26(pc),a1
-
-loc_1190C:
-		moveq	#0,d2
-		move.l	(a2)+,d3
-
-loc_11910:
-		sub.l	d3,d1
-		bcs.s	loc_11918
-		addq.w	#1,d2
-		bra.s	loc_11910
-; ---------------------------------------------------------------------------
-
-loc_11918:
-		add.l	d3,d1
-		tst.w	d2
-		beq.s	loc_11922
-		move.w	#1,d4
-
-loc_11922:
-		lsl.w	#6,d2
-		move.l	d0,4(a6)
-		lea	(a1,d2.w),a3
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		addi.l	#$400000,d0
-		dbf	d6,loc_1190C
-		rts
-; ---------------------------------------------------------------------------
-
-sub_11958:
-		lea	(Hud_1000).l,a2
-		moveq	#4-1,d6
-		moveq	#0,d4
-		lea	byte_11A26(pc),a1
-
-loc_11966:
-		moveq	#0,d2
-		move.l	(a2)+,d3
-
-loc_1196A:
-		sub.l	d3,d1
-		bcs.s	loc_11972
-		addq.w	#1,d2
-		bra.s	loc_1196A
-; ---------------------------------------------------------------------------
-
-loc_11972:
-		add.l	d3,d1
-		tst.w	d2
-		beq.s	loc_1197C
-		move.w	#1,d4
-
-loc_1197C:
-		tst.w	d4
-		beq.s	loc_119AC
-		lsl.w	#6,d2
-		lea	(a1,d2.w),a3
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-
-loc_119A6:
-		dbf	d6,loc_11966
-		rts
-; ---------------------------------------------------------------------------
-
-loc_119AC:
-		moveq	#16-1,d5
-
-loc_119AE:
-		move.l	#0,(a6)
-		dbf	d5,loc_119AE
-		bra.s	loc_119A6
-; ---------------------------------------------------------------------------
-
-sub_119BA:
-		locVRAM (ArtTile_HUD+$113)*tile_size,d0
-		moveq	#0,d1
-		move.b	(v_lives).w,d1
-		lea	(Hud_10).l,a2
-		moveq	#2-1,d6
-		moveq	#0,d4
-		lea	byte_11D26(pc),a1
-
-loc_119D4:
-		move.l	d0,4(a6)
-		moveq	#0,d2
-		move.l	(a2)+,d3
-
-loc_119DC:
-		sub.l	d3,d1
-		bcs.s	loc_119E4
-		addq.w	#1,d2
-		bra.s	loc_119DC
-; ---------------------------------------------------------------------------
-
-loc_119E4:
-		add.l	d3,d1
-		tst.w	d2
-		beq.s	loc_119EE
-		move.w	#1,d4
-
-loc_119EE:
-		tst.w	d4
-		beq.s	loc_11A14
-
-loc_119F2:
-		lsl.w	#5,d2
-		lea	(a1,d2.w),a3
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-		move.l	(a3)+,(a6)
-
-loc_11A08:
-		addi.l	#$400000,d0
-		dbf	d6,loc_119D4
-		rts
-; ---------------------------------------------------------------------------
-
-loc_11A14:
-		tst.w	d6
-		beq.s	loc_119F2
-		moveq	#8-1,d5
-
-loc_11A1A:
-		move.l	#0,(a6)
-		dbf	d5,loc_11A1A
-		bra.s	loc_11A08
-; ---------------------------------------------------------------------------
+		include	"include/HUD_Update.asm"
 
 byte_11A26:	binclude "artunc/HUD Numbers.bin"
-		even
 byte_11D26:	binclude "artunc/Lives Counter Numbers.bin"
-		even
 
 		include "objects/DebugMode.asm"
 		include "include/DebugList.asm"
@@ -6460,12 +5360,11 @@ Nem_SegaLogo:	binclude "artnem/Sega Logo.nem"
 Eni_SegaLogo:	binclude "tilemaps/Sega Logo.eni"
 		even
 Unc_Title:	binclude "tilemaps/Title Screen.bin"
-		even
 Nem_TitleFg:	binclude "artnem/Title Screen Foreground.nem"
 		even
 Nem_TitleSonic:	binclude "artnem/Title Screen Sonic.nem"
 		even
-		
+
 		align	$4000
 Map_Sonic:	include "_maps/Sonic.asm"
 SonicDynPLC:	include "_maps/Sonic - Dynamic Gfx Script.asm"
@@ -6473,7 +5372,6 @@ SonicDynPLC:	include "_maps/Sonic - Dynamic Gfx Script.asm"
 ; Uncompressed graphics	- Sonic
 ; ---------------------------------------------------------------------------
 Art_Sonic:	binclude "artunc/Sonic.bin"
-		even
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - various
 ; ---------------------------------------------------------------------------
@@ -6493,70 +5391,70 @@ Nem_Flash:	binclude "artnem/Flash.nem"
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - GHZ stuff
 ; ---------------------------------------------------------------------------
-byte_27400:	binclude "artnem/ghz flower stalk.nem"
+Nem_Stalk:	binclude "artnem/GHZ Flower Stalk.nem"
 		even
-byte_2744A:	binclude "artnem/GHZ Swinging Platform.nem"
+Nem_Swing:	binclude "artnem/GHZ Swinging Platform.nem"
 		even
-ArtBridge:	binclude "artnem/GHZ Bridge.nem"
+Nem_Bridge:	binclude "artnem/GHZ Bridge.nem"
 		even
-byte_27698:	binclude "artnem/GHZ Giant Ball.nem"
+Nem_Ball:	binclude "artnem/GHZ Giant Ball.nem"
 		even
-ArtSpikes:	binclude "artnem/Spikes.nem"
+Nem_Spikes:	binclude "artnem/Spikes.nem"
 		even
-ArtSpikeLogs:	binclude "artnem/GHZ Spiked Log.nem"
+Nem_SpikePole:	binclude "artnem/GHZ Spiked Log.nem"
 		even
-ArtPurpleRock:	binclude "artnem/GHZ Purple Rock.nem"
+Nem_PplRock:	binclude "artnem/GHZ Purple Rock.nem"
 		even
-ArtSmashWall:	binclude "artnem/GHZ Breakable Wall.nem"
+Nem_GhzWall1:	binclude "artnem/GHZ Breakable Wall.nem"
 		even
-ArtWall:	binclude "artnem/GHZ Edge Wall.nem"
+Nem_GhzWall2:	binclude "artnem/GHZ Edge Wall.nem"
 		even
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - MZ stuff
 ; ---------------------------------------------------------------------------
-ArtChainPtfm:	binclude "artnem/MZ Metal Blocks.nem"
+Nem_MzMetal:	binclude "artnem/MZ Metal Blocks.nem"
 		even
-ArtButtonMZ:	binclude "artnem/MZ Switch.nem"
+Nem_MzSwitch:	binclude "artnem/MZ Switch.nem"
 		even
-byte_2816E:	binclude "artnem/MZ Green Glass Block.nem"
+Nem_MzGlass:	binclude "artnem/MZ Green Glass Block.nem"
 		even
 		binclude "artnem/Unused - Grass.nem"
 		even
-byte_2827A:	binclude "artnem/Fireballs.nem"
+Nem_MzFire:	binclude "artnem/Fireballs.nem"
 		even
-byte_28558:	binclude "artnem/mz lava.nem"
+Nem_Lava:	binclude "artnem/MZ Lava.nem"
 		even
-byte_28E6E:	binclude "artnem/MZ Green Pushable Block.nem"
+Nem_MzBlock:	binclude "artnem/MZ Green Pushable Block.nem"
 		even
 		binclude "artnem/Unused - MZ Background.nem"
 		even
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - SLZ stuff
 ; ---------------------------------------------------------------------------
-ArtSeesaw:	binclude "artnem/SLZ Seesaw.nem"
+Nem_Seesaw:	binclude "artnem/SLZ Seesaw.nem"
 		even
-ArtFan:	binclude "artnem/SLZ Fan.nem"
+Nem_Fan:	binclude "artnem/SLZ Fan.nem"
 		even
 byte_294DA:	binclude "artnem/SLZ Breakable Wall.nem"
 		even
-byte_2953C:	binclude "artnem/slz girders.nem"
+Nem_Pylon:	binclude "artnem/SLZ Pylon.nem"
 		even
-byte_2961E:	binclude "artnem/SLZ Swinging Platform.nem"
+Nem_SlzSwing:	binclude "artnem/SLZ Swinging Platform.nem"
 		even
 Nem_SLZ_Platfm:	binclude "artnem/SLZ Platforms.nem"
 		even
-byte_29D4A:	binclude "artnem/SLZ 32x32 Block.nem"
+Nem_SlzBlock:	binclude "artnem/SLZ 32x32 Block.nem"
 		even
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - SZ stuff
 ; ---------------------------------------------------------------------------
-ArtBumper:	binclude "artnem/SZ Bumper.nem"
+Nem_Bumper:	binclude "artnem/SZ Bumper.nem"
 		even
-byte_29FC0:	binclude "artnem/SZ Small Spikeball.nem"
+Nem_SyzSpike2:	binclude "artnem/SZ Small Spikeball.nem"
 		even
-ArtButton:	binclude "artnem/Switch.nem"
+Nem_Switch:	binclude "artnem/Switch.nem"
 		even
-byte_2A104:	binclude "artnem/SZ Large Spikeball.nem"
+Nem_SyzSpike1:	binclude "artnem/SZ Large Spikeball.nem"
 		even
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - enemies
@@ -6566,14 +5464,14 @@ byte_2A104:	binclude "artnem/SZ Large Spikeball.nem"
 		even
 Nem_Crabmeat:	binclude "artnem/Enemy Crabmeat.nem"
 		even
-Nem_Buzzbomber:	binclude "artnem/Enemy Buzz Bomber.nem"
+Nem_Buzz:	binclude "artnem/Enemy Buzz Bomber.nem"
 		even
 ;Nem_Ball_Explosion:
 		binclude "artnem/Unused - Ball Hog's Bomb Explosion.nem"
 		even
 Nem_Burrobot:	binclude "artnem/Enemy Burrobot.nem"
 		even
-ArtChopper:	binclude "artnem/Enemy Chopper.nem"
+Nem_Chopper:	binclude "artnem/Enemy Chopper.nem"
 		even
 Nem_Jaws:	binclude "artnem/Enemy Jaws.nem"
 		even
@@ -6582,15 +5480,15 @@ Nem_Jaws:	binclude "artnem/Enemy Jaws.nem"
 		even
 Nem_Roller:	binclude "artnem/Enemy Roller.nem"
 		even
-ArtMotobug:	binclude "artnem/Enemy Motobug.nem"
+Nem_Motobug:	binclude "artnem/Enemy Motobug.nem"
 		even
-ArtNewtron:	binclude "artnem/Enemy Newtron.nem"
+Nem_Newtron:	binclude "artnem/Enemy Newtron.nem"
 		even
-ArtYardin:	binclude "artnem/Enemy Yadrin.nem"
+Nem_Yadrin:	binclude "artnem/Enemy Yadrin.nem"
 		even
-ArtBasaran:	binclude "artnem/Enemy Basaran.nem"
+Nem_Basaran:	binclude "artnem/Enemy Basaran.nem"
 		even
-ArtSplats:	binclude "artnem/Enemy Splats.nem"
+Nem_Splats:	binclude "artnem/Enemy Splats.nem"
 		even
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - various
@@ -6605,34 +5503,34 @@ Nem_Ring:	binclude "artnem/Rings.nem"
 		even
 Nem_Monitors:	binclude "artnem/Monitors.nem"
 		even
-ArtExplosions:	binclude "artnem/Explosion.nem"
+Nem_Explode:	binclude "artnem/Explosion.nem"
 		even
-Nem_Points:	binclude "artnem/score points.nem"
+Nem_Points:	binclude "artnem/Points.nem"
 		even
-ArtGameOver:	binclude "artnem/Game Over.nem"
+Nem_GameOver:	binclude "artnem/Game Over.nem"
 		even
-ArtSpringHoriz:	binclude "artnem/Spring Horizontal.nem"
+Nem_HSpring:	binclude "artnem/Spring Horizontal.nem"
 		even
-ArtSpringVerti:	binclude "artnem/Spring Vertical.nem"
+Nem_VSpring:	binclude "artnem/Spring Vertical.nem"
 		even
-ArtSignPost:	binclude "artnem/Signpost.nem"
+Nem_SignPost:	binclude "artnem/Signpost.nem"
 		even
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - animals
 ; ---------------------------------------------------------------------------
-ArtAnimalPocky:	binclude "artnem/Animal Rabbit.nem"
+Nem_Rabbit:	binclude "artnem/Animal Rabbit.nem"
 		even
-ArtAnimalCucky:	binclude "artnem/Animal Chicken.nem"
+Nem_Chicken:	binclude "artnem/Animal Chicken.nem"
 		even
-ArtAnimalPecky:	binclude "artnem/Animal Blackbird.nem"
+Nem_Penguin:	binclude "artnem/Animal Blackbird.nem"
 		even
-ArtAnimalRocky:	binclude "artnem/Animal Seal.nem"
+Nem_Seal:	binclude "artnem/Animal Seal.nem"
 		even
-ArtAnimalPicky:	binclude "artnem/Animal Pig.nem"
+Nem_Pig:	binclude "artnem/Animal Pig.nem"
 		even
-ArtAnimalFlicky:binclude "artnem/Animal Flicky.nem"
+Nem_Flicky:	binclude "artnem/Animal Flicky.nem"
 		even
-ArtAnimalRicky:	binclude "artnem/Animal Squirrel.nem"
+Nem_Squirrel:	binclude "artnem/Animal Squirrel.nem"
 		even
 
 		align	$1000
@@ -6641,7 +5539,6 @@ ArtAnimalRicky:	binclude "artnem/Animal Squirrel.nem"
 ; Blocks are Uncompressed
 ; ---------------------------------------------------------------------------
 Blk16_GHZ:	binclude "level/map16/GHZ.bin"
-		even
 Nem_GHZ_1st:	binclude "artnem/8x8 - GHZ1.nem"
 		even
 Nem_GHZ_2nd:	binclude "artnem/8x8 - GHZ2.nem"
@@ -6649,13 +5546,11 @@ Nem_GHZ_2nd:	binclude "artnem/8x8 - GHZ2.nem"
 Blk256_GHZ:	binclude "level/map256/GHZ.kos"
 		even
 Blk16_LZ:	binclude "level/map16/LZ.bin"
-		even
 Nem_LZ:	binclude "artnem/8x8 - LZ.nem"
 		even
 Blk256_LZ:	binclude "level/map256/LZ.kos"
 		even
 Blk16_MZ:	binclude "level/map16/MZ.bin"
-		even
 Nem_MZ:	binclude "artnem/8x8 - MZ.nem"
 		even
 Blk256_MZ:	binclude "level/map256/MZ.kos"
@@ -6672,19 +5567,16 @@ Blk256_MZ:	binclude "level/map256/MZ.kos"
 		binclude "unknown/3DB78.dat"
 		even
 Blk16_SLZ:	binclude "level/map16/SLZ.bin"
-		even
 Nem_SLZ:	binclude "artnem/8x8 - SLZ.nem"
 		even
 Blk256_SLZ:	binclude "level/map256/SLZ.kos"
 		even
 Blk16_SZ:	binclude "level/map16/SZ.bin"
-		even
 Nem_SZ:	binclude "artnem/8x8 - SZ.nem"
 		even
 Blk256_SZ:	binclude "level/map256/SZ.kos"
 		even
 Blk16_CWZ:	binclude "level/map16/CWZ.bin"
-		even
 Nem_CWZ:	binclude "artnem/8x8 - CWZ.nem"
 		even
 Blk256_CWZ:	binclude "level/map256/CWZ.kos"
@@ -6697,29 +5589,26 @@ Blk256_CWZ:	binclude "level/map256/CWZ.kos"
 ; and a duplicate of a duplicate end of chunk data pointer
 		dc.w $F89F, $F0, 0, 0, 0, 0, 0, 0
 
-;0x5711C	; seems to be chunk data as well?
+;0x5711C
 		binclude "unknown/5711C.dat"
 		even
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - bosses and ending sequence
 ; ---------------------------------------------------------------------------
-byte_60000:	binclude "artnem/Boss - Main.nem"
+Nem_Eggman:	binclude "artnem/Boss - Main.nem"
 		even
-byte_60864:	binclude "artnem/Boss - Weapons.nem"
+Nem_Weapons:	binclude "artnem/Boss - Weapons.nem"
 		even
-byte_60BB0:	binclude "artnem/Prison Capsule.nem"
+Nem_Prison:	binclude "artnem/Prison Capsule.nem"
 		even
 ; ===========================================================================
 ; Demos
 ; ===========================================================================
-byte_61434:	binclude "demodata/Intro - GHZ.bin"	; Green Hill's demo (act 2?)
+Demo_GHZ:	include "demodata/Intro - GHZ.asm"	; Green Hill's demo (act 2?)
+Demo_MZ:	include "demodata/Intro - MZ.asm"	; Marble's demo
+Demo_SZ:	binclude "demodata/Intro - SZ.bin"	; Sparkling's demo (?)
 		even
-byte_614C6:	binclude "demodata/Intro - MZ.bin"	; Marble's demo
-		even
-byte_61578:	binclude "demodata/Intro - SZ.bin"	; Sparkling's demo (?)
-		even
-byte_6161E:	binclude "demodata/Intro - Special Stage.bin" ; Special stage demo
-		even
+Demo_SS:	include "demodata/Intro - Special Stage.asm" ; Special stage demo
 
 		align	$3000
 
@@ -6737,81 +5626,65 @@ Eni_SSBg2:	binclude "tilemaps/SS Background 2.eni"
 		even
 Nem_SSBgCloud:	binclude "artnem/Special Clouds.nem"
 		even
-ArtSpecialGoal:	binclude "artnem/Special GOAL.nem"
+Nem_SSGOAL:	binclude "artnem/Special GOAL.nem"
 		even
-ArtSpecialR:	binclude "artnem/Special R.nem"
+Nem_SSRBlock:	binclude "artnem/Special R.nem"
 		even
-ArtSpecialSkull:binclude "artnem/Special Skull.nem"
+Nem_SSSkull:	binclude "artnem/Special Skull.nem"
 		even
-ArtSpecialU:	binclude "artnem/Special U.nem"
+Nem_SSUBlock:	binclude "artnem/Special U.nem"
 		even
-ArtSpecial1up:	binclude "artnem/Special 1UP.nem"
+Nem_SS1UpBlock:	binclude "artnem/Special 1UP.nem"
 		even
-ArtSpecialStars:binclude "artnem/Art Stars.nem"
+Nem_SSEmStars:	binclude "artnem/Special Emerald Twinkle.nem"
 		even
-byte_65432:	binclude "artnem/Special Red-White.nem"
+Nem_SSRedWhite:	binclude "artnem/Special Red-White.nem"
 		even
-ArtSpecialZone1:binclude "artnem/Special ZONE1.nem"
+Nem_SSZone1:	binclude "artnem/Special ZONE1.nem"
 		even
-ArtSpecialZone2:binclude "artnem/Special ZONE2.nem"
+Nem_SSZone2:	binclude "artnem/Special ZONE2.nem"
 		even
-ArtSpecialZone3:binclude "artnem/Special ZONE3.nem"
+Nem_SSZone3:	binclude "artnem/Special ZONE3.nem"
 		even
-ArtSpecialZone4:binclude "artnem/Special ZONE4.nem"
+Nem_SSZone4:	binclude "artnem/Special ZONE4.nem"
 		even
-ArtSpecialZone5:binclude "artnem/Special ZONE5.nem"
+Nem_SSZone5:	binclude "artnem/Special ZONE5.nem"
 		even
-ArtSpecialZone6:binclude "artnem/Special ZONE6.nem"
+Nem_SSZone6:	binclude "artnem/Special ZONE6.nem"
 		even
-ArtSpecialUpDown:binclude "artnem/Special UP-DOWN.nem"
+Nem_SSUpDown:	binclude "artnem/Special UP-DOWN.nem"
 		even
-ArtSpecialEmerald:binclude "artnem/Special Emeralds.nem"
+Nem_SSEmerald:	binclude "artnem/Special Emeralds.nem"
 		even
 
 		align	$4000
 ; ---------------------------------------------------------------------------
 ; Collision data
 ; ---------------------------------------------------------------------------
-colAngles:	binclude "collide/Angle Map.bin"
-		even
-colWidth:	binclude "collide/Collision Array (Normal).bin"
-		even
-colHeight:	binclude "collide/Collision Array (Rotated).bin"
-		even
-colGHZ:	binclude "collide/GHZ.bin"
-		even
-colLZ:	binclude "collide/LZ.bin"
-		even
-colMZ:	binclude "collide/MZ.bin"
-		even
-colSLZ:	binclude "collide/SLZ.bin"
-		even
-colSZ:	binclude "collide/SZ.bin"
-		even
-colCWZ:	binclude "collide/CWZ.bin"
-		even
+AngleMap:	binclude "collide/Angle Map.bin"
+CollArray1:	binclude "collide/Collision Array (Normal).bin"
+CollArray2:	binclude "collide/Collision Array (Rotated).bin"
+Col_GHZ:	binclude "collide/GHZ.bin"
+Col_LZ:	binclude "collide/LZ.bin"
+Col_MZ:	binclude "collide/MZ.bin"
+Col_SLZ:	binclude "collide/SLZ.bin"
+Col_SZ:	binclude "collide/SZ.bin"
+Col_CWZ:	binclude "collide/CWZ.bin"
 ; ---------------------------------------------------------------------------
 ; Special Stage layout (uncompressed)
 ; ---------------------------------------------------------------------------
 SS_1:	binclude "sslayout/1.bin"
-SS_1_End:	even
+SS_1_End:
 ; ---------------------------------------------------------------------------
 ; Animated uncompressed graphics
 ; ---------------------------------------------------------------------------
 Art_GhzWater:	binclude "artunc/GHZ Waterfall.bin"
-		even
 Art_GhzFlower1:	binclude "artunc/GHZ Flower Large.bin"
-		even
 Art_GhzFlower2:	binclude "artunc/GHZ Flower Small.bin"
-		even
 Art_MzLava1:	binclude "artunc/MZ Lava Surface.bin"
-		even
 Art_MzLava2:	binclude "artunc/MZ Lava.bin"
-		even
 Art_MzSaturns:	binclude "artunc/MZ Saturns.bin"
-		even
 Art_MzTorch:	binclude "artunc/MZ Background Torch.bin"
-		even
 ; ---------------------------------------------------------------------------
 ; Level	layout index
 ; ---------------------------------------------------------------------------
@@ -6852,80 +5725,51 @@ LayoutArray:	; GHZ
 		dc.w byte_6E3D6-LayoutArray, byte_6E3D6-LayoutArray, byte_6E3D6-LayoutArray
 
 LayoutGHZ1FG:	binclude "level/layout/ghz1.bin"
-		even
 LayoutGHZ1BG:	binclude "level/layout/ghzbg1.bin"
-		even
 byte_6CE54:	dc.l 0
 LayoutGHZ2FG:	binclude "level/layout/ghz2.bin"
-		even
 LayoutGHZ2BG:	binclude "level/layout/ghzbg2.bin"
-		even
 byte_6CF3C:	dc.l 0
 LayoutGHZ3FG:	binclude "level/layout/ghz3.bin"
-		even
 LayoutGHZ3BG:	binclude "level/layout/ghzbg3.bin"
-		even
 byte_6D084:	dc.l 0
 byte_6D088:	dc.l 0
 LayoutLZ1FG:	binclude "level/layout/lz1.bin"
-		even
 LayoutLZBG:	binclude "level/layout/lzbg.bin"
-		even
 byte_6D190:	dc.l 0
 LayoutLZ2FG:	binclude "level/layout/lz2.bin"
-		even
 byte_6D216:	dc.l 0
 LayoutLZ3FG:	binclude "level/layout/lz3.bin"
-		even
 byte_6D31C:	dc.l 0
 byte_6D320:	dc.l 0
 LayoutMZ1FG:	binclude "level/layout/mz1.bin"
-		even
 LayoutMZ1BG:	binclude "level/layout/mzbg1.bin"
-		even
 LayoutMZ2FG:	binclude "level/layout/mz2.bin"
-		even
 LayoutMZ2BG:	binclude "level/layout/mzbg2.bin"
-		even
 byte_6D614:	dc.l 0
 LayoutMZ3FG:	binclude "level/layout/mz3.bin"
-		even
 LayoutMZ3BG:	binclude "level/layout/mzbg3.bin"
-		even
 byte_6D7DC:	dc.l 0
 byte_6D7E0:	dc.l 0
 LayoutSLZ1FG:	binclude "level/layout/slz1.bin"
-		even
 LayoutSLZBG:	binclude "level/layout/slzbg.bin"
-		even
 LayoutSLZ2FG:	binclude "level/layout/slz2.bin"
-		even
 LayoutSLZ3FG:	binclude "level/layout/slz3.bin"
-		even
 byte_6DBE4:	dc.l 0
 LayoutSZ1FG:	binclude "level/layout/sz1.bin"
-		even
 LayoutSZBG:	binclude "level/layout/szbg.bin"
-		even
 byte_6DCD8:	dc.l 0
 LayoutSZ2FG:	binclude "level/layout/sz2.bin"
-		even
 byte_6DDDA:	dc.l 0
 LayoutSZ3FG:	binclude "level/layout/sz3.bin"
-		even
 byte_6DF30:	dc.l 0
 byte_6DF34:	dc.l 0
 LayoutCWZ1:	binclude "level/layout/cwz1.bin"
-		even
 LayoutCWZ2:	binclude "level/layout/cwz2.bin"
-		even
 byte_6E33C:	binclude "level/layout/cwz2bg.bin"
-		even
 LayoutCWZ3:	binclude "level/layout/cwz3.bin"
-		even
 byte_6E344:	dc.l 0
 LayoutTest:	binclude "leftovers/level/layout/test.bin"
-		even
 byte_6E3CA:	dc.l 0
 byte_6E3CE:	dc.l 0
 byte_6E3D2:	dc.l 0
@@ -6968,44 +5812,25 @@ ObjPos_Index:	; GHZ
 		dc.w $FFFF, 0, 0
 
 ObjPos_GHZ1:	binclude "level/objpos/ghz1.bin"
-		even
 ObjPos_GHZ2:	binclude "level/objpos/ghz2.bin"
-		even
 ObjPos_GHZ3:	binclude "level/objpos/ghz3.bin"
-		even
 ObjPos_LZ1:	binclude "level/objpos/lz1.bin"
-		even
 ObjPos_LZ2:	binclude "level/objpos/lz2.bin"
-		even
 ObjPos_LZ3:	binclude "level/objpos/lz3.bin"
-		even
 ObjPos_MZ1:	binclude "level/objpos/mz1.bin"
-		even
 ObjPos_MZ2:	binclude "level/objpos/mz2.bin"
-		even
 ObjPos_MZ3:	binclude "level/objpos/mz3.bin"
-		even
 ObjPos_SLZ1:	binclude "level/objpos/slz1.bin"
-		even
 ObjPos_SLZ2:	binclude "level/objpos/slz2.bin"
-		even
 ObjPos_SLZ3:	binclude "level/objpos/slz3.bin"
-		even
 ObjPos_SZ1:	binclude "level/objpos/sz1.bin"
-		even
 ObjPos_SZ2:	binclude "level/objpos/sz2.bin"
-		even
 ;0x729CA
 		binclude "leftovers/level/objpos/sz1.bin"
-		even
 ObjPos_SZ3:	binclude "level/objpos/sz3.bin"
-		even
 ObjPos_CWZ1:	binclude "level/objpos/cwz1.bin"
-		even
 ObjPos_CWZ2:	binclude "level/objpos/cwz2.bin"
-		even
 ObjPos_CWZ3:	binclude "level/objpos/cwz3.bin"
-		even
 ObjPos_Null:	dc.w $FFFF, 0, 0
 
 		align	$2000

@@ -1,6 +1,6 @@
 ; ---------------------------------------------------------------------------
 
-sub_101BE:
+FindFloor:
 		bsr.s	Floor_ChkTile
 		move.w	(a1),d0
 		move.w	d0,d4
@@ -22,7 +22,7 @@ loc_101DC:
 		move.b	(a2,d0.w),d0
 		andi.w	#$FF,d0
 		beq.s	loc_101CE
-		lea	(colAngles).l,a2
+		lea	(AngleMap).l,a2
 		move.b	(a2,d0.w),(a4)
 		lsl.w	#4,d0
 		move.w	d3,d1
@@ -41,7 +41,7 @@ loc_10202:
 loc_10212:
 		andi.w	#$F,d1
 		add.w	d0,d1
-		lea	(colWidth).l,a2
+		lea	(CollArray1).l,a2
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4
@@ -99,7 +99,7 @@ loc_10284:
 		move.b	(a2,d0.w),d0
 		andi.w	#$FF,d0
 		beq.s	loc_10276
-		lea	(colAngles).l,a2
+		lea	(AngleMap).l,a2
 		move.b	(a2,d0.w),(a4)
 		lsl.w	#4,d0
 		move.w	d3,d1
@@ -118,7 +118,7 @@ loc_102AA:
 loc_102BA:
 		andi.w	#$F,d1
 		add.w	d0,d1
-		lea	(colWidth).l,a2
+		lea	(CollArray1).l,a2
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4

@@ -77,7 +77,7 @@ locret_C33E:
 
 loc_C340:
 		bset	#1,obStatus(a0)
-		bsr.w	ObjectHitCeiling
+		bsr.w	ObjHitCeiling
 		tst.w	d1
 		bpl.s	locret_C360
 		move.b	#8,obSubtype(a0)
@@ -90,7 +90,7 @@ locret_C360:
 
 loc_C362:
 		bclr	#1,obStatus(a0)
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		tst.w	d1
 		bpl.s	locret_C382
 		move.b	#8,obSubtype(a0)
@@ -104,7 +104,7 @@ locret_C382:
 loc_C384:
 		bset	#0,obStatus(a0)
 		moveq	#-8,d3
-		bsr.w	ObjectHitWallLeft
+		bsr.w	ObjHitWallLeft
 		tst.w	d1
 		bpl.s	locret_C3A6
 		move.b	#8,obSubtype(a0)
@@ -118,7 +118,7 @@ locret_C3A6:
 loc_C3A8:
 		bclr	#0,obStatus(a0)
 		moveq	#8,d3
-		bsr.w	ObjectHitWallRight
+		bsr.w	ObjHitWallRight
 		tst.w	d1
 		bpl.s	locret_C3CA
 		move.b	#8,obSubtype(a0)

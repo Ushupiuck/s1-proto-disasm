@@ -14,7 +14,7 @@ loc_5C98:
 		move.b	#$18,obHeight(a0)
 		move.b	#$C,obWidth(a0)
 		bsr.w	ObjectFall
-		jsr	(ObjectHitFloor).l
+		jsr	(ObjFloorDist).l
 		tst.w	d1
 		bpl.s	locret_5CEC
 		add.w	d1,obY(a0)

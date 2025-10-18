@@ -14,7 +14,7 @@ loc_BFBE:
 		move.b	#$E,obHeight(a0)
 		move.b	#8,obWidth(a0)
 		bsr.w	ObjectFall
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		tst.w	d1
 		bpl.s	locret_C00A
 		add.w	d1,obY(a0)
@@ -69,7 +69,7 @@ locret_C05E:
 
 loc_C060:
 		bsr.w	SpeedToPos
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		cmpi.w	#-8,d1
 		blt.s	loc_C07A
 		cmpi.w	#$C,d1
@@ -92,7 +92,7 @@ loc_C08E:
 		bsr.w	ObjectFall
 		tst.w	obVelY(a0)
 		bmi.s	locret_C0AE
-		bsr.w	ObjectHitFloor
+		bsr.w	ObjFloorDist
 		tst.w	d1
 		bpl.s	locret_C0AE
 		add.w	d1,obY(a0)

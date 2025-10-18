@@ -75,7 +75,7 @@ loc_7418:
 		bsr.w	ObjectFall
 		tst.w	obVelY(a0)
 		bmi.s	loc_746E
-		jsr	(ObjectHitFloor).l
+		jsr	(ObjFloorDist).l
 		tst.w	d1
 		bpl.s	loc_746E
 		add.w	d1,obY(a0)
@@ -105,7 +105,7 @@ loc_7472:
 		tst.w	obVelY(a0)
 		bmi.s	loc_749C
 		move.b	#0,obFrame(a0)
-		jsr	(ObjectHitFloor).l
+		jsr	(ObjFloorDist).l
 		tst.w	d1
 		bpl.s	loc_749C
 		add.w	d1,obY(a0)
@@ -122,7 +122,7 @@ loc_74A8:
 		addi.w	#$18,obVelY(a0)
 		tst.w	obVelY(a0)
 		bmi.s	loc_74CC
-		jsr	(ObjectHitFloor).l
+		jsr	(ObjFloorDist).l
 		tst.w	d1
 		bpl.s	loc_74CC
 		add.w	d1,obY(a0)

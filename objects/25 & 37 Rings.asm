@@ -122,7 +122,7 @@ loc_7D2C:
 
 CollectRing:
 		addq.w	#1,(v_rings).w
-		ori.b	#1,(f_extralife).w
+		ori.b	#1,(f_ringcount).w
 		move.w	#sfx_Ring,d0
 		cmpi.w	#50,(v_rings).w
 		bcs.s	loc_7D6A
@@ -214,7 +214,7 @@ loc_7E1C:
 
 loc_7E2C:
 		move.w	#0,(v_rings).w
-		move.b	#$80,(f_extralife).w
+		move.b	#$80,(f_ringcount).w
 		move.b	#0,(v_lifecount).w
 		move.w	#sfx_RingLoss,d0
 		jsr	(PlaySound_Special).l
@@ -228,7 +228,7 @@ loc_7E48:
 		add.b	d7,d0
 		andi.b	#3,d0
 		bne.s	loc_7E82
-		jsr	(ObjectHitFloor).l
+		jsr	(ObjFloorDist).l
 		tst.w	d1
 		bpl.s	loc_7E82
 		add.w	d1,obY(a0)

@@ -38,7 +38,7 @@ loc_A72E:
 		move.l	#Map_Got,obMap(a1)
 		move.w	#make_art_tile(ArtTile_Title_Card,0,1),obGfx(a1)
 		move.b	#0,obRender(a1)
-		lea	obj.Size(a1),a1
+		lea	object_size(a1),a1
 		dbf	d1,loc_A70C
 
 loc_A74E:

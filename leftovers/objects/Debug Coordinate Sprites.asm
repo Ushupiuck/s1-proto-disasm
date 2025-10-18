@@ -12,7 +12,6 @@ Debug_Coord_Sprites:
 		dbf	d1,.loop
 		rts
 ; ---------------------------------------------------------------------------
-
 Debug_Coords_XY_Index:
 		dc.w $158, $148
 		dc.w $160, $148
@@ -43,7 +42,6 @@ Debug_Coord_B_Sprites:
 		dbf	d1,.loop
 		rts
 ; ---------------------------------------------------------------------------
-
 Debug_Coords_B_XY_Index:
 		dc.w $158, $90
 		dc.w $160, $90

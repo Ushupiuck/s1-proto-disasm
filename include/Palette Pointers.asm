@@ -25,8 +25,7 @@ ptr_Pal_CWZ:		palp	Pal_CWZ,v_palette+$20,$30 ; 9 - CWZ
 
 ptr_Pal_Special:	palp	Pal_Special,v_palette,$40 ; $A (10) - special stage
 ptr_Pal_Ending:		palp	Pal_Ending,v_palette,$40 ; $B (11) - ending sequence
-		even
-		        
+
 palid_SegaBG:	= (ptr_Pal_SegaBG-PalPointers)/8
 palid_Title:	= (ptr_Pal_Title-PalPointers)/8
 palid_LevelSel:	= (ptr_Pal_LevelSel-PalPointers)/8

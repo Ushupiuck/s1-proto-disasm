@@ -112,7 +112,7 @@ locret_D814:
 ObjBasaran_FlyUp:
 		bsr.w	SpeedToPos
 		subi.w	#$18,obVelY(a0)
-		bsr.w	ObjectHitCeiling
+		bsr.w	ObjHitCeiling
 		tst.w	d1
 		bpl.s	locret_D842
 		sub.w	d1,obY(a0)
@@ -140,7 +140,7 @@ loc_D862:
 		cmp.w	d2,d0
 		rts
 ; ---------------------------------------------------------------------------
-		; unused
+; unused
 		bsr.w	SpeedToPos
 		bsr.w	DisplaySprite
 		tst.b	obRender(a0)

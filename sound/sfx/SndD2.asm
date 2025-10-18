@@ -32,30 +32,3 @@ SndD2_Voices:
 	smpsVcDecayLevel	$01, $04, $02, $01
 	smpsVcReleaseRate	$0F, $0F, $0F, $0F
 	smpsVcTotalLevel	$00, $13, $12, $16
-
-; Unused voice
-;	Voice $01
-;	$00
-;	$1F, $01, $01, $80, 	$C0, $00, $0A, $00, 	$01, $F3, $E7, $F0
-;	$01, $01, $03, $08, 	$A7, $01, $FB, $01, 	$F7, $00, $1A, $FF
-	smpsVcAlgorithm		$00
-	smpsVcFeedback		$00
-	smpsVcUnusedBits	$00
-	smpsVcDetune		$08, $00, $00, $01
-	smpsVcCoarseFreq	$00, $01, $01, $0F
-	smpsVcRateScale		$00, $00, $00, $03
-	smpsVcAttackRate	$00, $0A, $00, $00
-	smpsVcAmpMod		$00, $00, $00, $00
-	smpsVcDecayRate1	$F0, $E7, $F3, $01
-	smpsVcDecayRate2	$08, $03, $01, $01
-	smpsVcDecayLevel	$00, $00, $00, $00
-	smpsVcReleaseRate	$01, $FB, $01, $A7
-	smpsVcTotalLevel	$FF, $1A, $00, $F7
-
-; Unreachable
-	dc.b	$F8
-	dc.b	$14
-	dc.b	$F6
-	dc.b	$FF
-	dc.b	$FD
-	dc.b	$F2
