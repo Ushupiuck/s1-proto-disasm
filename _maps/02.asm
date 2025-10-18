@@ -1,5 +1,8 @@
-Map02:		dc.w byte_4BFA-Map02, byte_4C00-Map02, byte_4C06-Map02, byte_4C30-Map02
-
+Map02:
+		dc.w byte_4BFA-Map02
+		dc.w byte_4C00-Map02
+		dc.w byte_4C06-Map02
+		dc.w byte_4C30-Map02
 byte_4BFA:	dc.b 1
 		dc.b $F0, $F, $80, 0, $F0
 byte_4C00:	dc.b 1

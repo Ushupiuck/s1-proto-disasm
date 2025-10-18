@@ -1,5 +1,7 @@
-MapBallhog:	dc.w byte_7260-MapBallhog, byte_7275-MapBallhog, byte_7285-MapBallhog
-
+MapBallhog:
+		dc.w byte_7260-MapBallhog
+		dc.w byte_7275-MapBallhog
+		dc.w byte_7285-MapBallhog
 byte_7260:	dc.b 4
 		dc.b $ED, 7, 0, 0, $F0
 		dc.b $ED, 7, 8, 0, 0

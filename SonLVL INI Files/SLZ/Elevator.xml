@@ -2,7 +2,7 @@
 <ObjDef xmlns="http://www.sonicretro.org" Namespace="S1ObjectDefinitions.SLZ" TypeName="Elevator" Language="cs" Name="Elevator" Image="img1">
   <Images>
     <ImageFromMappings id="img1">
-      <ArtFile filename="LevelArt"/>
+      <ArtFile filename="../artnem/SLZ Platforms.nem"/>
       <MapFile type="ASM" filename="../_maps/SLZ Elevators.asm" frame="0" startpal="2" />
     </ImageFromMappings>
   </Images>

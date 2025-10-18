@@ -1,6 +1,6 @@
-; ---------------------------------------------------------------------------
-
-Map1B:		dc.w byte_66E0-Map1B, byte_66F5-Map1B
+Map1B:
+		dc.w byte_66E0-Map1B
+		dc.w byte_66F5-Map1B
 byte_66E0:	dc.b 4
 		dc.b $F0, $A, 0, $89, $E0
 		dc.b $F0, $A, 8, $89, 8

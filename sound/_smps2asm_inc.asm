@@ -28,12 +28,23 @@ psgdelta	EQU 12
 	enumconf	1
 ; ---------------------------------------------------------------------------
 ; Note Equates
-	enum		nRst=$80,nC0,nCs0,nD0,nEb0,nE0,nF0,nFs0,nG0,nAb0,nA0,nBb0,nB0,nC1,nCs1,nD1
-	nextenum	nEb1,nE1,nF1,nFs1,nG1,nAb1,nA1,nBb1,nB1,nC2,nCs2,nD2,nEb2,nE2,nF2,nFs2
-	nextenum	nG2,nAb2,nA2,nBb2,nB2,nC3,nCs3,nD3,nEb3,nE3,nF3,nFs3,nG3,nAb3,nA3,nBb3
-	nextenum	nB3,nC4,nCs4,nD4,nEb4,nE4,nF4,nFs4,nG4,nAb4,nA4,nBb4,nB4,nC5,nCs5,nD5
-	nextenum	nEb5,nE5,nF5,nFs5,nG5,nAb5,nA5,nBb5,nB5,nC6,nCs6,nD6,nEb6,nE6,nF6,nFs6
-	nextenum	nG6,nAb6,nA6,nBb6,nB6,nC7,nCs7,nD7,nEb7,nE7,nF7,nFs7,nG7,nAb7,nA7,nBb7
+	enum		nRst=$80
+	nextenum	nC0,nCs0,nDb0=nCs0,nD0,nDs0,nEb0=nDs0,nE0,nFb0=nE0,nEs0,nF0=nEs0
+	nextenum	nFs0,nGb0=nFs0,nG0,nGs0,nAb0=nGs0,nA0,nAs0,nBb0=nAs0,nB0,nCb1=nB0,nBs0
+	nextenum	nC1=nBs0,nCs1,nDb1=nCs1,nD1,nDs1,nEb1=nDs1,nE1,nFb1=nE1,nEs1,nF1=nEs1
+	nextenum	nFs1,nGb1=nFs1,nG1,nGs1,nAb1=nGs1,nA1,nAs1,nBb1=nAs1,nB1,nCb2=nB1,nBs1
+	nextenum	nC2=nBs1,nCs2,nDb2=nCs2,nD2,nDs2,nEb2=nDs2,nE2,nFb2=nE2,nEs2,nF2=nEs2
+	nextenum	nFs2,nGb2=nFs2,nG2,nGs2,nAb2=nGs2,nA2,nAs2,nBb2=nAs2,nB2,nCb3=nB2,nBs2
+	nextenum	nC3=nBs2,nCs3,nDb3=nCs3,nD3,nDs3,nEb3=nDs3,nE3,nFb3=nE3,nEs3,nF3=nEs3
+	nextenum	nFs3,nGb3=nFs3,nG3,nGs3,nAb3=nGs3,nA3,nAs3,nBb3=nAs3,nB3,nCb4=nB3,nBs3
+	nextenum	nC4=nBs3,nCs4,nDb4=nCs4,nD4,nDs4,nEb4=nDs4,nE4,nFb4=nE4,nEs4,nF4=nEs4
+	nextenum	nFs4,nGb4=nFs4,nG4,nGs4,nAb4=nGs4,nA4,nAs4,nBb4=nAs4,nB4,nCb5=nB4,nBs4
+	nextenum	nC5=nBs4,nCs5,nDb5=nCs5,nD5,nDs5,nEb5=nDs5,nE5,nFb5=nE5,nEs5,nF5=nEs5
+	nextenum	nFs5,nGb5=nFs5,nG5,nGs5,nAb5=nGs5,nA5,nAs5,nBb5=nAs5,nB5,nCb6=nB5,nBs5
+	nextenum	nC6=nBs5,nCs6,nDb6=nCs6,nD6,nDs6,nEb6=nDs6,nE6,nFb6=nE6,nEs6,nF6=nEs6
+	nextenum	nFs6,nGb6=nFs6,nG6,nGs6,nAb6=nGs6,nA6,nAs6,nBb6=nAs6,nB6,nCb7=nB6,nBs6
+	nextenum	nC7=nBs6,nCs7,nDb7=nCs7,nD7,nDs7,nEb7=nDs7,nE7,nFb7=nE7,nEs7,nF7=nEs7
+	nextenum	nFs7,nGb7=nFs7,nG7,nGs7,nAb7=nGs7,nA7,nAs7,nBb7=nAs7
 ; SMPS2ASM uses nMaxPSG for songs from S1/S2 drivers.
 ; nMaxPSG1 and nMaxPSG2 are used only for songs from S3/S&K/S3D drivers.
 ; The use of psgdelta is intended to undo the effects of PSGPitchConvert
@@ -168,13 +179,13 @@ cFM6				EQU $06	; Only in S3/S&K/S3D, overrides DAC
 ; ---------------------------------------------------------------------------
 ; Conversion macros and functions
 
-conv0To256  function n,((n==0)<<8)|n
-s2TempotoS1 function n,(((768-n)>>1)/(256-n))&$FF
-s2TempotoS3 function n,($100-((n==0)|n))&$FF
-s1TempotoS2 function n,((((conv0To256(n)-1)<<8)+(conv0To256(n)>>1))/conv0To256(n))&$FF
-s1TempotoS3 function n,s2TempotoS3(s1TempotoS2(n))
-s3TempotoS1 function n,s2TempotoS1(s2TempotoS3(n))
-s3TempotoS2 function n,s2TempotoS3(n)
+conv0To256	function n,((n==0)<<8)|n
+s2TempotoS1	function n,(((768-n)>>1)/(256-n))&$FF
+s2TempotoS3	function n,($100-((n==0)|n))&$FF
+s1TempotoS2	function n,((((conv0To256(n)-1)<<8)+(conv0To256(n)>>1))/conv0To256(n))&$FF
+s1TempotoS3	function n,s2TempotoS3(s1TempotoS2(n))
+s3TempotoS1	function n,s2TempotoS1(s2TempotoS3(n))
+s3TempotoS2	function n,s2TempotoS3(n)
 
 convertMainTempoMod macro mod
 	if ((SourceDriver>=3)&&(SonicDriverVer>=3))||(SonicDriverVer==SourceDriver)
@@ -224,10 +235,8 @@ CheckedChannelPointer macro loc
 	if SonicDriverVer<>1
 		dc.w	z80_ptr(loc)
 	else
-		if MOMPASS>1
-			if loc<songStart
-				fatal "Tracks for Sonic 1 songs must come after the start of the song"
-			endif
+		if (MOMPASS=1)&&(DEFINED(loc))
+			fatal "Tracks for Sonic 1 songs must come after the start of the song"
 		endif
 		dc.w	loc-songStart
 	endif
@@ -270,10 +279,8 @@ smpsHeaderVoice macro loc
 	if SonicDriverVer<>1
 		dc.w	z80_ptr(loc)
 	else
-		if MOMPASS>1
-			if loc<songStart
-				fatal "Voice banks for Sonic 1 songs must come after the song"
-			endif
+		if (MOMPASS=1)&&(DEFINED(loc))
+			fatal "Voice banks for Sonic 1 songs must come after the song"
 		endif
 		dc.w	loc-songStart
 	endif
@@ -339,7 +346,7 @@ smpsHeaderPSG macro loc,pitch,vol,mod,voice
 		; other drivers may try to process as valid data, so manually force it to 0 here.
 		dc.b	0
 	else
-		if (MOMPASS==2) && (SonicDriverVer<3) && (SourceDriver>=3) && (mod<>0)
+		if (MOMPASS==1) && (SonicDriverVer<3) && (SourceDriver>=3) && (mod<>0)
 			message "This track header specifies a frequency envelope, but this driver does not support them."
 		endif
 		dc.b	mod
@@ -399,13 +406,14 @@ smpsNop macro val
 	endif
 	endm
 
+; E3xx - Global Modulation (Specific to Sonic 1 Prototype)
+smpsGlobalMod macro val
+	dc.b	$E3,val
+	endm
+
 ; Return (used after smpsCall)
 smpsReturn macro val
-;	if SonicDriverVer>=3
 		dc.b	$F9
-;	else
-;		dc.b	$E3
-;	endif
 	endm
 
 ; Fade in previous song (ie. 1-Up)
@@ -881,7 +889,7 @@ smpsVcTotalLevel macro op1,op2,op3,op4
 	set vcTL3,op3
 	set vcTL4,op4
 	dc.b	(vcUnusedBits<<6)+(vcFeedback<<3)+vcAlgorithm
-;   0     1     2     3     4     5     6     7
+;	0	1	2	3	4	5	6	7
 ;%1000,%1000,%1000,%1000,%1010,%1110,%1110,%1111
 	if SourceSMPS2ASM==0
 		set vcTLMask4,((vcAlgorithm==7)<<7)
@@ -905,25 +913,25 @@ smpsVcTotalLevel macro op1,op2,op3,op4
 		set vcTL3,vcTL3&$7F
 		set vcTL4,vcTL4&$7F
 	elseif (SonicDriverVer<3)&&(SourceDriver>=3)&&((((vcTL1|vcTLMask1)&$80)<>$80)||(((vcTL2|vcTLMask2)&$80)<>((vcAlgorithm>=5)<<7))||(((vcTL3|vcTLMask3)&$80)<>((vcAlgorithm>=4)<<7))||(((vcTL4|vcTLMask4)&$80)<>((vcAlgorithm==7)<<7)))
-		if MOMPASS>1
+		if MOMPASS=1
 			message "Voice at 0x\{*} has TL bits that do not match its algorithm setting. This voice will not work in S1/S2 drivers."
 		endif
 	endif
 
 	if SonicDriverVer==2
-		dc.b	(vcDT4<<4)+vcCF4       ,(vcDT2<<4)+vcCF2       ,(vcDT3<<4)+vcCF3       ,(vcDT1<<4)+vcCF1
-		dc.b	(vcRS4<<6)+vcAR4       ,(vcRS2<<6)+vcAR2       ,(vcRS3<<6)+vcAR3       ,(vcRS1<<6)+vcAR1
+		dc.b	(vcDT4<<4)+vcCF4	,(vcDT2<<4)+vcCF2		,(vcDT3<<4)+vcCF3		,(vcDT1<<4)+vcCF1
+		dc.b	(vcRS4<<6)+vcAR4	,(vcRS2<<6)+vcAR2		,(vcRS3<<6)+vcAR3		,(vcRS1<<6)+vcAR1
 		dc.b	vcAM4|vcD1R4|vcD1R4Unk ,vcAM2|vcD1R2|vcD1R2Unk ,vcAM3|vcD1R3|vcD1R3Unk ,vcAM1|vcD1R1|vcD1R1Unk
-		dc.b	vcD2R4                 ,vcD2R2                 ,vcD2R3                 ,vcD2R1
-		dc.b	(vcDL4<<4)+vcRR4       ,(vcDL2<<4)+vcRR2       ,(vcDL3<<4)+vcRR3       ,(vcDL1<<4)+vcRR1
-		dc.b	vcTL4|vcTLMask4        ,vcTL2|vcTLMask2        ,vcTL3|vcTLMask3        ,vcTL1|vcTLMask1
+		dc.b	vcD2R4				,vcD2R2				,vcD2R3					,vcD2R1
+		dc.b	(vcDL4<<4)+vcRR4	,(vcDL2<<4)+vcRR2		,(vcDL3<<4)+vcRR3		,(vcDL1<<4)+vcRR1
+		dc.b	vcTL4|vcTLMask4	,vcTL2|vcTLMask2        ,vcTL3|vcTLMask3		,vcTL1|vcTLMask1
 	else
-		dc.b	(vcDT4<<4)+vcCF4       ,(vcDT3<<4)+vcCF3       ,(vcDT2<<4)+vcCF2       ,(vcDT1<<4)+vcCF1
-		dc.b	(vcRS4<<6)+vcAR4       ,(vcRS3<<6)+vcAR3       ,(vcRS2<<6)+vcAR2       ,(vcRS1<<6)+vcAR1
+		dc.b	(vcDT4<<4)+vcCF4	,(vcDT3<<4)+vcCF3		,(vcDT2<<4)+vcCF2		,(vcDT1<<4)+vcCF1
+		dc.b	(vcRS4<<6)+vcAR4	,(vcRS3<<6)+vcAR3		,(vcRS2<<6)+vcAR2		,(vcRS1<<6)+vcAR1
 		dc.b	vcAM4|vcD1R4|vcD1R4Unk ,vcAM3|vcD1R3|vcD1R3Unk ,vcAM2|vcD1R2|vcD1R2Unk ,vcAM1|vcD1R1|vcD1R1Unk
-		dc.b	vcD2R4                 ,vcD2R3                 ,vcD2R2                 ,vcD2R1
-		dc.b	(vcDL4<<4)+vcRR4       ,(vcDL3<<4)+vcRR3       ,(vcDL2<<4)+vcRR2       ,(vcDL1<<4)+vcRR1
-		dc.b	vcTL4|vcTLMask4        ,vcTL3|vcTLMask3        ,vcTL2|vcTLMask2        ,vcTL1|vcTLMask1
+		dc.b	vcD2R4				,vcD2R3					,vcD2R2				,vcD2R1
+		dc.b	(vcDL4<<4)+vcRR4	,(vcDL3<<4)+vcRR3		,(vcDL2<<4)+vcRR2		,(vcDL1<<4)+vcRR1
+		dc.b	vcTL4|vcTLMask4		,vcTL3|vcTLMask3		,vcTL2|vcTLMask2		,vcTL1|vcTLMask1
 	endif
 	endm
 
