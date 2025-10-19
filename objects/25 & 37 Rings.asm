@@ -181,8 +181,6 @@ loc_7DA8:
 		move.w	obX(a0),obX(a1)
 		move.w	obY(a0),obY(a1)
 		move.l	#Map_Ring,obMap(a1)
-
-loc_7DD2:
 		move.w	#make_art_tile(ArtTile_Ring,1,0),obGfx(a1)
 		move.b	#4,obRender(a1)
 		move.b	#2,obPriority(a1)

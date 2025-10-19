@@ -26,7 +26,7 @@ ObjCannonballExplode_Init:
 ObjCannonballExplode_Act:
 		subq.b	#1,obTimeFrame(a0)
 		bpl.s	.display
-		move.b	#9,obTimeFrame(a0)
+		move.b	#10-1,obTimeFrame(a0)
 		addq.b	#1,obFrame(a0)
 		cmpi.b	#4,obFrame(a0)
 		beq.w	DeleteObject
@@ -69,7 +69,7 @@ ObjExplode_Init:
 ObjExplode_Act:
 		subq.b	#1,obTimeFrame(a0)
 		bpl.s	.display
-		move.b	#7,obTimeFrame(a0)
+		move.b	#8-1,obTimeFrame(a0)
 		addq.b	#1,obFrame(a0)
 		cmpi.b	#5,obFrame(a0)
 		beq.w	DeleteObject
