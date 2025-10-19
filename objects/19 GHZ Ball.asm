@@ -7,7 +7,11 @@ ObjRollingBall:
 		jmp	off_5C8E(pc,d1.w)
 ; ---------------------------------------------------------------------------
 
-off_5C8E:	dc.w loc_5C98-off_5C8E, loc_5D2C-off_5C8E, loc_5D86-off_5C8E, loc_5E4A-off_5C8E, loc_5CEE-off_5C8E
+off_5C8E:	dc.w loc_5C98-off_5C8E
+		dc.w loc_5D2C-off_5C8E
+		dc.w loc_5D86-off_5C8E
+		dc.w loc_5E4A-off_5C8E
+		dc.w loc_5CEE-off_5C8E
 ; ---------------------------------------------------------------------------
 
 loc_5C98:
@@ -173,7 +177,7 @@ sub_5E50:
 		move.b	obAngle(a0),d0
 		bsr.w	CalcSine
 		move.w	d0,d2
-		muls.w	#$38,d2
+		muls.w	#56,d2
 		asr.l	#8,d2
 		add.w	d2,obInertia(a0)
 		muls.w	obInertia(a0),d1
