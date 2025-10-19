@@ -38,7 +38,7 @@ loc_78F6:
 		btst	#1,objoff_34(a0)
 		bne.s	loc_7928
 		addq.b	#2,ob2ndRout(a0)
-		move.w	#127,objoff_32(a0)
+		move.w	#128-1,objoff_32(a0)
 		move.w	#$400,obVelX(a0)
 		move.b	#1,obAnim(a0)
 		btst	#0,obStatus(a0)
@@ -58,7 +58,13 @@ loc_7928:
 		addi.w	#$1C,obY(a1)
 		move.w	#$200,obVelY(a1)
 		move.w	#$200,obVelX(a1)
+	if FixBugs
+		; Matches with Newtron's.
+		move.w	#$14,d0
+	else
+		; Bug: This doesn't match with Newtron's setting, resulting in the x position being off by 4 pixels.
 		move.w	#$18,d0
+	endif
 		btst	#0,obStatus(a0)
 		bne.s	loc_7964
 		neg.w	d0
@@ -67,7 +73,7 @@ loc_7928:
 loc_7964:
 		add.w	d0,obX(a1)
 		move.b	obStatus(a0),obStatus(a1)
-		move.w	#14,objoff_32(a1)
+		move.w	#15-1,objoff_32(a1)
 		move.l	a0,objoff_3C(a1)
 		move.b	#1,objoff_34(a0)
 		move.w	#59,objoff_32(a0)
@@ -94,14 +100,14 @@ loc_79A8:
 		tst.b	obRender(a0)
 		bpl.s	locret_79E4
 		move.b	#2,objoff_34(a0)
-		move.w	#29,objoff_32(a0)
+		move.w	#30-1,objoff_32(a0)
 		bra.s	loc_79D4
 ; ---------------------------------------------------------------------------
 
 loc_79C2:
 		move.b	#0,objoff_34(a0)
 		bchg	#0,obStatus(a0)
-		move.w	#59,objoff_32(a0)
+		move.w	#60-1,objoff_32(a0)
 
 loc_79D4:
 		subq.b	#2,ob2ndRout(a0)
