@@ -158,9 +158,9 @@ PLC_SZ:		dc.w ((PLC_SZ2-PLC_SZ-2)/6)-1
 		plcm    Nem_Roller, ArtTile_Roller
 
 PLC_SZ2:	dc.w ((PLC_SZ2end-PLC_SZ2-2)/6)-1
-		plcm    Nem_Bumper, ArtTile_SYZ_Bumper
-		plcm    Nem_SyzSpike1, ArtTile_SYZ_Big_Spikeball
-		plcm    Nem_SyzSpike2, ArtTile_SYZ_Spikeball_Chain
+		plcm    Nem_Bumper, ArtTile_SZ_Bumper
+		plcm    Nem_SyzSpike1, ArtTile_SZ_Big_Spikeball
+		plcm    Nem_SyzSpike2, ArtTile_SZ_Spikeball_Chain
 		plcm    Nem_Switch, ArtTile_Button
 		plcm    Nem_Spikes, ArtTile_Spikes
 		plcm    Nem_HSpring, ArtTile_Spring_Horizontal

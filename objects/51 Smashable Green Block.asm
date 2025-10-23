@@ -13,7 +13,7 @@ off_D4D4:	dc.w loc_D4DA-off_D4D4, loc_D504-off_D4D4, loc_D580-off_D4D4
 
 loc_D4DA:
 		addq.b	#2,obRoutine(a0)
-		move.l	#MapSmashBlock,obMap(a0)
+		move.l	#Map_Smab,obMap(a0)
 		move.w	#make_art_tile(ArtTile_MZ_Block,2,0),obGfx(a0)
 		move.b	#4,obRender(a0)
 		move.b	#$10,obActWid(a0)

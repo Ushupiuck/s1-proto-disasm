@@ -379,9 +379,9 @@ ArtTile_MZ_Glass_Pillar:	equ $38E
 ArtTile_MZ_Lava:		equ $3A8
 
 ; Sparkling Zone
-ArtTile_SYZ_Bumper:		equ $380
-ArtTile_SYZ_Big_Spikeball:	equ $396
-ArtTile_SYZ_Spikeball_Chain:	equ $3BA
+ArtTile_SZ_Bumper:		equ $380
+ArtTile_SZ_Big_Spikeball:	equ $396
+ArtTile_SZ_Spikeball_Chain:	equ $3BA
 
 ; Star Light Zone
 ArtTile_SLZ_Seesaw:		equ $374

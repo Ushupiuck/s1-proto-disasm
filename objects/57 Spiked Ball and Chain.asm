@@ -12,8 +12,8 @@ ObjSpikedBalls_Index:dc.w ObjSpikedBalls_Init-ObjSpikedBalls_Index, ObjSpikedBal
 
 ObjSpikedBalls_Init:
 		addq.b	#2,obRoutine(a0)
-		move.l	#MapSpikedBalls,obMap(a0)
-		move.w	#make_art_tile(ArtTile_SYZ_Spikeball_Chain,0,0),obGfx(a0)
+		move.l	#Map_SBall,obMap(a0)
+		move.w	#make_art_tile(ArtTile_SZ_Spikeball_Chain,0,0),obGfx(a0)
 		move.b	#4,obRender(a0)
 		move.b	#4,obPriority(a0)
 		move.b	#8,obActWid(a0)

@@ -3482,8 +3482,8 @@ locret_6BDA:
 Map_TitleText:	include "_maps/Press Start.asm"
 Map_TitleSonic:	include "_maps/Title Screen Sonic.asm"
 
-		include "objects/1E Ballhog.asm"
-		include "objects/20 Ballhog's Bomb.asm"
+		include "objects/1E Ball Hog.asm"
+		include "objects/20 Ball Hog's Bomb.asm"
 		include "objects/24, 27 & 3F Explosions.asm"
 		include "_anim/Ball Hog.asm"
 Map_Hog:	include "_maps/Ball Hog.asm"
@@ -4107,7 +4107,7 @@ Map_CStom:	include "_maps/Chained Stompers.asm"
 Map_SStom:	include "_maps/Sideways Stomper.asm"
 
 		include "objects/32 Button.asm"
-		include "_maps/Button.asm"
+Map_But:	include "_maps/Button.asm"
 
 		include "objects/33 Pushable Blocks.asm"
 Map_Push:	include "_maps/Pushable Blocks.asm"
@@ -4267,7 +4267,7 @@ byte_AAD7:	dc.b 7
 		even
 
 		include "objects/36 Spikes.asm"
-		include "_maps/Spikes.asm"
+Map_Spike:	include "_maps/Spikes.asm"
 
 		include "objects/3B Purple Rock.asm"
 		include "objects/49 Waterfall Sound.asm"
@@ -4297,7 +4297,7 @@ ObjSmashWall_FragLeft:
 		dc.w -$600, $100
 		dc.w -$400, $500
 
-MapSmashWall:	include "_maps/Smashable Walls.asm"
+Map_Smash:	include "_maps/Smashable Walls.asm"
 
 		include "objects/3D Boss - Green Hill (part 1).asm"
 
@@ -4419,10 +4419,10 @@ ObjSmashBlock_Frag:
 		dc.w $200, -$200
 		dc.w $100, -$100
 
-MapSmashBlock:	include "_maps/Smashable Green Block.asm"
+Map_Smab:	include "_maps/Smashable Green Block.asm"
 
 		include "objects/52 Moving Blocks.asm"
-MapMovingPtfm:	include "_maps/Moving Blocks (MZ).asm"
+Map_MBlock:	include "_maps/Moving Blocks (MZ).asm"
 
 		include "objects/55 Basaran.asm"
 		include "_anim/Basaran.asm"
@@ -4432,10 +4432,10 @@ Map_Bas:	include "_maps/Basaran.asm"
 Map_FBlock:	include "_maps/Floating Blocks and Doors.asm"
 
 		include "objects/57 Spiked Ball and Chain.asm"
-		include "_maps/Spiked Ball and Chain (SZ).asm"
+Map_SBall:	include "_maps/Spiked Ball and Chain (SZ).asm"
 
 		include "objects/58 Big Spiked Ball.asm"
-		include "_maps/Big Spiked Ball.asm"
+Map_BBall:	include "_maps/Big Spiked Ball.asm"
 
 		include "objects/59 SLZ Elevators.asm"
 Map_Elev:	include "_maps/SLZ Elevators.asm"

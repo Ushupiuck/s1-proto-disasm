@@ -13,7 +13,7 @@ off_ADEA:	dc.w loc_ADF0-off_ADEA, loc_AE1A-off_ADEA, loc_AE92-off_ADEA
 
 loc_ADF0:
 		addq.b	#2,obRoutine(a0)
-		move.l	#MapSmashWall,obMap(a0)
+		move.l	#Map_Smash,obMap(a0)
 		move.w	#make_art_tile(ArtTile_GHZ_SLZ_Smashable_Wall,2,0),obGfx(a0)
 		move.b	#4,obRender(a0)
 		move.b	#$10,obActWid(a0)
@@ -65,6 +65,6 @@ loc_AE92:
 		bsr.w	SpeedToPos
 		addi.w	#$70,obVelY(a0)
 		bsr.w	DisplaySprite
-		tst.b	obj.Render(a0)
+		tst.b	obRender(a0)
 		bpl.w	DeleteObject
 		rts
