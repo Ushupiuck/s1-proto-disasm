@@ -77,8 +77,8 @@ ObjMovingBlocks_Action:
 		move.b	obSubtype(a0),d0
 		andi.w	#$F,d0
 		add.w	d0,d0
-		move.w	ObjBasaran_TypeIndex(pc,d0.w),d1
-		jsr	ObjBasaran_TypeIndex(pc,d1.w)
+		move.w	ObjMovingBlocks_TypeIndex(pc,d0.w),d1
+		jsr	ObjMovingBlocks_TypeIndex(pc,d1.w)
 		move.w	(sp)+,d4
 		tst.b	obRender(a0)
 		bpl.s	ObjMovingBlocks_ChkDelete
@@ -97,24 +97,24 @@ ObjMovingBlocks_ChkDelete:
 		rts
 ; ---------------------------------------------------------------------------
 
-ObjBasaran_TypeIndex:dc.w ObjBasaran_Type00-ObjBasaran_TypeIndex, ObjBasaran_Type01-ObjBasaran_TypeIndex, ObjBasaran_Type02-ObjBasaran_TypeIndex
-		dc.w ObjBasaran_Type03-ObjBasaran_TypeIndex, ObjBasaran_Type04-ObjBasaran_TypeIndex, ObjBasaran_Type05-ObjBasaran_TypeIndex
-		dc.w ObjBasaran_Type06-ObjBasaran_TypeIndex, ObjBasaran_Type07-ObjBasaran_TypeIndex, ObjBasaran_Type08-ObjBasaran_TypeIndex
-		dc.w ObjBasaran_Type09-ObjBasaran_TypeIndex, ObjBasaran_Type0A-ObjBasaran_TypeIndex, ObjBasaran_Type0B-ObjBasaran_TypeIndex
+ObjMovingBlocks_TypeIndex:dc.w ObjMovingBlocks_Type00-ObjMovingBlocks_TypeIndex, ObjMovingBlocks_Type01-ObjMovingBlocks_TypeIndex, ObjMovingBlocks_Type02-ObjMovingBlocks_TypeIndex
+		dc.w ObjMovingBlocks_Type03-ObjMovingBlocks_TypeIndex, ObjMovingBlocks_Type04-ObjMovingBlocks_TypeIndex, ObjMovingBlocks_Type05-ObjMovingBlocks_TypeIndex
+		dc.w ObjMovingBlocks_Type06-ObjMovingBlocks_TypeIndex, ObjMovingBlocks_Type07-ObjMovingBlocks_TypeIndex, ObjMovingBlocks_Type08-ObjMovingBlocks_TypeIndex
+		dc.w ObjMovingBlocks_Type09-ObjMovingBlocks_TypeIndex, ObjMovingBlocks_Type0A-ObjMovingBlocks_TypeIndex, ObjMovingBlocks_Type0B-ObjMovingBlocks_TypeIndex
 ; ---------------------------------------------------------------------------
 
-ObjBasaran_Type00:
+ObjMovingBlocks_Type00:
 		rts
 ; ---------------------------------------------------------------------------
 
-ObjBasaran_Type01:
+ObjMovingBlocks_Type01:
 		move.w	#$40,d1
 		moveq	#0,d0
 		move.b	(v_oscillate+$A).w,d0
 		bra.s	loc_DA38
 ; ---------------------------------------------------------------------------
 
-ObjBasaran_Type02:
+ObjMovingBlocks_Type02:
 		move.w	#$80,d1
 		moveq	#0,d0
 		move.b	(v_oscillate+$1E).w,d0
@@ -132,14 +132,14 @@ loc_DA44:
 		rts
 ; ---------------------------------------------------------------------------
 
-ObjBasaran_Type03:
+ObjMovingBlocks_Type03:
 		move.w	#$40,d1
 		moveq	#0,d0
 		move.b	(v_oscillate+$A).w,d0
 		bra.s	loc_DA62
 ; ---------------------------------------------------------------------------
 
-ObjBasaran_Type04:
+ObjMovingBlocks_Type04:
 		moveq	#0,d0
 		move.b	(v_oscillate+$1E).w,d0
 
@@ -156,7 +156,7 @@ loc_DA70:
 		rts
 ; ---------------------------------------------------------------------------
 
-ObjBasaran_Type05:
+ObjMovingBlocks_Type05:
 		tst.b	objoff_38(a0)
 		bne.s	loc_DA9A
 		lea	(f_switch).w,a2
@@ -190,7 +190,7 @@ loc_DAB4:
 		bra.s	loc_DAA4
 ; ---------------------------------------------------------------------------
 
-ObjBasaran_Type06:
+ObjMovingBlocks_Type06:
 		tst.b	objoff_38(a0)
 		bne.s	loc_DAEC
 		lea	(f_switch).w,a2
@@ -227,7 +227,7 @@ loc_DB0E:
 		bra.s	loc_DAFE
 ; ---------------------------------------------------------------------------
 
-ObjBasaran_Type07:
+ObjMovingBlocks_Type07:
 		tst.b	objoff_38(a0)
 		bne.s	loc_DB40
 		tst.b	(f_switch+$F).w
@@ -247,7 +247,7 @@ locret_DB5A:
 		rts
 ; ---------------------------------------------------------------------------
 
-ObjBasaran_Type08:
+ObjMovingBlocks_Type08:
 		move.w	#$10,d1
 		moveq	#0,d0
 		move.b	(v_oscillate+$2A).w,d0
@@ -256,7 +256,7 @@ ObjBasaran_Type08:
 		bra.s	ObjBasaran_MoveSquare
 ; ---------------------------------------------------------------------------
 
-ObjBasaran_Type09:
+ObjMovingBlocks_Type09:
 		move.w	#$30,d1
 		moveq	#0,d0
 		move.b	(v_oscillate+$2E).w,d0
@@ -264,7 +264,7 @@ ObjBasaran_Type09:
 		bra.s	ObjBasaran_MoveSquare
 ; ---------------------------------------------------------------------------
 
-ObjBasaran_Type0A:
+ObjMovingBlocks_Type0A:
 		move.w	#$50,d1
 		moveq	#0,d0
 		move.b	(v_oscillate+$32).w,d0
@@ -272,7 +272,7 @@ ObjBasaran_Type0A:
 		bra.s	ObjBasaran_MoveSquare
 ; ---------------------------------------------------------------------------
 
-ObjBasaran_Type0B:
+ObjMovingBlocks_Type0B:
 		move.w	#$70,d1
 		moveq	#0,d0
 		move.b	(v_oscillate+$36).w,d0

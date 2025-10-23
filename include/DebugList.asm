@@ -65,13 +65,13 @@ dbug:	macro map,object,subtype,frame,vram
 ;		mappings	object		subtype	frame	VRAM setting
 	dbug 	MapRing,	id_Rings,	0,	0,	make_art_tile(ArtTile_Ring,1,0)
 	dbug	MapMonitor,	id_Monitor,	0,	0,	make_art_tile(ArtTile_Monitor,0,0)
-	dbug	Map_Elev,	id_Elevator,	0,	0,	$4480
-	dbug	Map_CFlo,	id_CollapseFloor,	0,	2,	$44E0
-	dbug	Map_Plat_SLZ,	id_BasicPlatform,	0,	0,	$4480
-	dbug	Map_Circ,	id_CirclingPlatform,	0,	0,	$4480
-	dbug	Map_Stair,	id_Staircase,	0,	0,	$4480
+	dbug	Map_Elev,	id_Elevator,	0,	0,	make_art_tile(ArtTile_SLZ_Platform,2,0)
+	dbug	Map_CFlo,	id_CollapseFloor,	0,	2,	make_art_tile(ArtTile_SLZ_Smashable_Wall,2,0)
+	dbug	Map_Plat_SLZ,	id_BasicPlatform,	0,	0,	make_art_tile(ArtTile_SLZ_Platform,2,0)
+	dbug	Map_Circ,	id_CirclingPlatform,	0,	0,	make_art_tile(ArtTile_SLZ_Platform,2,0)
+	dbug	Map_Stair,	id_Staircase,	0,	0,	make_art_tile(ArtTile_SLZ_Platform,2,0)
 	dbug	Map_Fan,	id_Fan,		0,	0,	$43A0
-	dbug	Map_Seesaw,	id_Seesaw,	0,	0,	$374
+	dbug	Map_Seesaw,	id_Seesaw,	0,	0,	make_art_tile(ArtTile_SLZ_Seesaw,0,0)
 	dbug	Map_Spring,	id_Springs,	0,	0,	make_art_tile(ArtTile_Spring_Horizontal,0,0)
 	dbug	Map_Fire,	id_LavaMaker,	0,	0,	$345
 	dbug	Map_Crab,	id_Crabmeat,	0,	0,	make_art_tile(ArtTile_Crabmeat,0,0)
