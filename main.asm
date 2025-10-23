@@ -2320,9 +2320,9 @@ sub_3178:
 		rts
 ; ---------------------------------------------------------------------------
 Anim256Unk1:	binclude "level/map256/Anim Unknown 1.bin"
-Anim256Unk1_End:
+Anim256Unk1_End
 Anim256Unk2:	binclude "level/map256/Anim Unknown 2.bin"
-Anim256Unk2_End:
+Anim256Unk2_End
 ; ---------------------------------------------------------------------------
 
 LoadAnimatedBlocks:
@@ -2357,9 +2357,9 @@ LoadAnimatedBlocks:
 		rts
 ; ---------------------------------------------------------------------------
 Anim16GHZ:	binclude "level/map16/Anim GHZ.bin"
-Anim16GHZ_End:
+Anim16GHZ_End
 Anim16MZ:	binclude "level/map16/Anim MZ.bin"
-Anim16MZ_End:
+Anim16MZ_End
 ; ---------------------------------------------------------------------------
 
 DebugPosLoadArt:
@@ -2476,7 +2476,7 @@ GM_Special:
 		fillVRAM	0, ArtTile_SS_Plane_1*tile_size+plane_size_64x32, ArtTile_SS_Plane_5*tile_size
 		moveq	#plcid_SpecialStage,d0
 		bsr.w	QuickPLC
-		bsr.w	ssLoadBG
+		bsr.w	SS_BGLoad
 		clearRAM v_objspace,v_objspace_end
 		clearRAM v_misc_variables,v_misc_variables_end
 		clearRAM v_timingandscreenvariables,v_timingandscreenvariables_end
@@ -2521,8 +2521,8 @@ loc_3620:
 		move.w	(v_jpadhold1).w,(v_jpadhold2).w
 		bsr.w	ExecuteObjects
 		bsr.w	BuildSprites
-		jsr	(Special_ShowLayout).l
-		bsr.w	SpecialAnimateBG
+		jsr	(SS_ShowLayout).l
+		bsr.w	SS_AnimateBG
 		tst.w	(f_demo).w
 		beq.s	loc_3656
 		tst.w	(v_demolength).w
@@ -2539,7 +2539,7 @@ loc_3662:
 		rts
 ; ---------------------------------------------------------------------------
 
-ssLoadBG:
+SS_BGLoad:
 		lea	(v_start&$FFFFFF).l,a1
 		lea	(Eni_SSBg1).l,a0
 		move.w	#make_art_tile(ArtTile_SS_Background_Fish,2,0),d0
@@ -2618,7 +2618,7 @@ loc_3760:
 		move.w	d0,(v_palss_time).w
 		moveq	#0,d0
 		move.b	(a0)+,d0
-		move.w	d0,(unk_FFF7A0).w
+		move.w	d0,(v_ssbganim).w
 		lea	(byte_388A).l,a1
 		lea	(a1,d0.w),a1
 		move.w	#$8200,d0
@@ -2645,7 +2645,7 @@ locret_37B4:
 ; ---------------------------------------------------------------------------
 
 loc_37B6:
-		move.w	(unk_FFF79E).w,d1
+		move.w	(v_palss_index).w,d1
 		cmpi.w	#$8A,d0
 		blo.s	loc_37C2
 		addq.w	#1,d1
@@ -2748,11 +2748,11 @@ Pal_SSCyc1:	binclude "palette/Cycle - Special Stage 1.bin"
 Pal_SSCyc2:	binclude "palette/Cycle - Special Stage 2.bin"
 ; ---------------------------------------------------------------------------
 
-SpecialAnimateBG:
-		move.w	(unk_FFF7A0).w,d0
+SS_AnimateBG:
+		move.w	(v_ssbganim).w,d0
 		bne.s	loc_39C4
 		move.w	#0,(v_bgscreenposy).w
-		move.w	(v_bgscreenposy).w,(v_scrposy_dup+2).w
+		move.w	(v_bgscreenposy).w,(v_bgscrposy_dup).w
 
 loc_39C4:
 		cmpi.w	#8,d0
@@ -2761,7 +2761,7 @@ loc_39C4:
 		bne.s	loc_39DE
 		addq.w	#1,(v_bg3screenposx).w
 		addq.w	#1,(v_bgscreenposy).w
-		move.w	(v_bgscreenposy).w,(v_scrposy_dup+2).w
+		move.w	(v_bgscreenposy).w,(v_bgscrposy_dup).w
 
 loc_39DE:
 		moveq	#0,d0
@@ -4955,9 +4955,9 @@ locret_10870:
 		rts
 ; ---------------------------------------------------------------------------
 
-Special_ShowLayout:
-		bsr.w	Special_AniWallsandRings
-		bsr.w	Special_AniItems
+SS_ShowLayout:
+		bsr.w	SS_AniWallsandRings
+		bsr.w	SS_AniItems
 		move.w	d5,-(sp)
 		lea	(v_ssbuffer3).w,a1
 		move.b	(v_ssangle).w,d0
@@ -5077,7 +5077,7 @@ loc_109A6:
 		rts
 ; ---------------------------------------------------------------------------
 
-Special_AniWallsandRings:
+SS_AniWallsandRings:
 		lea	(v_ssblocktypes+$C).l,a1
 		moveq	#0,d0
 		move.b	(v_ssangle).w,d0
@@ -5179,7 +5179,7 @@ SS_WaRiVramSet:
 		dc.w make_art_tile(ArtTile_SS_Wall,3,0)
 ; ---------------------------------------------------------------------------
 
-sub_10ACC:
+SS_RemoveCollectedItem:
 		lea	(v_ssitembuffer).l,a2
 		move.w	#bytesToXcnt(v_ssitembuffer_end-v_ssitembuffer,8),d0
 
@@ -5193,7 +5193,7 @@ locret_10AE0:
 		rts
 ; ---------------------------------------------------------------------------
 
-Special_AniItems:
+SS_AniItems:
 		lea	(v_ssitembuffer).l,a0
 		move.w	#bytesToXcnt(v_ssitembuffer_end-v_ssitembuffer,8),d7
 

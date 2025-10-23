@@ -185,8 +185,8 @@ v_palchgspeed:	ds.w 1
 v_collindex:	ds.l 1
 v_palss_num:	ds.w 1
 v_palss_time:	ds.w 1
-unk_FFF79E:		ds.w 1
-unk_FFF7A0:		ds.w 1
+v_palss_index:	ds.w 1
+v_ssbganim:		ds.w 1
 			ds.w 1		; unused
 v_obj31ypos:	ds.w 1		; y-position of object 31 (MZ stomper) (2 bytes)
 			ds.b 1		; unused

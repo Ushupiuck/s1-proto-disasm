@@ -411,7 +411,7 @@ sub_1107C:
 loc_110AE:
 		cmpi.b	#$11,d4
 		bne.s	loc_110D0
-		bsr.w	sub_10ACC
+		bsr.w	SS_RemoveCollectedItem
 		bne.s	loc_110C2
 		move.b	#1,(a2)
 		move.l	a1,4(a2)
@@ -475,7 +475,7 @@ loc_110FE:
 		asr.l	#8,d0
 		move.w	d0,obVelY(a0)
 		bset	#1,obStatus(a0)
-		bsr.w	sub_10ACC
+		bsr.w	SS_RemoveCollectedItem
 		bne.s	loc_1116C
 		move.b	#2,(a2)
 		move.l	objoff_32(a0),d0
