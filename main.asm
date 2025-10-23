@@ -5144,14 +5144,39 @@ loc_10A26:
 		move.w	6(a0),$18(a1)
 		rts
 ; ---------------------------------------------------------------------------
-SS_WaRiVramSet:	dc.w $142, $142, $142, $2142
-		dc.w $142, $142, $142, $142
-		dc.w $2142, $2142, $2142, $142
-		dc.w $2142, $2142, $2142, $2142
-		dc.w $4142, $4142, $4142, $2142
-		dc.w $4142, $4142, $4142, $4142
-		dc.w $6142, $6142, $6142, $2142
-		dc.w $6142, $6142, $6142, $6142
+SS_WaRiVramSet:
+		dc.w make_art_tile(ArtTile_SS_Wall,0,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,0,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,0,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,1,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,0,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,0,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,0,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,0,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,1,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,1,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,1,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,0,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,1,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,1,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,1,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,1,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,2,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,2,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,2,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,1,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,2,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,2,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,2,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,2,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,3,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,3,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,3,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,1,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,3,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,3,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,3,0)
+		dc.w make_art_tile(ArtTile_SS_Wall,3,0)
 ; ---------------------------------------------------------------------------
 
 sub_10ACC:
