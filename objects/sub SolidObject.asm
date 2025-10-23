@@ -3,7 +3,7 @@
 SolidObject:
 		cmpi.b	#6,(v_player+obRoutine).w
 		bcc.w	loc_A2FE
-		tst.b	ob2ndRout(a0)
+		tst.b	obSolid(a0)
 		beq.w	loc_A37C
 		move.w	d1,d2
 		add.w	d2,d2
@@ -20,7 +20,7 @@ SolidObject:
 loc_A2EE:
 		bclr	#3,obStatus(a1)
 		bclr	#3,obStatus(a0)
-		clr.b	ob2ndRout(a0)
+		clr.b	obSolid(a0)
 
 loc_A2FE:
 		moveq	#0,d4
@@ -222,7 +222,7 @@ loc_A488:
 		sub.w	d3,obY(a1)
 		subq.w	#1,obY(a1)
 		bsr.w	loc_4FD4
-		move.b	#2,ob2ndRout(a0)
+		move.b	#2,obSolid(a0)
 		bset	#3,obStatus(a0)
 		moveq	#-1,d4
 		rts
