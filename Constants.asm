@@ -397,6 +397,7 @@ ArtTile_SLZ_Spikeball:		equ $4F0
 
 ; General Level Art
 ArtTile_Level:			equ $000
+ArtTile_Burrobot:		equ $39C
 ArtTile_Ball_Hog:		equ $400
 ArtTile_Bomb:			equ $400
 ArtTile_Crabmeat:		equ $400
@@ -404,9 +405,8 @@ ArtTile_Missile_Disolve:	equ $41C ; Unused
 ArtTile_Buzz_Bomber:	equ $444
 ArtTile_Chopper:		equ $47B
 ArtTile_Yadrin:			equ $47B
-ArtTile_Jaws:			equ $4CE
+ArtTile_Jaws:			equ $47B
 ArtTile_Newtron:		equ $49B
-ArtTile_Burrobot:		equ $4A6
 ArtTile_Basaran:		equ $4B8
 ArtTile_Roller:			equ $4B8
 ArtTile_Splats:			equ $4E4

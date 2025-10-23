@@ -46,8 +46,8 @@ loc_E892:
 		jsr	off_E8C8(pc,d1.w)
 		bsr.s	sub_E8D6
 		bsr.w	sub_E952
-		move.b	(v_angle_primary).w,objoff_36(a0)
-		move.b	(v_angle_secondary).w,objoff_37(a0)
+		move.b	(v_anglebuffer).w,objoff_36(a0)
+		move.b	(v_anglebuffer2).w,objoff_37(a0)
 		bsr.w	Sonic_Animate
 		bsr.w	TouchObjects
 		bsr.w	Sonic_SpecialChunk
@@ -244,7 +244,7 @@ Sonic_LookUp:
 		btst	#bitUp,(v_jpadhold2).w
 		beq.s	Sonic_Duck
 		move.b	#id_LookUp,obAnim(a0)
-		cmpi.w	#$C8,(v_lookshift).w
+		cmpi.w	#200,(v_lookshift).w
 		beq.s	loc_EAEA
 		addq.w	#2,(v_lookshift).w
 		bra.s	loc_EAEA
@@ -261,7 +261,7 @@ Sonic_Duck:
 ; ---------------------------------------------------------------------------
 
 Sonic_ResetScroll:
-		cmpi.w	#$60,(v_lookshift).w
+		cmpi.w	#96,(v_lookshift).w
 		beq.s	loc_EAEA
 		bcc.s	loc_EAE6
 		addq.w	#4,(v_lookshift).w
@@ -381,9 +381,15 @@ loc_EBC4:
 
 loc_EBCC:
 		move.w	d0,obInertia(a0)
+	if FixBugs
+		move.b	obAngle(a0),d1
+		addi.b	#$20,d1
+		andi.b	#$C0,d1
+	else
 		move.b	obAngle(a0),d0
 		addi.b	#$20,d0
 		andi.b	#$C0,d0
+	endif
 		bne.s	locret_EBFA
 		cmpi.w	#$400,d0
 		blt.s	locret_EBFA
@@ -423,9 +429,15 @@ loc_EC2A:
 
 loc_EC32:
 		move.w	d0,obInertia(a0)
+	if FixBugs
+		move.b	obAngle(a0),d1
+		addi.b	#$20,d1
+		andi.b	#$C0,d1
+	else
 		move.b	obAngle(a0),d0
 		addi.b	#$20,d0
 		andi.b	#$C0,d0
+	endif
 		bne.s	locret_EC60
 		cmpi.w	#-$400,d0
 		bgt.s	locret_EC60
@@ -567,7 +579,7 @@ Sonic_JumpMove:
 		move.w	d0,obVelX(a0)
 
 Sonic_ResetScroll2:
-		cmpi.w	#$60,(v_lookshift).w
+		cmpi.w	#96,(v_lookshift).w
 		beq.s	loc_ED9A
 		bcc.s	loc_ED96
 		addq.w	#4,(v_lookshift).w
@@ -603,7 +615,7 @@ loc_EDC4:
 locret_EDC8:
 		rts
 ; ---------------------------------------------------------------------------
-		; unused
+; unused
 ;Sonic_Squish:
 		move.b	obAngle(a0),d0
 		addi.b	#$20,d0
@@ -629,11 +641,11 @@ Sonic_LevelBound:
 		add.l	d0,d1
 		swap	d1
 		move.w	(v_limitleft2).w,d0
-		addi.w	#$10,d0
+		addi.w	#16,d0
 		cmp.w	d1,d0
 		bhi.s	Sonic_BoundSides
 		move.w	(v_limitright2).w,d0
-		addi.w	#$128,d0
+		addi.w	#320-24,d0
 		cmp.w	d1,d0
 		bls.s	Sonic_BoundSides
 		move.w	(v_limitbtm2).w,d0

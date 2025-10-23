@@ -523,7 +523,7 @@ ErrorWaitForC:
 ; ---------------------------------------------------------------------------
 
 Art_Text:	binclude "artunc/menutext.bin"
-Art_Text_End:
+Art_Text_End
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -4611,8 +4611,8 @@ Sonic_WalkSpeed:
 		add.l	d1,d2
 		swap	d2
 		swap	d3
-		move.b	d0,(v_angle_primary).w
-		move.b	d0,(v_angle_secondary).w
+		move.b	d0,(v_anglebuffer).w
+		move.b	d0,(v_anglebuffer2).w
 		move.b	d0,d1
 		addi.b	#$20,d0
 		andi.b	#$C0,d0
@@ -4630,8 +4630,8 @@ loc_10514:
 ; ---------------------------------------------------------------------------
 
 sub_10520:
-		move.b	d0,(v_angle_primary).w
-		move.b	d0,(v_angle_secondary).w
+		move.b	d0,(v_anglebuffer).w
+		move.b	d0,(v_anglebuffer2).w
 		addi.b	#$20,d0
 		andi.b	#$C0,d0
 		cmpi.b	#$40,d0
@@ -4651,7 +4651,7 @@ Sonic_HitFloor:
 		move.b	obWidth(a0),d0
 		ext.w	d0
 		add.w	d0,d3
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$D,d5
@@ -4666,7 +4666,7 @@ Sonic_HitFloor:
 		move.b	obWidth(a0),d0
 		ext.w	d0
 		sub.w	d0,d3
-		lea	(v_angle_secondary).w,a4
+		lea	(v_anglebuffer2).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$D,d5
@@ -4675,10 +4675,10 @@ Sonic_HitFloor:
 		move.b	#0,d2
 
 loc_105A8:
-		move.b	(v_angle_secondary).w,d3
+		move.b	(v_anglebuffer2).w,d3
 		cmp.w	d0,d1
 		ble.s	loc_105B6
-		move.b	(v_angle_primary).w,d3
+		move.b	(v_anglebuffer).w,d3
 		move.w	d0,d1	; this line was changed to exg in the final game
 
 loc_105B6:
@@ -4695,7 +4695,7 @@ locret_105BE:
 
 loc_105C8:
 		addi.w	#$A,d2
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$E,d5
@@ -4703,7 +4703,7 @@ loc_105C8:
 		move.b	#0,d2
 
 loc_105E2:
-		move.b	(v_angle_primary).w,d3
+		move.b	(v_anglebuffer).w,d3
 		btst	#0,d3
 		beq.s	locret_105EE
 		move.b	d2,d3
@@ -4721,13 +4721,13 @@ ObjFloorDist2:
 		move.b	obHeight(a0),d0
 		ext.w	d0
 		add.w	d0,d2
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		move.b	#0,(a4)
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$D,d5
 		bsr.w	FindFloor
-		move.b	(v_angle_primary).w,d3
+		move.b	(v_anglebuffer).w,d3
 		btst	#0,d3
 		beq.s	locret_10626
 		move.b	#0,d3
@@ -4746,7 +4746,7 @@ loc_10628:
 		move.b	obHeight(a0),d0
 		ext.w	d0
 		add.w	d0,d3
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$E,d5
@@ -4761,7 +4761,7 @@ loc_10628:
 		move.b	obHeight(a0),d0
 		ext.w	d0
 		add.w	d0,d3
-		lea	(v_angle_secondary).w,a4
+		lea	(v_anglebuffer2).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$E,d5
@@ -4777,7 +4777,7 @@ sub_1068C:
 
 loc_10694:
 		addi.w	#$A,d3
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$E,d5
@@ -4789,13 +4789,13 @@ loc_10694:
 ObjHitWallRight:
 		add.w	obX(a0),d3
 		move.w	obY(a0),d2
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		move.b	#0,(a4)
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$E,d5
 		bsr.w	FindWall
-		move.b	(v_angle_primary).w,d3
+		move.b	(v_anglebuffer).w,d3
 		btst	#0,d3
 		beq.s	locret_106DE
 		move.b	#-$40,d3
@@ -4815,7 +4815,7 @@ Sonic_NoRunningOnWalls:
 		move.b	obWidth(a0),d0
 		ext.w	d0
 		add.w	d0,d3
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		movea.w	#-$10,a3
 		move.w	#$1000,d6
 		moveq	#$E,d5
@@ -4831,7 +4831,7 @@ Sonic_NoRunningOnWalls:
 		move.b	obWidth(a0),d0
 		ext.w	d0
 		sub.w	d0,d3
-		lea	(v_angle_secondary).w,a4
+		lea	(v_anglebuffer2).w,a4
 		movea.w	#-$10,a3
 		move.w	#$1000,d6
 		moveq	#$E,d5
@@ -4847,7 +4847,7 @@ Sonic_NoRunningOnWalls:
 loc_10754:
 		subi.w	#$A,d2
 		eori.w	#$F,d2
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		movea.w	#-$10,a3
 		move.w	#$1000,d6
 		moveq	#$E,d5
@@ -4864,12 +4864,12 @@ ObjHitCeiling:
 		ext.w	d0
 		sub.w	d0,d2
 		eori.w	#$F,d2
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		movea.w	#-$10,a3
 		move.w	#$1000,d6
 		moveq	#$E,d5
 		bsr.w	FindFloor
-		move.b	(v_angle_primary).w,d3
+		move.b	(v_anglebuffer).w,d3
 		btst	#0,d3
 		beq.s	locret_107AC
 		move.b	#$80,d3
@@ -4889,7 +4889,7 @@ loc_107AE:
 		ext.w	d0
 		sub.w	d0,d3
 		eori.w	#$F,d3
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		movea.w	#-$10,a3
 		move.w	#$800,d6
 		moveq	#$E,d5
@@ -4905,7 +4905,7 @@ loc_107AE:
 		ext.w	d0
 		sub.w	d0,d3
 		eori.w	#$F,d3
-		lea	(v_angle_secondary).w,a4
+		lea	(v_anglebuffer2).w,a4
 		movea.w	#-$10,a3
 		move.w	#$800,d6
 		moveq	#$E,d5
@@ -4922,7 +4922,7 @@ Sonic_HitWall:
 loc_10822:
 		subi.w	#$A,d3
 		eori.w	#$F,d3
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		movea.w	#-$10,a3
 		move.w	#$800,d6
 		moveq	#$E,d5
@@ -4940,13 +4940,13 @@ ObjHitWallLeft:
 		; 16x16 block; this one:
 		eori.w	#$F,d3
 	endif
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		move.b	#0,(a4)
 		movea.w	#-$10,a3
 		move.w	#$800,d6
 		moveq	#$E,d5
 		bsr.w	FindWall
-		move.b	(v_angle_primary).w,d3
+		move.b	(v_anglebuffer).w,d3
 		btst	#0,d3
 		beq.s	locret_10870
 		move.b	#$40,d3

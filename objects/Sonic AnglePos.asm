@@ -4,15 +4,15 @@ Sonic_AnglePos:
 		btst	#3,obStatus(a0)
 		beq.s	loc_FE26
 		moveq	#0,d0
-		move.b	d0,(v_angle_primary).w
-		move.b	d0,(v_angle_secondary).w
+		move.b	d0,(v_anglebuffer).w
+		move.b	d0,(v_anglebuffer2).w
 		rts
 ; ---------------------------------------------------------------------------
 
 loc_FE26:
 		moveq	#3,d0
-		move.b	d0,(v_angle_primary).w
-		move.b	d0,(v_angle_secondary).w
+		move.b	d0,(v_anglebuffer).w
+		move.b	d0,(v_anglebuffer2).w
 		move.b	obAngle(a0),d0
 		addi.b	#$20,d0
 		andi.b	#$C0,d0
@@ -31,7 +31,7 @@ loc_FE26:
 		move.b	obWidth(a0),d0
 		ext.w	d0
 		add.w	d0,d3
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$D,d5
@@ -47,7 +47,7 @@ loc_FE26:
 		ext.w	d0
 		neg.w	d0
 		add.w	d0,d3
-		lea	(v_angle_secondary).w,a4
+		lea	(v_anglebuffer2).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$D,d5
@@ -127,10 +127,10 @@ locret_FF0C:
 ; ---------------------------------------------------------------------------
 
 Sonic_Angle:
-		move.b	(v_angle_secondary).w,d2
+		move.b	(v_anglebuffer2).w,d2
 		cmp.w	d0,d1
 		ble.s	loc_FF60
-		move.b	(v_angle_primary).w,d2
+		move.b	(v_anglebuffer).w,d2
 		move.w	d0,d1
 
 loc_FF60:
@@ -152,8 +152,6 @@ Sonic_WalkVertR:
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
 		moveq	#0,d0
-
-loc_FF88:
 		move.b	obWidth(a0),d0
 		ext.w	d0
 		neg.w	d0
@@ -161,14 +159,12 @@ loc_FF88:
 		move.b	obHeight(a0),d0
 		ext.w	d0
 		add.w	d0,d3
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$D,d5
 		bsr.w	FindWall
 		move.w	d1,-(sp)
-
-loc_FFAE:
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
 		moveq	#0,d0
@@ -178,12 +174,10 @@ loc_FFAE:
 		move.b	obHeight(a0),d0
 		ext.w	d0
 		add.w	d0,d3
-		lea	(v_angle_secondary).w,a4
+		lea	(v_anglebuffer2).w,a4
 		movea.w	#$10,a3
 		move.w	#0,d6
 		moveq	#$D,d5
-
-loc_FFD6:
 		bsr.w	FindWall
 		move.w	(sp)+,d0
 		bsr.w	Sonic_Angle
@@ -225,7 +219,7 @@ Sonic_WalkCeiling:
 		move.b	obWidth(a0),d0
 		ext.w	d0
 		add.w	d0,d3
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		movea.w	#-$10,a3
 		move.w	#$1000,d6
 		moveq	#$D,d5
@@ -241,7 +235,7 @@ Sonic_WalkCeiling:
 		move.b	obWidth(a0),d0
 		ext.w	d0
 		sub.w	d0,d3
-		lea	(v_angle_secondary).w,a4
+		lea	(v_anglebuffer2).w,a4
 		movea.w	#-$10,a3
 		move.w	#$1000,d6
 		moveq	#$D,d5
@@ -284,7 +278,7 @@ Sonic_WalkVertL:
 		ext.w	d0
 		sub.w	d0,d3
 		eori.w	#$F,d3
-		lea	(v_angle_primary).w,a4
+		lea	(v_anglebuffer).w,a4
 		movea.w	#-$10,a3
 		move.w	#$800,d6
 		moveq	#$D,d5
@@ -300,7 +294,7 @@ Sonic_WalkVertL:
 		ext.w	d0
 		sub.w	d0,d3
 		eori.w	#$F,d3
-		lea	(v_angle_secondary).w,a4
+		lea	(v_anglebuffer2).w,a4
 		movea.w	#-$10,a3
 		move.w	#$800,d6
 		moveq	#$D,d5

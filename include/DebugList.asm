@@ -124,6 +124,11 @@ dbug:	macro map,object,subtype,frame,vram
 ;.DebugUnk:
 ;		mappings	object		subtype	frame	VRAM setting
 	dbug 	Map_Hog,	id_BallHog,	0,	0,	make_art_tile(ArtTile_Ball_Hog,1,0)
-	dbug	Map_Jaws,	id_Jaws,	0,	0,	make_art_tile($47B,0,0)
-	dbug	Map_Burro,	id_Burrobot,	0,	0,	make_art_tile($47B,1,0)
+	dbug	Map_Jaws,	id_Jaws,	0,	0,	make_art_tile(ArtTile_Jaws,0,0)
+	if FixBugs
+	dbug	Map_Burro,	id_Burrobot,	0,	0,	make_art_tile(ArtTile_Burrobot,1,0)
+	else
+	; This will use Jaws's art instead of Burrobot's art.
+	dbug	Map_Burro,	id_Burrobot,	0,	0,	make_art_tile(ArtTile_Jaws,1,0)
+	endif
 ;.DebugUnkend:

@@ -171,8 +171,8 @@ v_sonspeedacc:	ds.w 1
 v_sonspeeddec:	ds.w 1
 v_sonframenum:	ds.b 1		; frame to display for Sonic
 f_sonframechg:	ds.b 1
-v_angle_primary:	ds.w 1		; primary angle buffer (2 bytes)
-v_angle_secondary:	ds.w 1		; secondary angle buffer (2 bytes)
+v_anglebuffer:	ds.w 1		; primary angle buffer (2 bytes)
+v_anglebuffer2:	ds.w 1		; secondary angle buffer (2 bytes)
 v_opl_routine:	ds.w 1		; ObjPosLoad - routine counter (2 bytes)
 v_opl_screen:	ds.w 1		; ObjPosLoad - screen variable (2 bytes)
 v_opl_data:		ds.b $10	; ObjPosLoad - data buffer ($10 bytes)
