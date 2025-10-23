@@ -5283,7 +5283,14 @@ loc_10BC8:
 		rts
 ; ---------------------------------------------------------------------------
 
-		include "include/Special Stage Mappings & VRAM Pointers.asm"
+SS_MapIndex:	include "include/Special Stage Mappings & VRAM Pointers.asm"
+SS_MapIndex_End
+
+Map_SS_Up:
+Map_SS_Goal:	include	"_maps/SS UP Block.asm"
+
+Map_SS_Down:
+Map_SS_Goal_R:	include	"_maps/SS DOWN Block.asm"
 
 ; unused
 ;sub_10C98:

@@ -196,8 +196,8 @@ objoff_3C:	equ obj.Off_3C
 objoff_3D:	equ obj.Off_3D
 objoff_3E:	equ obj.Off_3E
 objoff_3F:	equ obj.Off_3F
-object_size_bits:	equ 6
 object_size:	equ obj.Size
+object_size_bits:	equ 6
 
 ; Animation flags
 afEnd:		equ $FF					; return to beginning of animation
