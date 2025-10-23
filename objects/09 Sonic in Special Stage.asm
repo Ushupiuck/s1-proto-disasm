@@ -36,8 +36,9 @@ Obj09_Load:
 		jsr	(Sonic_DynTiles).l
 		jmp	(DisplaySprite).l
 ; ---------------------------------------------------------------------------
-Obj09_Modes:	dc.w loc_10D32-Obj09_Modes
-                dc.w loc_10D40-Obj09_Modes
+Obj09_Modes:
+		dc.w loc_10D32-Obj09_Modes
+		dc.w loc_10D40-Obj09_Modes
 ; ---------------------------------------------------------------------------
 
 loc_10D32:
@@ -234,15 +235,16 @@ loc_10EE6:
 locret_10EF6:
 		rts
 ; ---------------------------------------------------------------------------
+ss_waitcount:	equ objoff_38
 
 Obj09_ExitStage:
-		addi.w	#$40,(v_ssrotate).w
-		cmpi.w	#$3000,(v_ssrotate).w
-		blt.s	loc_10F1C
-		move.w	#0,(v_ssrotate).w
-		move.w	#$4000,(v_ssangle).w
-		addq.b	#2,obRoutine(a0)
-		move.w	#$12C,objoff_38(a0)
+		addi.w	#$40,(v_ssrotate).w	; increase rotation speed
+		cmpi.w	#$3000,(v_ssrotate).w	; is it lower than $3000?
+		blt.s	loc_10F1C	; if so, skip the code below
+		move.w	#0,(v_ssrotate).w	; stop rotating
+		move.w	#$4000,(v_ssangle).w	; set angle to $4000
+		addq.b	#2,obRoutine(a0)	; go to next routine (Obj09_Exit2)
+		move.w	#60*5,ss_waitcount(a0)	; set wait count to 5 seconds before reloading the special stage
 
 loc_10F1C:
 		move.w	(v_ssangle).w,d0
@@ -255,13 +257,13 @@ loc_10F1C:
 ; ---------------------------------------------------------------------------
 
 Obj09_Exit2:
-		subq.w	#1,objoff_38(a0)
-		bne.s	loc_10F66
-		clr.w	(v_ssangle).w
-		move.w	#$40,(v_ssrotate).w
-		move.w	#$458,(v_objspace+obX).w
-		move.w	#$4A0,(v_objspace+obY).w
-		clr.b	obRoutine(a0)
+		subq.w	#1,ss_waitcount(a0)	; subtract 1 from the wait count
+		bne.s	loc_10F66	; if zero hasn't been reached yet, skip the code below
+		clr.w	(v_ssangle).w	; clear special stage angle
+		move.w	#$40,(v_ssrotate).w	; set default rotation speed
+		move.w	#$458,(v_objspace+obX).w	; set sonic's x position
+		move.w	#$4A0,(v_objspace+obY).w	; set sonic's y position
+		clr.b	obRoutine(a0)	; reset sonic's routine back to the starting routine (Obj09_Main)
 		move.l	a0,-(sp)
 		jsr	(SS_Load).l
 		movea.l	(sp)+,a0
