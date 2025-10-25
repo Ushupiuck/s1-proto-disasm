@@ -2185,7 +2185,7 @@ loc_2EC8:
 		bne.s	loc_2E9E
 		rts
 ; ---------------------------------------------------------------------------
-		include "leftovers/objects/Debug Coordinate Sprites.asm"
+		include "leftovers/obj/Debug Coordinate Sprites.asm"
 ; ---------------------------------------------------------------------------
 ; Unused, Speculated to have been for a window plane wavy masking effect
 ; involving writes during HBlank. It writes its tables in the Nemesis GFX
@@ -2971,17 +2971,17 @@ loc_4904:
 ; ---------------------------------------------------------------------------
 		include "include/DynamicLevelEvents.asm"
 
-		include "objects/02.asm"
+		include "obj/02.asm"
 Map_02:	include "_maps/02.asm"
 
-		include "objects/03.asm"
-		include "objects/04.asm"
-		include "objects/05.asm"
+		include "obj/03.asm"
+		include "obj/04.asm"
+		include "obj/05.asm"
 Map_05:	include "_maps/05.asm"
 
-		include "objects/06.asm"
-		include "objects/07.asm"
-		include "objects/11 Bridge (part 1).asm"
+		include "obj/06.asm"
+		include "obj/07.asm"
+		include "obj/11 Bridge (part 1).asm"
 ; ---------------------------------------------------------------------------
 
 PtfmBridge:
@@ -3116,7 +3116,7 @@ PtfmNormalHeight:
 		sub.w	d3,d0
 		bra.w	PtfmNormal3
 
-		include "objects/11 Bridge (part 2).asm"
+		include "obj/11 Bridge (part 2).asm"
 ; ---------------------------------------------------------------------------
 
 PtfmCheckExit:
@@ -3142,27 +3142,27 @@ loc_510A:
 locret_511C:
 		rts
 
-		include "objects/11 Bridge (part 3).asm"
+		include "obj/11 Bridge (part 3).asm"
 MapBridge:	include "_maps/Bridge.asm"
 
-		include "objects/15 Swinging Platform.asm"
+		include "obj/15 Swinging Platform.asm"
 Map_Swing_GHZ:	include "_maps/Swinging Platforms (GHZ).asm"
 Map_Swing_SLZ:	include "_maps/Swinging Platforms (SLZ).asm"
 
-		include "objects/17 Spiked Pole Helix.asm"
+		include "obj/17 Spiked Pole Helix.asm"
 Map_Hel:	include "_maps/Spiked Pole Helix.asm"
 
-		include "objects/18 Platforms.asm"
+		include "obj/18 Platforms.asm"
 		include "_maps/Platforms (unused).asm"
 Map_Plat_GHZ:	include "_maps/Platforms (GHZ).asm"
 Map_Plat_SZ:	include "_maps/Platforms (SZ).asm"
 Map_Plat_SLZ:	include "_maps/Platforms (SLZ).asm"
 
-		include "objects/19 GHZ Ball.asm"
+		include "obj/19 GHZ Ball.asm"
 Map_GBall:	include "_maps/GHZ Ball.asm"
 
-		include "objects/1A Collapsing Ledge (part 1).asm"
-		include "objects/53 Collapsing Floors.asm"
+		include "obj/1A Collapsing Ledge (part 1).asm"
+		include "obj/53 Collapsing Floors.asm"
 ; ---------------------------------------------------------------------------
 
 loc_612A:
@@ -3266,16 +3266,16 @@ ObjCollapsePtfm_Slope:dc.b $20, $20, $20, $20, $20, $20, $20, $20, $21, $21
 Map_Ledge:	include "_maps/Collapsing Ledge.asm"
 Map_CFlo:	include "_maps/Collapsing Floors.asm"
 
-		include "objects/1B.asm"
+		include "obj/1B.asm"
 Map_1B:	include "_maps/1B.asm"
 
-		include "objects/1C Scenery.asm"
+		include "obj/1C Scenery.asm"
 Map_Scen:	include "_maps/Scenery.asm"
 
-		include "objects/1D Unused Switch.asm"
+		include "obj/1D Unused Switch.asm"
 Map_UnkSwitch:	include "_maps/Unknown Switch.asm"
 
-		include "objects/2A Switch Door.asm"
+		include "obj/2A Switch Door.asm"
 ; ---------------------------------------------------------------------------
 
 sub_6936:
@@ -3400,8 +3400,8 @@ loc_6A28:
 ; ---------------------------------------------------------------------------
 Map_2A:	include "_maps/2A.asm"
 
-		include "objects/0E Title Screen Sonic.asm"
-		include "objects/0F Press Start.asm"
+		include "obj/0E Title Screen Sonic.asm"
+		include "obj/0F Press Start.asm"
 		include "_anim/Title Screen Sonic.asm"
 		include "_anim/Press Start.asm"
 ; ---------------------------------------------------------------------------
@@ -3482,42 +3482,42 @@ locret_6BDA:
 Map_TitleText:	include "_maps/Press Start.asm"
 Map_TitleSonic:	include "_maps/Title Screen Sonic.asm"
 
-		include "objects/1E Ball Hog.asm"
-		include "objects/20 Ball Hog's Bomb.asm"
-		include "objects/24, 27 & 3F Explosions.asm"
+		include "obj/1E Ball Hog.asm"
+		include "obj/20 Ball Hog's Bomb.asm"
+		include "obj/24, 27 & 3F Explosions.asm"
 		include "_anim/Ball Hog.asm"
 Map_Hog:	include "_maps/Ball Hog.asm"
 		include "_maps/Ball Hog's Bomb.asm"
 		include "_maps/Ball Hog's Bomb Explosion.asm"
 		include "_maps/Explosions.asm"
 
-		include "objects/28 Animals.asm"
-		include "objects/29 Points.asm"
+		include "obj/28 Animals.asm"
+		include "obj/29 Points.asm"
 Map_Animal1:	include "_maps/Animals 1.asm"
 Map_Animal2:	include "_maps/Animals 2.asm"
 Map_Animal3:	include "_maps/Animals 3.asm"
 Map_Poi:	include "_maps/Points.asm"
 
-		include "objects/1F Crabmeat.asm"
+		include "obj/1F Crabmeat.asm"
 		include "_anim/Crabmeat.asm"
 Map_Crab:	include "_maps/Crabmeat.asm"
 
-		include "objects/22 Buzz Bomber.asm"
-		include "objects/23 Buzz Bomber Missile.asm"
+		include "obj/22 Buzz Bomber.asm"
+		include "obj/23 Buzz Bomber Missile.asm"
 		include "_anim/Buzz Bomber.asm"
 		include "_anim/Buzz Bomber Missile.asm"
 Map_Buzz:	include "_maps/Buzz Bomber.asm"
 Map_Missile:	include "_maps/Buzz Bomber Missile.asm"
 
-		include "objects/25 & 37 Rings.asm"
-		include "objects/4B Giant Ring Flash.asm"
+		include "obj/25 & 37 Rings.asm"
+		include "obj/4B Giant Ring Flash.asm"
 		include "_anim/Rings.asm"
 Map_Ring:	include "_maps/Rings.asm"
 Map_GRing:	include "_maps/Giant Ring.asm"
 
-		include "objects/26 Monitor.asm"
-		include "objects/2E Monitor Content Power-Up.asm"
-		include "objects/26 Monitor (SolidSides subroutine).asm"
+		include "obj/26 Monitor.asm"
+		include "obj/2E Monitor Content Power-Up.asm"
+		include "obj/26 Monitor (SolidSides subroutine).asm"
 		include "_anim/Monitor.asm"
 Map_Monitor:	include "_maps/Monitor.asm"
 ; ---------------------------------------------------------------------------
@@ -3564,10 +3564,10 @@ loc_8576:
 ; ---------------------------------------------------------------------------
 Obj_Index:
 		include "include/Object Pointers.asm"
-		include "objects/sub ObjectFall.asm"
-		include "objects/sub SpeedToPos.asm"
-		include "objects/sub DisplaySprite.asm"
-		include "objects/sub DeleteObject.asm"
+		include "obj/sub ObjectFall.asm"
+		include "obj/sub SpeedToPos.asm"
+		include "obj/sub DisplaySprite.asm"
+		include "obj/sub DeleteObject.asm"
 ; ---------------------------------------------------------------------------
 
 off_8796:	dc.l 0
@@ -4079,44 +4079,44 @@ loc_8B96:
 locret_8BA2:
 		rts
 
-		include "objects/2B Chopper.asm"
+		include "obj/2B Chopper.asm"
 		include "_anim/Chopper.asm"
 Map_Chop:	include "_maps/Chopper.asm"
 
-		include "objects/2C Jaws.asm"
+		include "obj/2C Jaws.asm"
 		include "_anim/Jaws.asm"
 Map_Jaws:	include "_maps/Jaws.asm"
 
-		include "objects/2D Burrobot.asm"
+		include "obj/2D Burrobot.asm"
 		include "_anim/Burrobot.asm"
 Map_Burro:	include "_maps/Burrobot.asm"
 
-		include "objects/2F MZ Large Grassy Platforms.asm"
+		include "obj/2F MZ Large Grassy Platforms.asm"
 
-		include "objects/35 Burning Grass.asm"
+		include "obj/35 Burning Grass.asm"
 		include "_anim/Burning Grass.asm"
 Map_LGrass:	include "_maps/MZ Large Grassy Platforms.asm"
 Map_Fire:	include "_maps/Fireballs.asm"
 
-		include "objects/30 MZ Large Green Glass Blocks.asm"
+		include "obj/30 MZ Large Green Glass Blocks.asm"
 Map_Glass:	include "_maps/MZ Large Green Glass Blocks.asm"
 
-		include "objects/31 Chained Stompers.asm"
-		include "objects/45 Sideways Stomper.asm"
+		include "obj/31 Chained Stompers.asm"
+		include "obj/45 Sideways Stomper.asm"
 Map_CStom:	include "_maps/Chained Stompers.asm"
 Map_SStom:	include "_maps/Sideways Stomper.asm"
 
-		include "objects/32 Button.asm"
+		include "obj/32 Button.asm"
 Map_But:	include "_maps/Button.asm"
 
-		include "objects/33 Pushable Blocks.asm"
+		include "obj/33 Pushable Blocks.asm"
 Map_Push:	include "_maps/Pushable Blocks.asm"
 
-		include "objects/sub SolidObject.asm"
+		include "obj/sub SolidObject.asm"
 
-		include "objects/34 Title Cards.asm"
-		include "objects/39 Game Over.asm"
-		include "objects/3A Got Through Act.asm"
+		include "obj/34 Title Cards.asm"
+		include "obj/39 Game Over.asm"
+		include "obj/3A Got Through Act.asm"
 
 Map_TitleCard:	dc.w byte_A8A4-Map_TitleCard, byte_A8D2-Map_TitleCard, byte_A900-Map_TitleCard
 		dc.w byte_A920-Map_TitleCard, byte_A94E-Map_TitleCard, byte_A97C-Map_TitleCard
@@ -4266,16 +4266,16 @@ byte_AAD7:	dc.b 7
 		dc.b $F8, 1, 1, $70, $48
 		even
 
-		include "objects/36 Spikes.asm"
+		include "obj/36 Spikes.asm"
 Map_Spike:	include "_maps/Spikes.asm"
 
-		include "objects/3B Purple Rock.asm"
-		include "objects/49 Waterfall Sound.asm"
+		include "obj/3B Purple Rock.asm"
+		include "obj/49 Waterfall Sound.asm"
 
 Map_PRock:	include "_maps/Purple Rock.asm"
 
-		include "objects/3C Smashable Wall.asm"
-		include "objects/sub SmashObject.asm"
+		include "obj/3C Smashable Wall.asm"
+		include "obj/sub SmashObject.asm"
 
 ObjSmashWall_FragRight:
 		dc.w $400, -$500
@@ -4299,7 +4299,7 @@ ObjSmashWall_FragLeft:
 
 Map_Smash:	include "_maps/Smashable Walls.asm"
 
-		include "objects/3D Boss - Green Hill (part 1).asm"
+		include "obj/3D Boss - Green Hill (part 1).asm"
 
 sub_B146:
 		move.b	(v_vbla_byte).w,d0
@@ -4340,78 +4340,78 @@ BossMove:
 		move.l	d3,obBossY(a0)
 		rts
 
-		include "objects/3D Boss - Green Hill (part 2).asm"
-		include "objects/48 Eggman's Swinging Ball.asm"
+		include "obj/3D Boss - Green Hill (part 2).asm"
+		include "obj/48 Eggman's Swinging Ball.asm"
 
 		include "_anim/Eggman.asm"
 Map_Eggman:	include "_maps/Eggman.asm"
 
 Map_BossItems:	include "_maps/Boss Items.asm"
 
-		include "objects/3E Prison Capsule.asm"
+		include "obj/3E Prison Capsule.asm"
 
 		include "_anim/Prison Capsule.asm"
 Map_Pri:	include "_maps/Prison Capsule.asm"
 
-		include "objects/40 Motobug.asm"
+		include "obj/40 Motobug.asm"
 
 		include "_anim/Moto Bug.asm"
 Map_Moto:	include "_maps/Moto Bug.asm"
 
-		include "objects/41 Springs.asm"
+		include "obj/41 Springs.asm"
 
 		include "_anim/Springs.asm"
 Map_Spring:	include "_maps/Springs.asm"
 
-		include "objects/42 Newtron.asm"
+		include "obj/42 Newtron.asm"
 
 		include "_anim/Newtron.asm"
 Map_Newt:	include "_maps/Newtron.asm"
 
-		include "objects/43 Roller.asm"
+		include "obj/43 Roller.asm"
 		include "_anim/Roller.asm"
 Map_Roll:	include "_maps/Roller.asm"
 
-		include "objects/44 GHZ Edge Walls.asm"
+		include "obj/44 GHZ Edge Walls.asm"
 Map_Edge:	include "_maps/GHZ Edge Walls.asm"
 
-		include "objects/13 Lava Ball Maker.asm"
-		include "objects/14 Lava Ball.asm"
+		include "obj/13 Lava Ball Maker.asm"
+		include "obj/14 Lava Ball.asm"
 		include "_anim/Fireballs.asm"
 
-		include "objects/46 MZ Bricks.asm"
+		include "obj/46 MZ Bricks.asm"
 Map_Brick:	include "_maps/MZ Bricks.asm"
 
-		include "objects/12 Light.asm"
+		include "obj/12 Light.asm"
 Map_Light:	include "_maps/Light.asm"
 
-		include "objects/47 Bumper.asm"
+		include "obj/47 Bumper.asm"
 		include "_anim/Bumper.asm"
 Map_Bump:	include "_maps/Bumper.asm"
 
-		include "objects/0D Signpost.asm"
+		include "obj/0D Signpost.asm"
 Ani_Sign:	include "_anim/Signpost.asm"
 Map_Sign:	include "_maps/Signpost.asm"
 
-		include "objects/4C & 4D Lava Geyser Maker.asm"
+		include "obj/4C & 4D Lava Geyser Maker.asm"
 
-		include "objects/4E Wall of Lava.asm"
+		include "obj/4E Wall of Lava.asm"
 
-		include "objects/54 Lava Tag.asm"
+		include "obj/54 Lava Tag.asm"
 Map_LTag:	include "_maps/Lava Tag.asm"
 		include "_anim/Lava Geyser.asm"
 		include "_anim/Wall of Lava.asm"
 Map_Geyser:	include "_maps/Lava Geyser.asm"
 Map_LWall:	include "_maps/Wall of Lava.asm"
 
-		include "objects/4F Splats.asm"
+		include "obj/4F Splats.asm"
 Map_Splats:	include "_maps/Splats.asm"
 
-		include "objects/50 Yadrin.asm"
+		include "obj/50 Yadrin.asm"
 Ani_Yadrin:	include "_anim/Yadrin.asm"
 Map_Yadrin:	include "_maps/Yadrin.asm"
 
-		include "objects/51 Smashable Green Block.asm"
+		include "obj/51 Smashable Green Block.asm"
 
 ObjSmashBlock_Frag:
 		dc.w -$200, -$200
@@ -4421,38 +4421,38 @@ ObjSmashBlock_Frag:
 
 Map_Smab:	include "_maps/Smashable Green Block.asm"
 
-		include "objects/52 Moving Blocks.asm"
+		include "obj/52 Moving Blocks.asm"
 Map_MBlock:	include "_maps/Moving Blocks (MZ).asm"
 
-		include "objects/55 Basaran.asm"
+		include "obj/55 Basaran.asm"
 		include "_anim/Basaran.asm"
 Map_Bas:	include "_maps/Basaran.asm"
 
-		include "objects/56 Floating Blocks and Doors.asm"
+		include "obj/56 Floating Blocks and Doors.asm"
 Map_FBlock:	include "_maps/Floating Blocks and Doors.asm"
 
-		include "objects/57 Spiked Ball and Chain.asm"
+		include "obj/57 Spiked Ball and Chain.asm"
 Map_SBall:	include "_maps/Spiked Ball and Chain (SZ).asm"
 
-		include "objects/58 Big Spiked Ball.asm"
+		include "obj/58 Big Spiked Ball.asm"
 Map_BBall:	include "_maps/Big Spiked Ball.asm"
 
-		include "objects/59 SLZ Elevators.asm"
+		include "obj/59 SLZ Elevators.asm"
 Map_Elev:	include "_maps/SLZ Elevators.asm"
 
-		include "objects/5A SLZ Circling Platform.asm"
+		include "obj/5A SLZ Circling Platform.asm"
 Map_Circ:	include "_maps/SLZ Circling Platform.asm"
 
-		include "objects/5B Staircase.asm"
+		include "obj/5B Staircase.asm"
 Map_Stair:	include "_maps/Staircase.asm"
 
-		include "objects/5C Pylon.asm"
+		include "obj/5C Pylon.asm"
 Map_Pylon:	include "_maps/Pylon.asm"
 
-		include "objects/5D Fan.asm"
+		include "obj/5D Fan.asm"
 Map_Fan:	include "_maps/Fan.asm"
 
-		include "objects/5E Seesaw.asm"
+		include "obj/5E Seesaw.asm"
 
 ObjSeeSaw_SlopeTilt:dc.b $24, $24, $26, $28, $2A, $2C, $2A, $28, $26, $24
 		dc.b $23, $22, $21, $20, $1F, $1E, $1D, $1C, $1B, $1A
@@ -4470,10 +4470,10 @@ ObjSeeSaw_SlopeLine:dc.b $15, $15, $15, $15, $15, $15, $15, $15, $15, $15
 
 Map_Seesaw:	include "_maps/Seesaw.asm"
 
-		include	"objects/01 Sonic.asm"
+		include	"obj/01 Sonic.asm"
 
-		include "objects/38 Shield and Invincibility.asm"
-		include "objects/4A Giant Ring.asm"
+		include "obj/38 Shield and Invincibility.asm"
+		include "obj/4A Giant Ring.asm"
 
 		include "_anim/Shield.asm"
 		include "_maps/Shield.asm"
@@ -4481,13 +4481,13 @@ Map_Seesaw:	include "_maps/Seesaw.asm"
 		include "_anim/Special Stage Entry (Unused).asm"
 Map_Vanish:	include "_maps/Special Stage Entry (Unused).asm"
 
-		include "objects/sub ReactToItem.asm"
+		include "obj/sub ReactToItem.asm"
 
-		include "objects/Sonic AnglePos.asm"
+		include "obj/Sonic AnglePos.asm"
 
-		include "objects/sub FindNearestTile.asm"
-		include "objects/sub FindFloor.asm"
-		include "objects/sub FindWall.asm"
+		include "obj/sub FindNearestTile.asm"
+		include "obj/sub FindFloor.asm"
+		include "obj/sub FindWall.asm"
 ; ---------------------------------------------------------------------------
 ; This subroutine takes 'raw' bitmap-like collision block data as input and
 ; converts it into the proper collision arrays (ColArray and ColArray2).
@@ -5333,12 +5333,12 @@ loc_10CA8:
 		dbf	d1,loc_10CA6
 		rts
 
-		include "objects/09 Sonic in Special Stage.asm"
-		include "objects/10 Sonic Animation Test.asm"
+		include "obj/09 Sonic in Special Stage.asm"
+		include "obj/10 Sonic Animation Test.asm"
 
 		include "include/AnimateLevelGfx.asm"
 
-		include "objects/21 HUD.asm"
+		include "obj/21 HUD.asm"
 Map_HUD:	include "_maps/HUD.asm"
 ; ---------------------------------------------------------------------------
 
@@ -5368,7 +5368,7 @@ locret_11678:
 byte_11A26:	binclude "artunc/HUD Numbers.bin"
 byte_11D26:	binclude "artunc/Lives Counter Numbers.bin"
 
-		include "objects/DebugMode.asm"
+		include "obj/DebugMode.asm"
 		include "include/DebugList.asm"
 		include "include/LevelHeaders.asm"
 		include "include/Pattern Load Cues.asm"

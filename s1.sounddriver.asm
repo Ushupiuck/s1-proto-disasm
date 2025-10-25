@@ -20,7 +20,6 @@ Go_SpecSoundIndex:	dc.l SpecSoundIndex
 Go_MusicIndex:		dc.l MusicIndex
 Go_SoundIndex:		dc.l SoundIndex
 Go_Modulation:		dc.l ModulationIndex
-; off_74010:
 Go_PSGIndex:		dc.l PSG_Index
 		dc.l $A0
 		dc.l UpdateMusic
@@ -510,7 +509,8 @@ FM3SpcUpdateFreq:
 		rts
 ; ---------------------------------------------------------------------------
 
-.fm3freqs:	dc.b $AD, $A9
+.fm3freqs:
+		dc.b $AD, $A9
 		dc.b $AC, $A8
 		dc.b $AE, $AA
 		dc.b $A6, $A2
@@ -594,12 +594,16 @@ loc_7457E:
 locret_745AE:
 		rts
 ; ---------------------------------------------------------------------------
-FM_Pan_Table:	dc.l pan_1_data
+FM_Pan_Table:
+		dc.l pan_1_data
 		dc.l pan_2_data
 		dc.l pan_3_data
-pan_1_data:	dc.b $40, $80
-pan_2_data:	dc.b $40, $C0, $80
-pan_3_data:	dc.b $C0, $80, $C0, $40
+pan_1_data:
+		dc.b $40, $80
+pan_2_data:
+		dc.b $40, $C0, $80
+pan_3_data:
+		dc.b $C0, $80, $C0, $40
 		even
 ; ---------------------------------------------------------------------------
 
