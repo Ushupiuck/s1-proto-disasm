@@ -12,7 +12,7 @@
 
 	cpu 68000
 
-FixBugs	= 1
+FixBugs	= 0
 ;	| If 1, fixes a handful of bugs in the game
 zeroOffsetOptimization = 0
 ;	| If 1, makes a handful of zero-offset instructions smaller
@@ -3061,7 +3061,7 @@ loc_4FFC:
 		asr.w	#2,d0
 		sub.w	d0,obVelX(a1)
 		move.w	obVelX(a1),obInertia(a1)
-		btst	#1,obStatus(a1)
+		btst	#status_in_air,obStatus(a1)
 		beq.s	loc_503C
 		move.l	a0,-(sp)
 		movea.l	a1,a0
@@ -3125,7 +3125,7 @@ PtfmCheckExit:
 PtfmCheckExit2:
 		add.w	d2,d2
 		lea	(v_player).w,a1
-		btst	#1,obStatus(a1)
+		btst	#status_in_air,obStatus(a1)
 		bne.s	loc_510A
 		move.w	obX(a1),d0
 		sub.w	obX(a0),d0
@@ -3304,7 +3304,7 @@ loc_6966:
 		move.w	#0,obVelX(a1)
 
 loc_6976:
-		btst	#1,obStatus(a1)
+		btst	#status_in_air,obStatus(a1)
 		bne.s	loc_699A
 		bset	#5,obStatus(a1)
 		bset	#5,obStatus(a0)

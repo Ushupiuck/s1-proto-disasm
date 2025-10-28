@@ -196,7 +196,7 @@ loc_5AE4:
 		bne.s	loc_5B20
 		btst	#3,obStatus(a0)
 		beq.s	loc_5B1A
-		bset	#1,obStatus(a1)
+		bset	#status_in_air,obStatus(a1)
 		bclr	#3,obStatus(a1)
 		move.b	#2,obRoutine(a1)
 		bclr	#3,obStatus(a0)

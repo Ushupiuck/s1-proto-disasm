@@ -724,7 +724,7 @@ Sonic_Jump:
 		muls.w	#$680,d0
 		asr.l	#8,d0
 		add.w	d0,obVelY(a0)
-		bset	#1,obStatus(a0)
+		bset	#status_in_air,obStatus(a0)	; set in air status
 		bclr	#5,obStatus(a0)
 		addq.l	#4,sp
 		move.b	#1,jumpflag(a0)
@@ -853,7 +853,7 @@ Sonic_SlopeRepel:
 loc_F018:
 		cmpi.w	#$280,d0
 		bcc.s	locret_F02A
-		bset	#1,obStatus(a0)
+		bset	#status_in_air,obStatus(a0)	; set in air status
 		move.w	#$1E,ctrllock(a0)
 
 locret_F02A:
@@ -1074,7 +1074,7 @@ Sonic_ResetOnFloor:
 
 loc_F226:
 		bclr	#5,obStatus(a0)
-		bclr	#1,obStatus(a0)
+		bclr	#status_in_air,obStatus(a0)	; clear in air status
 		bclr	#4,obStatus(a0)
 		btst	#2,obStatus(a0)
 		beq.s	loc_F25C
@@ -1179,8 +1179,8 @@ Sonic_SpecialChunk:
 ; ---------------------------------------------------------------------------
 
 loc_F438:
-		btst	#1,obStatus(a0)
-		beq.s	loc_F448
+		btst	#status_in_air,obStatus(a0)	; is sonic in the air?
+		beq.s	loc_F448	; if not, branch
 		bclr	#6,obRender(a0)
 		rts
 ; ---------------------------------------------------------------------------

@@ -135,6 +135,8 @@ shoetime:	equ obj.Off_34				; time left for speed shoes
 jumpflag:	equ obj.Off_3C				; flag for when sonic is jumping
 standonobject:	equ obj.Off_3D				; object Sonic stands on
 ctrllock:	equ obj.Off_3E				; lock left and right controls (2 bytes)
+; Object status bits used by Sonic
+status_in_air:	equ 1	; %0001
 
 ; Object variables used by the title card
 card_mainX:	equ obj.Off_30				; position for card to display on
