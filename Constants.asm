@@ -135,6 +135,8 @@ shoetime:	equ obj.Off_34				; time left for speed shoes
 jumpflag:	equ obj.Off_3C				; flag for when sonic is jumping
 standonobject:	equ obj.Off_3D				; object Sonic stands on
 ctrllock:	equ obj.Off_3E				; lock left and right controls (2 bytes)
+; Object status bits used by Sonic
+status_in_air:	equ 1	; %0001
 
 ; Object variables used by the title card
 card_mainX:	equ obj.Off_30				; position for card to display on
@@ -196,8 +198,8 @@ objoff_3C:	equ obj.Off_3C
 objoff_3D:	equ obj.Off_3D
 objoff_3E:	equ obj.Off_3E
 objoff_3F:	equ obj.Off_3F
-object_size_bits:	equ 6
 object_size:	equ obj.Size
+object_size_bits:	equ 6
 
 ; Animation flags
 afEnd:		equ $FF					; return to beginning of animation
@@ -379,9 +381,9 @@ ArtTile_MZ_Glass_Pillar:	equ $38E
 ArtTile_MZ_Lava:		equ $3A8
 
 ; Sparkling Zone
-ArtTile_SYZ_Bumper:		equ $380
-ArtTile_SYZ_Big_Spikeball:	equ $396
-ArtTile_SYZ_Spikeball_Chain:	equ $3BA
+ArtTile_SZ_Bumper:		equ $380
+ArtTile_SZ_Big_Spikeball:	equ $396
+ArtTile_SZ_Spikeball_Chain:	equ $3BA
 
 ; Star Light Zone
 ArtTile_SLZ_Seesaw:		equ $374
@@ -397,6 +399,7 @@ ArtTile_SLZ_Spikeball:		equ $4F0
 
 ; General Level Art
 ArtTile_Level:			equ $000
+ArtTile_Burrobot:		equ $39C
 ArtTile_Ball_Hog:		equ $400
 ArtTile_Bomb:			equ $400
 ArtTile_Crabmeat:		equ $400
@@ -404,9 +407,8 @@ ArtTile_Missile_Disolve:	equ $41C ; Unused
 ArtTile_Buzz_Bomber:	equ $444
 ArtTile_Chopper:		equ $47B
 ArtTile_Yadrin:			equ $47B
-ArtTile_Jaws:			equ $4CE
+ArtTile_Jaws:			equ $47B
 ArtTile_Newtron:		equ $49B
-ArtTile_Burrobot:		equ $4A6
 ArtTile_Basaran:		equ $4B8
 ArtTile_Roller:			equ $4B8
 ArtTile_Splats:			equ $4E4

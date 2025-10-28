@@ -167,16 +167,18 @@ AniArt_MZ_Saturns:
 		; Bug: This misses the last frame of animation
 		cmpi.b	#5,d0				; are we on frame 5?
 	endif
-		bne.s	AniArt_MZ_Torch			; if not, then we move onto the MZ Torch
-		moveq	#0,d0				; set back to frame 0
+		bne.s	.notframe5			; if not, then set back to frame 0
+		moveq	#0,d0
 
-AniArt_MZ_Torch:
+.notframe5:
 		move.b	d0,(v_lani2_frame).w
 		mulu.w	#$100,d0
 		adda.w	d0,a1
 		locVRAM ArtTile_MZ_Saturns*tile_size
 		move.w	#8-1,d1
 		bsr.w	LoadTiles
+		
+;AniArt_MZ_Torch:
 		lea	(Art_MzTorch).l,a1
 		moveq	#0,d0
 		move.b	(v_lani3_frame).w,d0
