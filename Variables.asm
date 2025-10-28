@@ -171,8 +171,8 @@ v_sonspeedacc:	ds.w 1
 v_sonspeeddec:	ds.w 1
 v_sonframenum:	ds.b 1		; frame to display for Sonic
 f_sonframechg:	ds.b 1
-v_angle_primary:	ds.w 1		; primary angle buffer (2 bytes)
-v_angle_secondary:	ds.w 1		; secondary angle buffer (2 bytes)
+v_anglebuffer:	ds.w 1		; primary angle buffer (2 bytes)
+v_anglebuffer2:	ds.w 1		; secondary angle buffer (2 bytes)
 v_opl_routine:	ds.w 1		; ObjPosLoad - routine counter (2 bytes)
 v_opl_screen:	ds.w 1		; ObjPosLoad - screen variable (2 bytes)
 v_opl_data:		ds.b $10	; ObjPosLoad - data buffer ($10 bytes)
@@ -185,8 +185,8 @@ v_palchgspeed:	ds.w 1
 v_collindex:	ds.l 1
 v_palss_num:	ds.w 1
 v_palss_time:	ds.w 1
-unk_FFF79E:		ds.w 1
-unk_FFF7A0:		ds.w 1
+v_palss_index:	ds.w 1
+v_ssbganim:		ds.w 1
 			ds.w 1		; unused
 v_obj31ypos:	ds.w 1		; y-position of object 31 (MZ stomper) (2 bytes)
 			ds.b 1		; unused

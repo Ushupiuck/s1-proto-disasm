@@ -102,7 +102,7 @@ PLC_LZ:		dc.w ((PLC_LZ2-PLC_LZ-2)/6)-1
 		plcm    Nem_LZ, ArtTile_Level
 
 PLC_LZ2:	dc.w ((PLC_LZ2end-PLC_LZ2-2)/6)-1
-		plcm    Nem_Jaws, ArtTile_Jaws
+		plcm    Nem_Jaws, $4CE
 PLC_LZ2end:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Marble
@@ -159,9 +159,9 @@ PLC_SZ:		dc.w ((PLC_SZ2-PLC_SZ-2)/6)-1
 		plcm    Nem_Roller, ArtTile_Roller
 
 PLC_SZ2:	dc.w ((PLC_SZ2end-PLC_SZ2-2)/6)-1
-		plcm    Nem_Bumper, ArtTile_SYZ_Bumper
-		plcm    Nem_SyzSpike1, ArtTile_SYZ_Big_Spikeball
-		plcm    Nem_SyzSpike2, ArtTile_SYZ_Spikeball_Chain
+		plcm    Nem_Bumper, ArtTile_SZ_Bumper
+		plcm    Nem_SyzSpike1, ArtTile_SZ_Big_Spikeball
+		plcm    Nem_SyzSpike2, ArtTile_SZ_Spikeball_Chain
 		plcm    Nem_Switch, ArtTile_Button
 		plcm    Nem_Spikes, ArtTile_Spikes
 		plcm    Nem_HSpring, ArtTile_Spring_Horizontal
@@ -174,7 +174,7 @@ PLC_CWZ:	dc.w ((PLC_CWZ2-PLC_CWZ-2)/6)-1
 		plcm    Nem_CWZ, ArtTile_Level
 
 PLC_CWZ2:	dc.w ((PLC_CWZ2end-PLC_CWZ2-2)/6)-1
-		plcm    Nem_Jaws, ArtTile_Jaws
+		plcm    Nem_Jaws, $4CE
 PLC_CWZ2end:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - title card
@@ -219,6 +219,7 @@ PLC_SpecialStage:	dc.w ((PLC_SpeStageend-PLC_SpecialStage-2)/6)-1
 		plcm    Nem_SSSkull, ArtTile_SS_Skull_Block
 		plcm    Nem_SSUBlock, ArtTile_SS_U_Block
 PLC_SpeStageend:
+		; unused
 		plcm    Nem_SSEmerald, 0
 		plcm    Nem_SSZone1, 0
 		plcm    Nem_SSZone2, 0
