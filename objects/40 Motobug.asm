@@ -21,8 +21,8 @@ loc_B898:
 		move.b	#$E,obHeight(a0)
 		move.b	#8,obWidth(a0)
 		move.b	#$C,obColType(a0)
-		bsr.w	ObjectFall
-		bsr.w	ObjFloorDist
+		bsr.w	ObjectMoveAndFall
+		bsr.w	ObjHitFloor
 		tst.w	d1
 		bpl.s	locret_B8F0
 		add.w	d1,obY(a0)

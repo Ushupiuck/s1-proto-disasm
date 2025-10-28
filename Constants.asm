@@ -436,7 +436,7 @@ ArtTile_SBZ_Spinning_Platform:	equ $4DF
 
 ; General Level Art
 ArtTile_Level:			equ $000
-ArtTile_Ball_Hog:		equ $400
+ArtTile_Ball_Hog:		equ $3E8
 ArtTile_Bomb:			equ $400
 ArtTile_Crabmeat:		equ $400
 ArtTile_Missile_Disolve:	equ $41C ; Unused

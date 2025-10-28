@@ -7,7 +7,8 @@ ObjCannonball:
 		jmp	off_7070(pc,d1.w)
 ; ---------------------------------------------------------------------------
 
-off_7070:	dc.w ObjCannonball_Init-off_7070, ObjCannonball_Act-off_7070, ObjCannonball_Delete-off_7070
+off_7070:	dc.w ObjCannonball_Init-off_7070
+		dc.w ObjCannonball_Act-off_7070
 ; ---------------------------------------------------------------------------
 
 ObjCannonball_Init:
@@ -19,6 +20,7 @@ ObjCannonball_Init:
 		move.b	#$87,obColType(a0)
 		move.b	#8,obActWid(a0)
 		move.w	#$18,objoff_30(a0)
+		rts
 
 ObjCannonball_Act:
 		btst	#7,obStatus(a0)
@@ -41,14 +43,8 @@ loc_70D2:
 
 loc_70D6:
 		bsr.w	ObjectFall
-		bsr.w	DisplaySprite
 		move.w	(v_limitbtm2).w,d0
 		addi.w	#224,d0
 		cmp.w	obY(a0),d0
-		bcs.s	ObjCannonball_Delete
-		rts
-; ---------------------------------------------------------------------------
-
-ObjCannonball_Delete:
-		bsr.w	DeleteObject
-		rts
+		bcs.w	DeleteObject
+		bra.w	DisplaySprite

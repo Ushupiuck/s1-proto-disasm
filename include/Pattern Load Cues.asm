@@ -93,6 +93,7 @@ PLC_GHZ2:	dc.w ((PLC_GHZ2end-PLC_GHZ2-2)/6)-1
 		plcm    Nem_Ball, ArtTile_GHZ_Giant_Ball
 		plcm    Nem_GhzWall1, ArtTile_GHZ_SLZ_Smashable_Wall
 		plcm    Nem_GhzWall2, ArtTile_GHZ_Edge_Wall
+		plcm    Nem_BallHog, ArtTile_Ball_Hog
 PLC_GHZ2end:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Labyrinth

@@ -1,5 +1,5 @@
 ; ---------------------------------------------------------------------------
-
+ObjectMoveAndFall:
 ObjectFall:
 		move.l	obX(a0),d2
 		move.l	obY(a0),d3

@@ -1,3 +1,4 @@
+MarkObjGone:
 RememberState:
 		out_of_range_rememberstate.w	loc_B938
 		bra.w	DisplaySprite

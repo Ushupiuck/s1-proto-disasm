@@ -3490,7 +3490,7 @@ Map_TitleSonic:	include "_maps/Title Screen Sonic.asm"
 		include "objects/20 Ballhog's Bomb.asm"
 		include "objects/24, 27 & 3F Explosions.asm"
 		include "_anim/Ball Hog.asm"
-Map_Hog:	include "_maps/Ball Hog.asm"
+Map_BallHog:	include "_maps/Ball Hog.asm"
 		include "_maps/Ball Hog's Bomb.asm"
 		include "_maps/Ball Hog's Bomb Explosion.asm"
 		include "_maps/Explosions.asm"
@@ -4716,6 +4716,7 @@ locret_105EE:
 		rts
 ; ---------------------------------------------------------------------------
 
+ObjHitFloor:
 ObjFloorDist:
 		move.w	obX(a0),d3
 
@@ -5459,14 +5460,14 @@ Nem_SyzSpike1:	binclude "artnem/SZ Large Spikeball.nem"
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - enemies
 ; ---------------------------------------------------------------------------
-;Nem_BallHog:
+Nem_BallHog:
 		binclude "artnem/Unused - Enemy Ball Hog.nem"
 		even
 Nem_Crabmeat:	binclude "artnem/Enemy Crabmeat.nem"
 		even
 Nem_Buzz:	binclude "artnem/Enemy Buzz Bomber.nem"
 		even
-;Nem_Ball_Explosion:
+Nem_Ball_Explosion:
 		binclude "artnem/Unused - Ball Hog's Bomb Explosion.nem"
 		even
 Nem_Burrobot:	binclude "artnem/Enemy Burrobot.nem"
