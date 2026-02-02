@@ -525,7 +525,7 @@ ErrorWaitForC:
 ; ---------------------------------------------------------------------------
 
 Art_Text:	binclude "artunc/menutext.bin"
-Art_Text_End
+Art_Text_End:
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -1444,17 +1444,17 @@ PalLoad2:
 
 		include "_include/Palette Index.asm"
 
-Pal_SegaBG:	binclude "palette/Sega Screen.bin"
-Pal_Title:	binclude "palette/Title Screen.bin"
+Pal_SegaBG:		binclude "palette/Sega Screen.bin"
+Pal_Title:		binclude "palette/Title Screen.bin"
 Pal_LevelSel:	binclude "palette/Level Select.bin"
-Pal_Sonic:	binclude "palette/Sonic.bin"
-Pal_GHZ:	binclude "palette/Green Hill Zone.bin"
-Pal_LZ:	binclude "palette/Labyrinth Zone.bin"
-Pal_Ending:	binclude "palette/Ending.bin"
-Pal_MZ:	binclude "palette/Marble Zone.bin"
-Pal_SLZ:	binclude "palette/Star Light Zone.bin"
-Pal_SZ:	binclude "palette/Sparkling Zone.bin"
-Pal_CWZ:	binclude "palette/Clock Work Zone.bin"
+Pal_Sonic:		binclude "palette/Sonic.bin"
+Pal_GHZ:		binclude "palette/Green Hill Zone.bin"
+Pal_LZ:			binclude "palette/Labyrinth Zone.bin"
+Pal_Ending:		binclude "palette/Ending.bin"
+Pal_MZ:			binclude "palette/Marble Zone.bin"
+Pal_SLZ:		binclude "palette/Star Light Zone.bin"
+Pal_SZ:			binclude "palette/Sparkling Zone.bin"
+Pal_CWZ:		binclude "palette/Clock Work Zone.bin"
 Pal_Special:	binclude "palette/Special Stage.bin"
 ; ---------------------------------------------------------------------------
 
@@ -2205,8 +2205,8 @@ Level_TtlCardLoop:
 .notCWZ:
 		move.b	#id_SonicPlayer,(v_player).w
 		move.b	#id_HUD,(v_hud).w
-		btst	#bitA,(v_jpadhold1).w
-		beq.s	loc_2D54
+		btst	#bitA,(v_jpadhold1).w	; is button A held?
+		beq.s	loc_2D54	; if not, branch
 		move.b	#1,(f_debugmode).w
 
 loc_2D54:
@@ -2428,9 +2428,9 @@ sub_3178:
 		rts
 ; ---------------------------------------------------------------------------
 Anim256Unk1:	binclude "level/map256/Anim Unknown 1.bin"
-Anim256Unk1_End
+Anim256Unk1_End:
 Anim256Unk2:	binclude "level/map256/Anim Unknown 2.bin"
-Anim256Unk2_End
+Anim256Unk2_End:
 ; ---------------------------------------------------------------------------
 
 LoadAnimatedBlocks:
@@ -2465,9 +2465,9 @@ LoadAnimatedBlocks:
 		rts
 ; ---------------------------------------------------------------------------
 Anim16GHZ:	binclude "level/map16/Anim GHZ.bin"
-Anim16GHZ_End
+Anim16GHZ_End:
 Anim16MZ:	binclude "level/map16/Anim MZ.bin"
-Anim16MZ_End
+Anim16MZ_End:
 ; ---------------------------------------------------------------------------
 
 DebugPosLoadArt:
@@ -4138,6 +4138,8 @@ loc_8AFA:
 		move.l	a0,(v_opl_data+4).w
 		rts
 ; ---------------------------------------------------------------------------
+; Unused routine to load secondary index of object layout
+; ---------------------------------------------------------------------------
 
 loc_8B00:
 		movea.l	(v_opl_data+8).w,a0
@@ -4149,7 +4151,6 @@ loc_8B00:
 		bsr.w	sub_8B22
 		move.l	a0,(v_opl_data+8).w
 		bra.w	loc_8B00
-; ---------------------------------------------------------------------------
 
 locret_8B20:
 		rts

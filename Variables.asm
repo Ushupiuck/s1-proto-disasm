@@ -10,34 +10,34 @@ ramaddr function x,(-(x&$80000000)<<1)|x
 v_ram_start:
 
 v_256x256:		ds.b	$52*$200	; 256x256 tile mappings ($A400 bytes)
-v_256x256_end
+v_256x256_end:
 
 layout_size:	= $40
 
 v_lvllayout:	ds.b	layout_size*$10	; level layout buffer ($400 bytes)
 v_lvllayoutbg:	= v_lvllayout+layout_size
-v_lvllayout_end
+v_lvllayout_end:
 
 v_bgscroll_buffer:	ds.b	$200
 
 v_ngfx_buffer:	ds.b	$200
-v_ngfx_buffer_end
+v_ngfx_buffer_end:
 
 v_spritequeue:	ds.b	$400
 
 v_16x16:		ds.w	4*$300	; 16x16 tile mappings ($1800 bytes)
-v_16x16_end
+v_16x16_end:
 
 v_sgfx_buffer:	ds.b	23*tile_size	; sonic graphics ram buffer ($2E0 bytes)
-v_sgfx_buffer_end
+v_sgfx_buffer_end:
 
 			ds.b	$20	; unused
 v_tracksonic:	ds.b	$100	; sonic position table ($100 bytes)
 
 v_hscrolltablebuffer:	ds.b	$380
-v_hscrolltablebuffer_end
+v_hscrolltablebuffer_end:
 			ds.b	$80
-v_hscrolltablebuffer_end_padded
+v_hscrolltablebuffer_end_padded:
 
 v_objspace:		ds.b	object_size*32	; RAM for object space ($600 bytes)
 
@@ -85,12 +85,12 @@ v_debugnumbers2	=	v_objspace+object_size*10	; object variable space for the unus
 v_vanishsonic	=	v_objspace+object_size*7	; object variable space for when sonic is vanishing after interacting with a giant ring ($40 bytes)
 
 v_lvlobjspace:	ds.b	object_size*96
-v_lvlobjend
-v_objspace_end
+v_lvlobjend:
+v_objspace_end:
 
 ; $FFFFF000
 v_snddriver_ram:	SMPS_RAM	; start of RAM for the sound driver data ($5C0 bytes)
-v_snddriver_ram_end
+v_snddriver_ram_end:
 
 			ds.b	$40	; unused
 v_gamemode:		ds.b	1
@@ -152,7 +152,7 @@ v_plc_shiftvalue:	ds.l	1		; pattern load cues buffer (4 bytes)
 v_plc_patternsleft:	ds.w	1		; flag set for pattern load cue execution (2 bytes)
 v_plc_framepatternsleft:	ds.w	1
 			ds.b	4		; unused
-v_plc_buffer_end
+v_plc_buffer_end:
 
 v_misc_variables:
 v_scrposx:		ds.l	1
@@ -258,10 +258,10 @@ f_switch:		ds.w	1
 			ds.b	$E		; unused
 v_scroll_block_size:	ds.w	1
 			ds.b	$E		; unused
-v_misc_variables_end
+v_misc_variables_end:
 
 v_spritetablebuffer:	ds.b	$280
-v_spritetablebuffer_end
+v_spritetablebuffer_end:
 			ds.b	$80	; unused
 
 v_palette:	; main palette
@@ -269,17 +269,17 @@ v_palette_line_1:		ds.b $20
 v_palette_line_2:		ds.b $20
 v_palette_line_3:		ds.b $20
 v_palette_line_4:		ds.b $20
-v_palette_end
+v_palette_end:
 
 v_palette_fading:	; duplicate palette, used for transitions
 v_palette_fading_line_1:		ds.b $20
 v_palette_fading_line_2:		ds.b $20
 v_palette_fading_line_3:		ds.b $20
 v_palette_fading_line_4:		ds.b $20
-v_palette_fading_end
+v_palette_fading_end:
 
 v_objstate:		ds.b	$C0	; object state list
-v_objstate_end
+v_objstate_end:
 			ds.b	$140	; stack
 v_systemstack:
 v_crossresetram:
@@ -336,7 +336,7 @@ v_ani3_time:	ds.b	1		; synchronised sprite animation 3 - time until next frame
 v_ani3_frame:	ds.b	1		; synchronised sprite animation 3 - current frame
 v_ani3_buf:		ds.w	1		; synchronised sprite animation 3 - info buffer (2 bytes)
 			ds.b	$36	; unused
-v_timingandscreenvariables_end
+v_timingandscreenvariables_end:
 
 			ds.b	$E0	; unused
 v_unused12:	ds.w	1		; value that's set to 1 during initation, unused otherwise (2 bytes)
@@ -351,7 +351,7 @@ v_megadrive:	ds.b	1
 f_debugmode:	ds.b	1
 			ds.b	1		; unused
 v_init:			ds.l	1		; 'init' text string (4 bytes)
-v_ram_end
+v_ram_end:
 	dephase
 
 ; Special Stage Variables
@@ -367,7 +367,7 @@ v_ssbuffer3		= v_ram_start+$8000
 v_ssscroll_buffer	= v_ngfx_buffer+$100
 
 	phase v_objstate
-v_regbuffer:	ds.b	obj.size	; stores registers d0-a7 during an error event
+v_regbuffer:	ds.b	object_size	; stores registers d0-a7 during an error event
 v_spbuffer:		ds.l	1		; stores most recent sp address
 v_errortype:	ds.b	1		; error type
 	dephase
