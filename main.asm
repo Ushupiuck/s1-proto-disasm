@@ -120,71 +120,78 @@ ErrorTrap:
 EntryPoint:
 		tst.l	(ctrl_port_1_ctrl).l
 loc_20C:
-		bne.w	SkipSetup
+		bne.w	GameProgram
 		tst.w	(ctrl_expansion_ctrl).l
 		bne.s	loc_20C
 		lea	SetupValues(pc),a5
 		movem.l	(a5)+,d5-a4
-		move.w	region_ver-1-z80_bus_request(a1),d0
+		move.w	region_ver-1-z80_bus_request(a1),d0	; get hardware version (from $A10001)
 		andi.w	#$F00,d0
-		beq.s	loc_232
+		beq.s	SkipSecurity
 		move.l	#"SEGA",security_addr-z80_bus_request(a1)
 
-loc_232:
+SkipSecurity:
 		move.w	(a4),d0
 		moveq	#0,d0
 		movea.l	d0,a6
 		move.l	a6,usp
 		moveq	#VDPInitValues_End-VDPInitValues-1,d1
 
-loc_23C:
+VDPInitLoop:
 		move.b	(a5)+,d5
 		move.w	d5,(a4)
 		add.w	d7,d5
-		dbf	d1,loc_23C
+		dbf	d1,VDPInitLoop
+
 		move.l	#$40000080,(a4)
 		move.w	d0,(a3)
 		move.w	d7,(a1)
 		move.w	d7,(a2)
 
-loc_252:
+WaitForZ80:
 		btst	d0,(a1)
-		bne.s	loc_252
+		bne.s	WaitForZ80
+
 		moveq	#Z80StartupCodeEnd-Z80StartupCodeBegin-1,d2
 
-loc_258:
+Z80InitLoop:
 		move.b	(a5)+,(a0)+
-		dbf	d2,loc_258
+		dbf	d2,Z80InitLoop
+
 		move.w	d0,(a2)
 		move.w	d0,(a1)
 		move.w	d7,(a2)
 
-loc_264:
+ClrRAMLoop:
 		move.l	d0,-(a6)
-		dbf	d6,loc_264
+		dbf	d6,ClrRAMLoop
+
 		move.l	#($8100+%0100)<<16|$8F00+%0010,(a4)
 		move.l	#$C0000000,(a4)
 		moveq	#bytesToLcnt(palette_size),d3
 
-loc_278:
+ClrCRAMLoop:
 		move.l	d0,(a3)
-		dbf	d3,loc_278
+		dbf	d3,ClrCRAMLoop
+
 		move.l	#$40000010,(a4)
 		moveq	#bytesToLcnt($50),d4
 
-loc_286:
+ClrVSRAMLoop:
 		move.l	d0,(a3)
-		dbf	d4,loc_286
+		dbf	d4,ClrVSRAMLoop
+
 		moveq	#PSGInitValues_End-PSGInitValues-1,d5
 
-loc_28E:
+PSGInitLoop:
 		move.b	(a5)+,psg_input-vdp_data_port-1(a3)
-		dbf	d5,loc_28E
+		dbf	d5,PSGInitLoop
+
 		move.w	d0,(a2)
 		movem.l	(a6),d0-a6
 		disable_ints
-		bra.s	SkipSetup
-; ---------------------------------------------------------------------------
+		bra.s	GameProgram
+; ===========================================================================
 SetupValues:	dc.l $8000			; VDP register start number
 		dc.l bytesToLcnt(v_ram_end-v_ram_start)		; size of RAM divided by 4
 		dc.l $100					; VDP register diff
@@ -263,8 +270,9 @@ Z80StartupCodeEnd:
 PSGInitValues:
 		dc.b $9F,$BF,$DF,$FF		; values for PSG channel volumes
 PSGInitValues_End:
-; ---------------------------------------------------------------------------
-SkipSetup:
+; ===========================================================================
+
+GameProgram:
 		btst	#6,(ctrl_expansion_ctrl_b).l
 		beq.s	CheckSumCheck
 		cmpi.l	#"init",(v_init).w ; has checksum routine already run?
@@ -294,9 +302,9 @@ CheckSumCheck:
 
 .clrRAM:
 		move.l	d7,(a6)+
-		dbf	d6,.clrRAM
+		dbf	d6,.clrRAM	; clear RAM ($FE00-$FFFF)
 
-		move.b	(region_ver).l,d0
+		move.b	(region_ver).l,d0	; get region version
 		andi.b	#%11000000,d0		; AND the value so it only gets the japanese bit and clock speed bit
 		move.b	d0,(v_megadrive).w	; move the region values into 68K memory for later use
 		move.w	#1,(v_unused12).w	; set an unused flag to 1
@@ -309,18 +317,18 @@ GameInit:
 
 .clrRAM:
 		move.l	d7,(a6)+
-		dbf	d6,.clrRAM
+		dbf	d6,.clrRAM	; clear RAM ($0000-$FDFF)
 
 		bsr.w	VDPSetupGame
 		bsr.w	DACDriverLoad
-		bsr.w	InitJoypads
-		move.b	#id_Sega,(v_gamemode).w
+		bsr.w	JoypadInit
+		move.b	#id_Sega,(v_gamemode).w ; set Game Mode to Sega Screen
 
-GameModeLoop:
+MainGameLoop:
 		move.b	(v_gamemode).w,d0 ; load Game Mode
 		andi.w	#$1C,d0	; limit Game Mode value to $1C max (change to a maximum of 7C to add more game modes)
 		jsr	GameModeArray(pc,d0.w) ; jump to apt location in ROM
-		bra.s	GameModeLoop	; loop indefinitely
+		bra.s	MainGameLoop	; loop indefinitely
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Main game mode array
@@ -328,18 +336,18 @@ GameModeLoop:
 
 GameModeArray:
 
-ptr_GM_Sega:	bra.w	GM_Sega
+ptr_GM_Sega:	bra.w	GM_Sega		; Sega Screen ($00)
 
-ptr_GM_Title:	bra.w	GM_Title
+ptr_GM_Title:	bra.w	GM_Title	; Title Screen ($04)
 
-ptr_GM_Demo:	bra.w	GM_Level
+ptr_GM_Demo:	bra.w	GM_Level	; Demo Mode ($08)
 
-ptr_GM_Level:	bra.w	GM_Level
+ptr_GM_Level:	bra.w	GM_Level	; Normal Level ($0C)
 
-ptr_GM_Special:	bra.w	GM_Special
+ptr_GM_Special:	bra.w	GM_Special	; Special Stage ($10)
 
 		rts
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 ; Unused, as the checksum check doesn't care if the checksum is wrong.
 ChecksumError:
@@ -347,71 +355,61 @@ ChecksumError:
 		move.l	#$C0000000,(vdp_control_port).l	; Set VDP to CRAM write
 		moveq	#bytesToWcnt(palette_size),d7
 
-.palwrite:
-		move.w	#cRed,(vdp_data_port).l		; Write red to data
-		dbf	d7,.palwrite
+.fillred:
+		move.w	#cRed,(vdp_data_port).l ; fill palette with red
+		dbf	d7,.fillred	; repeat until CRAM is filled
 
 .endlessloop:
 		bra.s	.endlessloop
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 BusError:
 		move.b	#2,(v_errortype).w
 		bra.s	ErrorAddress
-; ---------------------------------------------------------------------------
 
 AddressError:
 		move.b	#4,(v_errortype).w
 		bra.s	ErrorAddress
-; ---------------------------------------------------------------------------
 
 IllegalInstr:
 		move.b	#6,(v_errortype).w
 		addq.l	#2,2(sp)
 		bra.s	ErrorNormal
-; ---------------------------------------------------------------------------
 
 ZeroDivide:
 		move.b	#8,(v_errortype).w
 		bra.s	ErrorNormal
-; ---------------------------------------------------------------------------
 
 ChkInstr:
-		move.b	#$A,(v_errortype).w
+		move.b	#10,(v_errortype).w
 		bra.s	ErrorNormal
-; ---------------------------------------------------------------------------
 
 TrapvInstr:
-		move.b	#$C,(v_errortype).w
+		move.b	#12,(v_errortype).w
 		bra.s	ErrorNormal
-; ---------------------------------------------------------------------------
 
 PrivilegeViol:
-		move.b	#$E,(v_errortype).w
+		move.b	#14,(v_errortype).w
 		bra.s	ErrorNormal
-; ---------------------------------------------------------------------------
 
 Trace:
-		move.b	#$10,(v_errortype).w
+		move.b	#16,(v_errortype).w
 		bra.s	ErrorNormal
-; ---------------------------------------------------------------------------
 
 Line1010Emu:
-		move.b	#$12,(v_errortype).w
+		move.b	#18,(v_errortype).w
 		addq.l	#2,2(sp)
 		bra.s	ErrorNormal
-; ---------------------------------------------------------------------------
 
 Line1111Emu:
-		move.b	#$14,(v_errortype).w
+		move.b	#20,(v_errortype).w
 		addq.l	#2,2(sp)
 		bra.s	ErrorNormal
-; ---------------------------------------------------------------------------
 
 ErrorExcept:
 		move.b	#0,(v_errortype).w
 		bra.s	ErrorNormal
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 ErrorAddress:
 		disable_ints
@@ -419,53 +417,56 @@ ErrorAddress:
 		move.l	(sp)+,(v_spbuffer).w
 		addq.w	#2,sp
 		movem.l	d0-sp,(v_regbuffer).w
-		bsr.w	ErrorPrint
+		bsr.w	ShowErrorMessage
 		move.l	2(sp),d0
-		bsr.w	ErrorPrintAddr
+		bsr.w	ShowErrorValue
 		move.l	(v_spbuffer).w,d0
-		bsr.w	ErrorPrintAddr
+		bsr.w	ShowErrorValue
 		bra.s	loc_472
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 ErrorNormal:
 		disable_ints
 		movem.l	d0-sp,(v_regbuffer).w
-		bsr.w	ErrorPrint
+		bsr.w	ShowErrorMessage
 		move.l	2(sp),d0
-		bsr.w	ErrorPrintAddr
+		bsr.w	ShowErrorValue
 
 loc_472:
 		bsr.w	ErrorWaitForC
 		movem.l	(v_regbuffer).w,d0-sp
 		enable_ints
 		rte
-; ---------------------------------------------------------------------------
 
-ErrorPrint:
+; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
+
+ShowErrorMessage:
 		lea	(vdp_data_port).l,a6
 		locVRAM	ArtTile_Error_Handler_Font*tile_size
 		lea	(Art_Text).l,a0
 		move.w	#bytesToWcnt(Art_Text_End-Art_Text-tile_size),d1
 
-.loadart:
+.loadgfx:
 		move.w	(a0)+,(a6)
-		dbf	d1,.loadart
-		moveq	#0,d0
-		move.b	(v_errortype).w,d0
+		dbf	d1,.loadgfx
+
+		moveq	#0,d0		; clear d0
+		move.b	(v_errortype).w,d0 ; load error code
 		move.w	ErrorText(pc,d0.w),d0
 		lea	ErrorText(pc,d0.w),a0
 		locVRAM vram_fg+$604
-		moveq	#19-1,d1
+		moveq	#19-1,d1		; number of characters (minus 1)
 
-.loadtext:
+.showchars:
 		moveq	#0,d0
 		move.b	(a0)+,d0
-		addi.w	#-'0'+ArtTile_Error_Handler_Font,d0
+		addi.w	#-'0'+ArtTile_Error_Handler_Font,d0 ; rebase from ASCII to a VRAM index
 		move.w	d0,(a6)
-		dbf	d1,.loadtext
+		dbf	d1,.showchars	; repeat for number of characters
 		rts
-; ---------------------------------------------------------------------------
+; End of function ShowErrorMessage
 
+; ===========================================================================
 ErrorText:
 		dc.w .exception-ErrorText
 		dc.w .bus-ErrorText
@@ -492,7 +493,7 @@ ErrorText:
 		even
 ; ---------------------------------------------------------------------------
 
-ErrorPrintAddr:
+ShowErrorValue:
 		move.w	#ArtTile_Error_Handler_Font+10,(a6)	; display "$" symbol
 		moveq	#8-1,d2
 
@@ -556,55 +557,73 @@ VInt_Exit:
 		jsr	(UpdateMusic).l
 		movem.l	(sp)+,d0-a6
 		rte
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; VInt 00 - Return to caller
 ; ---------------------------------------------------------------------------
 
 VInt_00:
 		rts
-; ---------------------------------------------------------------------------
-
+; ===========================================================================
 VInt_Index:
-ptr_VInt_00:	dc.w VInt_00-VInt_Index
-ptr_VInt_02:	dc.w VInt_02-VInt_Index
-ptr_VInt_04:	dc.w VInt_04-VInt_Index
-ptr_VInt_06:	dc.w VInt_06-VInt_Index
-ptr_VInt_08:	dc.w VInt_08-VInt_Index
-ptr_VInt_0A:	dc.w VInt_0A-VInt_Index
-ptr_VInt_0C:	dc.w VInt_0C-VInt_Index
-ptr_VInt_0E:	dc.w VInt_0E-VInt_Index
-ptr_VInt_10:	dc.w VInt_10-VInt_Index
-ptr_VInt_12:	dc.w VInt_12-VInt_Index
+ptr_VInt_00:	dc.w VInt_00-VInt_Index	; return to caller
+ptr_VInt_02:	dc.w VInt_02-VInt_Index	; Sega Screen
+ptr_VInt_04:	dc.w VInt_04-VInt_Index	; Title Screen
+ptr_VInt_06:	dc.w VInt_06-VInt_Index	; (unused)
+ptr_VInt_08:	dc.w VInt_08-VInt_Index	; Levels
+ptr_VInt_0A:	dc.w VInt_0A-VInt_Index	; Special Stage
+ptr_VInt_0C:	dc.w VInt_0C-VInt_Index ; Title Cards
+ptr_VInt_0E:	dc.w VInt_0E-VInt_Index ; (unused)
+ptr_VInt_10:	dc.w VInt_10-VInt_Index ; Paused
+ptr_VInt_12:	dc.w VInt_12-VInt_Index ; Palette Fade
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; VInt 02 - Sega Screen
 ; ---------------------------------------------------------------------------
 
 VInt_02:
-		bsr.w	VInt_Generic
+		bsr.w	VInt_StandardTransfers
 		tst.w	(v_generictimer).w
 		beq.w	.end
 		subq.w	#1,(v_generictimer).w
 
 .end:
 		rts
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; VInt 04 - Title Screen, Level Select
 ; ---------------------------------------------------------------------------
 
 VInt_04:
-		bsr.w	VInt_Generic
+		bsr.w	VInt_StandardTransfers
 		bsr.w	LoadTilesAsYouMove_BGOnly
-		bsr.w	ProcessDPLC
+		bsr.w	ProcessDPLC_9Tiles
 		tst.w	(v_generictimer).w
 		beq.w	.end
 		subq.w	#1,(v_generictimer).w
 
 .end:
 		rts
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; VInt 06 - Unused
 ; ---------------------------------------------------------------------------
 
 VInt_06:
-		bsr.w	VInt_Generic
+		bsr.w	VInt_StandardTransfers
 		rts
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; VInt 10 - While game is paused
 ; ---------------------------------------------------------------------------
 
 VInt_10:
 		cmpi.b	#id_Special,(v_gamemode).w
 		beq.w	VInt_0A
+
+; ---------------------------------------------------------------------------
+; VInt 08 - Levels
+; ---------------------------------------------------------------------------
 
 VInt_08:
 		bsr.w	ReadJoypads
@@ -616,17 +635,17 @@ VInt_08:
 		move.w	(v_hint_hreg).w,(a5)
 		move.w	(v_bg3scrposy_vdp).w,(v_bg3scrposy_vdp_dup).w
 		writeVRAM	v_spritetablebuffer,vram_sprites
-		tst.b	(f_sonframechg).w
-		beq.s	.nochg
+		tst.b	(f_sonframechg).w ; has Sonic's sprite changed?
+		beq.s	.nochg		; if not, branch
 		writeVRAM	v_sgfx_buffer,vram_sonic ; load new Sonic gfx
 		move.b	#0,(f_sonframechg).w
 
 .nochg:
 		startZ80
-		bsr.w	LoadTilesAsYouMove
-		jsr	(AnimateLevelGfx).l
-		jsr	(UpdateHUD).l
-		bsr.w	ProcessDPLC2
+		bsr.w	LoadTilesAsYouMove	; update level tiles while screen is moving
+		jsr	(AnimateLevelGfx).l	; updated animated tiles
+		jsr	(UpdateHUD).l		; update HUD data
+		bsr.w	ProcessDPLC_3Tiles
 		moveq	#0,d0
 		move.b	(v_lvlcount).w,d0
 		move.b	(v_lvlcount2).w,d1
@@ -642,6 +661,9 @@ VInt_08:
 
 .end:
 		rts
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; VInt 0A - Special Stages
 ; ---------------------------------------------------------------------------
 
 VInt_0A:
@@ -665,6 +687,9 @@ VInt_0A:
 
 .end:
 		rts
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; VInt 0C - While title cards are displayed (Levels)
 ; ---------------------------------------------------------------------------
 
 VInt_0C:
@@ -684,25 +709,36 @@ VInt_0C:
 		bsr.w	LoadTilesAsYouMove
 		jsr	(AnimateLevelGfx).l
 		jsr	(UpdateHUD).l
-		bsr.w	ProcessDPLC
+		bsr.w	ProcessDPLC_9Tiles
 		rts
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; VInt 0E - Unused
 ; ---------------------------------------------------------------------------
 
 VInt_0E:
-		bsr.w	VInt_Generic
+		bsr.w	VInt_StandardTransfers
 		bsr.w	ExecuteObjects
 		bsr.w	BuildSprites
 		addq.b	#1,(v_lvlcount).w
 		move.b	#id_VInt_0E,(v_vint_routine).w
 		rts
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; VInt 12 - During palette fades
 ; ---------------------------------------------------------------------------
 
 VInt_12:
-		bsr.w	VInt_Generic
-		bra.w	ProcessDPLC
+		bsr.w	VInt_StandardTransfers
+		bra.w	ProcessDPLC_9Tiles
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to perform standard VRAM transfers (palette, sprites, H-scroll)
 ; ---------------------------------------------------------------------------
 
-VInt_Generic:
+; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
+
+VInt_StandardTransfers:
 		bsr.w	ReadJoypads
 		stopZ80
 		waitZ80
@@ -711,7 +747,14 @@ VInt_Generic:
 		writeVRAM	v_hscrolltablebuffer,vram_hscroll
 		startZ80
 		rts
+; End of function VBla_StandardTransfers
+
+; ===========================================================================
 ; ---------------------------------------------------------------------------
+; Horizontal interrupt (unused)
+; ---------------------------------------------------------------------------
+
+; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 HInt:
 		tst.w	(f_hint).w
@@ -744,26 +787,37 @@ HInt2:
 
 .return:
 		rte
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to initialise joypads
 ; ---------------------------------------------------------------------------
 
-InitJoypads:
+; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
+
+JoypadInit:
 		stopZ80
 		waitZ80
 		moveq	#$40,d0
-		move.b	d0,(ctrl_port_1_ctrl_b).l
-		move.b	d0,(ctrl_port_2_ctrl_b).l
-		move.b	d0,(ctrl_expansion_ctrl_b).l
+		move.b	d0,(ctrl_port_1_ctrl_b).l	; init port 1 (joypad 1)
+		move.b	d0,(ctrl_port_2_ctrl_b).l	; init port 2 (joypad 2)
+		move.b	d0,(ctrl_expansion_ctrl_b).l	; init port 3 (expansion/extra)
 		startZ80
 		rts
+; End of function JoypadInit
+
 ; ---------------------------------------------------------------------------
+; Subroutine to read joypad input, and send it to the RAM
+; ---------------------------------------------------------------------------
+
+; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ReadJoypads:
 		stopZ80
 		waitZ80
-		lea	(v_jpadhold1).w,a0
-		lea	(ctrl_port_1_data_b).l,a1
-		bsr.s	.read
-		addq.w	#2,a1
+		lea	(v_jpadhold1).w,a0 ; address where joypad states are written
+		lea	(ctrl_port_1_data_b).l,a1	; first joypad port
+		bsr.s	.read		; do the first joypad
+		addq.w	#2,a1		; do the second joypad
 		bsr.s	.read
 		startZ80
 		rts
@@ -1079,27 +1133,32 @@ loc_1404:
 
 Rplc_Exit:
 		rts
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to decompress and dump a specified number of Nemesis-compressed
+; PLC tiles from the PLC process list to VRAM. These are called from VBlank,
+; probably done to smooth out level loading because of how slow Nemesis is.
 ; ---------------------------------------------------------------------------
 
-ProcessDPLC:
+ProcessDPLC_9Tiles:
 		tst.w	(v_plc_patternsleft).w
 		beq.w	locret_14D0
-		move.w	#9,(v_plc_framepatternsleft).w
+		move.w	#9,(v_plc_framepatternsleft).w	; process 9 Nemesis-compressed tiles
 		moveq	#0,d0
 		move.w	(v_plc_buffer+4).w,d0
 		addi.w	#$120,(v_plc_buffer+4).w
-		bra.s	loc_146C
-; ---------------------------------------------------------------------------
+		bra.s	ProcessDPLC
+; ===========================================================================
 
-ProcessDPLC2:
+ProcessDPLC_3Tiles:
 		tst.w	(v_plc_patternsleft).w
 		beq.s	locret_14D0
-		move.w	#3,(v_plc_framepatternsleft).w
+		move.w	#3,(v_plc_framepatternsleft).w	; process 3 Nemesis-compressed tiles
 		moveq	#0,d0
 		move.w	(v_plc_buffer+4).w,d0
 		addi.w	#$60,(v_plc_buffer+4).w
 
-loc_146C:
+ProcessDPLC:
 		lea	(vdp_control_port).l,a4
 		lsl.l	#2,d0
 		lsr.w	#2,d0
