@@ -520,7 +520,7 @@ FM3SpcUpdateFreq:
 		dc.b $AC, $A8
 		dc.b $AE, $AA
 		dc.b $A6, $A2
-.fm3freqs_end
+.fm3freqs_end:
 ; ---------------------------------------------------------------------------
 
 FMPan_Set:
@@ -2133,13 +2133,13 @@ loc_752DE:
 		addq.w	#8,sp				; Tamper return value so we don't return to caller
 		rts
 ; ---------------------------------------------------------------------------
-
-dcSilence:
+; Leftover unused coord flag to set total level and release rate off.
+cfSilence:
 		jsr	FMSilenceAll_Special(pc)
 		bra.w	cfStopTrack
 ; ---------------------------------------------------------------------------
-
-dcPanAni:
+; Leftover unused coord flag to set panning values.
+cfAutoPan:
 		move.b	(a4)+,SMPS_Track.PanNumber(a5)
 		beq.s	.disable
 		move.b	(a4)+,SMPS_Track.PanTable(a5)
@@ -2148,7 +2148,6 @@ dcPanAni:
 		move.b	(a4),SMPS_Track.PanLength(a5)
 		move.b	(a4)+,SMPS_Track.PanContinue(a5)
 		rts
-; ---------------------------------------------------------------------------
 
 .disable:
 		move.b	#$B4,d0
@@ -2158,8 +2157,8 @@ dcPanAni:
 
 cfChangePFMVolume:
 		move.b	(a4)+,d0
-		tst.b	SMPS_Track.VoiceControl(a5)
-		bpl.s	cfChangeFMVolume
+		tst.b	SMPS_Track.VoiceControl(a5)	; is track FM?
+		bpl.s	cfChangeFMVolume	; if so, branch
 		add.b	d0,SMPS_Track.Volume(a5)
 		addq.w	#1,a4
 		rts
@@ -2212,12 +2211,12 @@ cfSetLFO:
 		andi.b	#$C0,d0				; lr data get
 		or.b	d0,d1				; d1 = lr,ams,pms data
 		move.b	d1,SMPS_Track.AMSFMSPan(a5)	; pan data store
-		move.b	#$B4,d0				; d0 = pan registor
+		move.b	#$B4,d0				; d0 = pan register
 		bra.w	WriteFMIorIIMain
 ; ---------------------------------------------------------------------------
 
 LFO_Reg_Table:	dc.b $60, $68, $64, $6C
-LFO_Reg_Table_End
+LFO_Reg_Table_End:
 ; ---------------------------------------------------------------------------
 
 cfSetTempo:
@@ -2311,7 +2310,7 @@ locret_75454:
 ; ---------------------------------------------------------------------------
 
 FMSlotMask:	dc.b 8,	8, 8, 8, $A, $E, $E, $F
-FMSlotMask_End
+FMSlotMask_End:
 ; ---------------------------------------------------------------------------
 
 SendVoiceTL:
@@ -2383,14 +2382,14 @@ FMInstrumentOperatorTable:
 		dc.b  $88				; Secondary amplitude/release rate operator 3
 		dc.b  $84				; Secondary amplitude/release rate operator 2
 		dc.b  $8C				; Secondary amplitude/release rate operator 4
-FMInstrumentOperatorTable_End
+FMInstrumentOperatorTable_End:
 
 FMInstrumentTLTable:
 		dc.b  $40				; Total level operator 1
 		dc.b  $48				; Total level operator 3
 		dc.b  $44				; Total level operator 2
 		dc.b  $4C				; Total level operator 4
-FMInstrumentTLTable_End
+FMInstrumentTLTable_End:
 ; ---------------------------------------------------------------------------
 
 cfModulation:
@@ -2645,10 +2644,10 @@ SSG_Reg_Table:	dc.b $90, $50
 		dc.b $98, $58
 		dc.b $94, $54
 		dc.b $9C, $5C
-SSG_Reg_Table_End
+SSG_Reg_Table_End:
 
 DACDriver:	include	"sound/z80.asm"
-DACDriver_End
+DACDriver_End:
 ; ---------------------------------------------------------------------------
 ; SMPS2ASM - A collection of macros that make SMPS's bytecode human-readable.
 ; ---------------------------------------------------------------------------

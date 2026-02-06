@@ -720,7 +720,7 @@ VInt_0E:
 		bsr.w	VInt_StandardTransfers
 		bsr.w	ExecuteObjects
 		bsr.w	BuildSprites
-		addq.b	#1,(v_lvlcount).w
+		addq.b	#1,(v_lvlcount).w	; increase level counter
 		move.b	#id_VInt_0E,(v_vint_routine).w
 		rts
 ; ===========================================================================
@@ -889,7 +889,7 @@ VDPSetupArray:
 		dc.w $9000+%0001
 		dc.w $9100
 		dc.w $9200
-VDPSetupArray_End
+VDPSetupArray_End:
 ; ---------------------------------------------------------------------------
 
 ClearScreen:
