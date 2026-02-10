@@ -24,7 +24,7 @@ zeroOffsetOptimization = 0
 ; ---------------------------------------------------------------------------
 
 StartOfROM:
-Vectors:
+;Vectors:
 		dc.l v_systemstack&$FFFFFF	; Initial stack pointer value
 		dc.l EntryPoint			; Start of program
 		dc.l BusError			; Bus error
@@ -491,7 +491,7 @@ ErrorText:
 .line1010:	dc.b "LINE 1010 EMULATOR "
 .line1111:	dc.b "LINE 1111 EMULATOR "
 		even
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 ShowErrorValue:
 		move.w	#ArtTile_Error_Handler_Font+10,(a6)	; display "$" symbol
@@ -502,7 +502,6 @@ ShowErrorValue:
 		bsr.s	.shownumber	; display 8 numbers
 		dbf	d2,.loop
 		rts
-; ---------------------------------------------------------------------------
 
 .shownumber:
 		move.w	d0,d1
@@ -515,14 +514,14 @@ ShowErrorValue:
 		addi.w	#ArtTile_Error_Handler_Font,d1
 		move.w	d1,(a6)
 		rts
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 ErrorWaitForC:
 		bsr.w	ReadJoypads
 		cmpi.b	#btnC,(v_jpadpress1).w	; is button C pressed?
 		bne.w	ErrorWaitForC	; if not, branch
 		rts
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 Art_Text:	binclude "artunc/menutext.bin"
 Art_Text_End:
@@ -541,7 +540,7 @@ VInt:
 		move.l	(v_scrposy_vdp).w,(vdp_data_port).l
 		btst	#6,(v_megadrive).w	; are we on a PAL machine?
 		beq.s	.notPAL	; if not, branch
-		move.w	#17930/10-1,d0	; intentionally lag the system to move the CRAM dots on PAL machines
+		move.w	#17930/10-1,d0	; intentionally lag the control port to move the CRAM dots on PAL machines
 		dbf	d0,*
 
 .notPAL:
@@ -631,7 +630,7 @@ VInt_08:
 		waitZ80
 		writeCRAM	v_palette,0
 		writeVRAM	v_hscrolltablebuffer,vram_hscroll
-		move.w	#$8400+vram_bg>>13,(a5)	; write vram for background plane register
+		move.w	#$8400+vram_bg>>13,(a5)	; set vram for background plane register
 		move.w	(v_hint_hreg).w,(a5)
 		move.w	(v_bg3scrposy_vdp).w,(v_bg3scrposy_vdp_dup).w
 		writeVRAM	v_spritetablebuffer,vram_sprites
@@ -766,7 +765,12 @@ HInt:
 
 .return:
 		rte
+; ===========================================================================
 ; ---------------------------------------------------------------------------
+; Secondary horizontal interrupt (unused)
+; ---------------------------------------------------------------------------
+
+; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 HInt2:
 		tst.w	(f_hint).w

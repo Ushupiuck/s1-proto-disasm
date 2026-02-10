@@ -49,8 +49,8 @@ Sonic_Control:	; Routine 2
 		jsr	Sonic_Modes(pc,d1.w)
 		bsr.s	Sonic_Display
 		bsr.w	Sonic_RecordPosition
-		move.b	(v_anglebuffer).w,objoff_36(a0)
-		move.b	(v_anglebuffer2).w,objoff_37(a0)
+		move.b	(v_anglebuffer).w,angleright(a0)
+		move.b	(v_anglebuffer2).w,angleleft(a0)
 		bsr.w	Sonic_Animate
 		bsr.w	TouchObjects
 		bsr.w	Sonic_Loops
@@ -199,7 +199,7 @@ Sonic_Move:
 		move.w	(v_sonspeedmax).w,d6
 		move.w	(v_sonspeedacc).w,d5
 		move.w	(v_sonspeeddec).w,d4
-		tst.w	ctrllock(a0)
+		tst.w	locktime(a0)
 		bne.w	Sonic_LookUp
 		btst	#bitL,(v_jpadhold2).w ; is left being pressed?
 		beq.s	.notleft	; if not, branch
@@ -246,7 +246,7 @@ Sonic_Balance:
 		jsr	(ObjFloorDist).l
 		cmpi.w	#$C,d1
 		blt.s	Sonic_LookUp
-		cmpi.b	#3,objoff_36(a0)
+		cmpi.b	#3,angleright(a0)
 		bne.s	loc_EA8A
 
 loc_EA82:
@@ -255,7 +255,7 @@ loc_EA82:
 ; ===========================================================================
 
 loc_EA8A:
-		cmpi.b	#3,objoff_37(a0)
+		cmpi.b	#3,angleleft(a0)
 		bne.s	Sonic_LookUp
 
 loc_EA92:
@@ -494,7 +494,7 @@ Sonic_RollSpeed:
 		asr.w	#1,d5
 		move.w	(v_sonspeeddec).w,d4
 		asr.w	#2,d4
-		tst.w	ctrllock(a0)
+		tst.w	locktime(a0)
 		bne.s	.notright
 		btst	#bitL,(v_jpadhold2).w ; is left being pressed?
 		beq.s	.notleft	; if not, branch
@@ -811,7 +811,7 @@ Sonic_Jump:
 		bset	#1,obStatus(a0)	; set in-air flag.
 		bclr	#5,obStatus(a0)	; clear pushing flag.
 		addq.l	#4,sp	; Run in-air subroutines when we return.
-		move.b	#1,jumpflag(a0)	; set jump flag.
+		move.b	#1,jumping(a0)	; set jump flag.
 		move.w	#sfx_Jump,d0
 		jsr	(QueueSound2).l	; play jumping sound
 		move.b	#$13,obHeight(a0)	; set Sonic's hitbox to standing size.
@@ -845,7 +845,7 @@ Sonic_Jump:
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 Sonic_JumpHeight:
-		tst.b	jumpflag(a0)	; has Sonic jumped?
+		tst.b	jumping(a0)	; has Sonic jumped?
 		beq.s	.capyvel		; if not, just cap Y speed normally.
 		cmpi.w	#-$400,obVelY(a0)	; is Sonic at maximum y speed?
 		bge.s	.return		; if not, branch
@@ -945,7 +945,7 @@ locret_EFF8:
 
 Sonic_SlopeRepel:
 		nop
-		tst.w	ctrllock(a0)
+		tst.w	locktime(a0)
 		bne.s	loc_F02C
 		move.b	obAngle(a0),d0
 		addi.b	#$20,d0
@@ -959,14 +959,14 @@ loc_F018:
 		cmpi.w	#$280,d0
 		bhs.s	locret_F02A
 		bset	#1,obStatus(a0)	; set in-air flag
-		move.w	#30,ctrllock(a0)
+		move.w	#30,locktime(a0)
 
 locret_F02A:
 		rts
 ; ===========================================================================
 
 loc_F02C:
-		subq.w	#1,ctrllock(a0)
+		subq.w	#1,locktime(a0)
 		rts
 ; End of function Sonic_SlopeRepel
 
@@ -1189,26 +1189,26 @@ locret_F216:
 
 Sonic_ResetOnFloor:
 		btst	#4,obStatus(a0)	; is Sonic roll-jumping?
-		beq.s	loc_F226	; if not, skip.
+		beq.s	.notrolljump	; if not, skip.
 		nop	; Unknown removed code.
 		nop
 		nop
 
-loc_F226:
+.notrolljump:
 		bclr	#5,obStatus(a0)	; clear push flag.
 		bclr	#1,obStatus(a0)	; clear in-air flag.
 		bclr	#4,obStatus(a0)	; clear roll-jump flag.
 		btst	#2,obStatus(a0)	; check if Sonic is in a ball state.
-		beq.s	loc_F25C	; if not, skip.
+		beq.s	.notball	; if not, skip.
 		bclr	#2,obStatus(a0)	; clear ball flag.
 		move.b	#$13,obHeight(a0)	; set Sonic's hitbox to standing.
 		move.b	#9,obWidth(a0)
 		move.b	#id_Walk,obAnim(a0) ; use running/walking animation
 		subq.w	#5,obY(a0)	; raise Sonic up 5 pixels so he's not inside the ground.
 
-loc_F25C:
-		move.w	#0,ctrllock(a0)
-		move.b	#0,jumpflag(a0)	; clear jump flag.
+.notball:
+		move.w	#0,locktime(a0)	; clear lock time.
+		move.b	#0,jumping(a0)	; clear jump flag.
 		rts
 ; End of function Sonic_ResetOnFloor
 
@@ -1291,7 +1291,7 @@ Sonic_HurtStop:
 		move.w	d0,obInertia(a0)
 		move.b	#id_Walk,obAnim(a0)
 		subq.b	#2,obRoutine(a0)
-		move.w	#120,flashtime(a0)		; set sonic to be invulnerable for 2 seconds
+		move.w	#120,flashtime(a0)		; set flash time to 2 seconds
 
 locret_F318:
 		rts
@@ -1302,7 +1302,7 @@ locret_F318:
 ; ---------------------------------------------------------------------------
 
 ; Obj01_Death:
-Sonic_Death:
+Sonic_Death:	; Routine 6
 		bsr.w	Sonic_GameOver
 		bsr.w	ObjectFall
 		bsr.w	Sonic_RecordPosition
@@ -1313,16 +1313,25 @@ Sonic_Death:
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 Sonic_GameOver:
+	if FixBugs
+		; Fix the death boundary bug
+		; https://info.sonicretro.org/SCHG_How-to:Fix_the_death_boundary_bug
+		move.w	(v_scrposy).w,d0
+		addi.w	#$100,d0
+		cmp.w	obY(a0),d0
+		bge.w	locret_F3AE
+	else
 		move.w	(v_limitbtm2).w,d0
-		addi.w	#256,d0
+		addi.w	#$100,d0
 		cmp.w	obY(a0),d0
 		bhs.w	locret_F3AE
+	endif
 		move.w	#-$38,obVelY(a0)
 		addq.b	#2,obRoutine(a0)
 		addq.b	#1,(f_lifecount).w ; update lives counter
 		subq.b	#1,(v_lives).w	; subtract 1 from number of lives
 		bne.s	loc_F380
-		move.w	#0,objoff_3A(a0)
+		move.w	#0,restartime(a0)
 		move.b	#id_GameOverCard,(v_gameovertext1).w ; load GAME object
 		move.b	#id_GameOverCard,(v_gameovertext2).w ; load OVER object
 		move.b	#1,(v_gameovertext2+obFrame).w ; set OVER object to correct frame
@@ -1333,20 +1342,20 @@ Sonic_GameOver:
 ; ===========================================================================
 
 loc_F380:
-		move.w	#60,objoff_3A(a0)	; set time delay to 1 second
+		move.w	#60,restartime(a0)	; set time delay to 1 second
 		rts
 ; ===========================================================================
 
 loc_F388:
 		move.b	(v_jpadpress2).w,d0
-		andi.b	#btnABC,d0
-		beq.s	locret_F3AE
-		andi.b	#btnA,d0
-		bne.s	loc_F3B0
-		move.b	#id_Walk,obAnim(a0)		; Respawns you after a death
-		subq.b	#4,obRoutine(a0)		; The lines above seem to make the code do nothing
-		move.w	objoff_38(a0),obY(a0)
-		move.w	#120,flashtime(a0)		; set sonic to be invulnerable for 2 seconds
+		andi.b	#btnABC,d0	; is A, B or C pressed?
+		beq.s	locret_F3AE	; if not, branch
+		andi.b	#btnA,d0	; is A pressed?
+		bne.s	loc_F3B0	; if so, branch
+		move.b	#id_Walk,obAnim(a0)	; set Sonic to use his walking animation
+		subq.b	#4,obRoutine(a0)	; return to Sonic_Control, respawning Sonic immediately after he died
+		move.w	respawny(a0),obY(a0)	; set an otherwise unused object variable for Sonic
+		move.w	#120,flashtime(a0)		; set flash time to 2 seconds
 
 locret_F3AE:
 		rts
@@ -1363,9 +1372,9 @@ loc_F3B0:
 
 ; Obj01_ResetLevel:
 Sonic_ResetLevel:; Routine 8
-		tst.w	objoff_3A(a0)
+		tst.w	restartime(a0)
 		beq.s	.return
-		subq.w	#1,objoff_3A(a0)	; subtract 1 from time delay
+		subq.w	#1,restartime(a0)	; subtract 1 from time delay
 		bne.s	.return
 		move.w	#1,(f_restart).w ; restart the level
 
