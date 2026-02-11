@@ -13,5 +13,5 @@ SndC8_Burning_PSG3:
 	dc.b	nD3, $25
 	smpsStop
 
-; Song seems to not use any FM voices
+; Sound seems to not use any FM voices
 SndC8_Burning_Voices:

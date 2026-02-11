@@ -14,5 +14,5 @@ SndA0_Jump_PSG1:
 	dc.b	nBb2, $15
 	smpsStop
 
-; Song seems to not use any FM voices
+; Sound seems to not use any FM voices
 SndA0_Jump_Voices:

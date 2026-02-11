@@ -1084,7 +1084,6 @@ NewPLC:
 
 ; Clear the pattern load queue ($FFF680 - $FFF700)
 
-
 ClearPLC:
 		lea	(v_plc_buffer).w,a2		; PLC buffer space in RAM
 		moveq	#bytesToLcnt(v_plc_buffer_end-v_plc_buffer),d0
@@ -1413,9 +1412,8 @@ PalCycSega:
 
 .return:
 		rts
-
+; ---------------------------------------------------------------------------
 Cyc_Sega:	binclude "palette/Cycle - Sega.bin"
-
 ; ---------------------------------------------------------------------------
 
 PalLoad1:

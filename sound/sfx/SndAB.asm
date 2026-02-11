@@ -19,5 +19,5 @@ SndAB_Loop00:
 	smpsLoop			$00, $15, SndAB_Loop00
 	smpsStop
 
-; Song seems to not use any FM voices
+; Sound seems to not use any FM voices
 SndAB_Voices:

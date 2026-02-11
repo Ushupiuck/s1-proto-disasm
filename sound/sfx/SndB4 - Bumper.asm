@@ -46,7 +46,7 @@ SndB4_Bumper_Voices:
 	smpsVcDecayRate2	$0A, $06, $0A, $09
 	smpsVcDecayLevel	$03, $03, $03, $04
 	smpsVcReleaseRate	$0F, $0F, $0F, $0F
-	smpsVcTotalLevel	$80, $2B, $80, $1F
+	smpsVcTotalLevel	$00, $2B, $00, $1F
 
 ;	Voice $01
 ;	$05
@@ -64,7 +64,7 @@ SndB4_Bumper_Voices:
 	smpsVcDecayRate2	$08, $08, $08, $12
 	smpsVcDecayLevel	$05, $05, $05, $01
 	smpsVcReleaseRate	$0F, $0F, $0F, $0F
-	smpsVcTotalLevel	$80, $80, $80, $07
+	smpsVcTotalLevel	$00, $00, $00, $07
 
 ; Unused voice
 ;	Voice $02
@@ -83,4 +83,4 @@ SndB4_Bumper_Voices:
 	smpsVcDecayRate2	$0E, $00, $00, $00
 	smpsVcDecayLevel	$03, $05, $00, $04
 	smpsVcReleaseRate	$0F, $0F, $0F, $0F
-	smpsVcTotalLevel	$80, $1C, $13, $15
+	smpsVcTotalLevel	$00, $1C, $13, $15

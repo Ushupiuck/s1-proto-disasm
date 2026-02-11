@@ -18,5 +18,5 @@ SndA2_Loop00:
 	smpsLoop			$00, $06, SndA2_Loop00
 	smpsStop
 
-; Song seems to not use any FM voices
+; Sound seems to not use any FM voices
 SndA2_Voices:
