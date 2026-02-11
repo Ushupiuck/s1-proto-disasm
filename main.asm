@@ -4,24 +4,37 @@
 ; | Originally done by Mega Drive Developers Collective.|
 ; +-----------------------------------------------------+
 
-; Processor: Motorola 68000 (M68K)
-; Sound Processor: Zilog Z80 (Z80)
 ; Intended for tab width of 8
 
-; ---------------------------------------------------------------------------
-
-	cpu 68000
+; ===========================================================================
+; ASSEMBLY OPTIONS:
 
 FixBugs	= 0
-;	| If 1, fixes a handful of bugs in the game
-zeroOffsetOptimization = 0
+;	| If 1, enables various bugfixes across the game and sound driver
+;	| See also FixMusicAndSFXDataBugs
+
+ZeroOffsetOptimization = 0
 ;	| If 1, makes a handful of zero-offset instructions smaller
 
+; ===========================================================================
+; AS-specific macros and assembler settings
+		cpu 68000
 		include "MacroSetup.asm"
+
+; ===========================================================================
+; Simplifying macros and functions
 		include "Constants.asm"
-		include "Variables.asm"
+
+; ===========================================================================
+; Equates section - Names for constants
 		include "Macros.asm"
-; ---------------------------------------------------------------------------
+
+; ===========================================================================
+; Equates section - Names for variables
+		include "Variables.asm"
+
+; ===========================================================================
+; start of ROM
 
 StartOfROM:
 ;Vectors:

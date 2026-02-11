@@ -102,7 +102,7 @@ tracenum := (tracenum+1)
 	endm
 tracenum := 0
 
-	if zeroOffsetOptimization=0
+	if ZeroOffsetOptimization=0
 	; disable a space optimization in AS so we can build a bit-perfect ROM
 	; (the hard way, but it requires no modification of AS itself)
 
@@ -204,3 +204,12 @@ _tst	macro
 	endm
 
 	endif
+
+bit function nBits,1<<(nBits-1)
+signmask function val,nBits,-((-(val&bit(nBits)))&bit(nBits))
+signextend function val,nBits,(val+signmask(val,nBits))!signmask(val,nBits)
+signextendB function val,signextend(val,8)
+roundFloatToInteger function float,INT(float+0.5)
+min function a,b,b!((a!b)&(-(a<b)))
+max function a,b,a!((a!b)&(-(a<b)))
+signedToString function number,substr("-",0,-sgn(number))+"$\{abs(number)}"
