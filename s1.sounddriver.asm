@@ -1214,13 +1214,13 @@ Sound_PlaySpecial:
 .sfxloadloop:
 		move.b	SMPS_Track.VoiceControl(a1),d4	; Voice control bits
 		bmi.s	.sfxoverridepsg			; Branch if PSG
-		bset	#2,SMPS_RAM.v_music_fm4_track+SMPS_Track.PlaybackControl(a6) ; Set 'SFX is overriding' bit
+		bset	#2,SMPS_RAM.v_music_fm4_track.PlaybackControl(a6) ; Set 'SFX is overriding' bit
 		lea	SMPS_RAM.v_spcsfx_fm4_track(a6),a5
 		bra.s	.sfxinitpsg
 ; ===========================================================================
 
 .sfxoverridepsg:
-		bset	#2,SMPS_RAM.v_music_psg3_track+SMPS_Track.PlaybackControl(a6) ; Set 'SFX is overriding' bit
+		bset	#2,SMPS_RAM.v_music_psg3_track.PlaybackControl(a6) ; Set 'SFX is overriding' bit
 		lea	SMPS_RAM.v_spcsfx_psg3_track(a6),a5
 
 .sfxinitpsg:
@@ -1247,14 +1247,14 @@ Sound_PlaySpecial:
 .sfxpsginitdone:
 		dbf	d7,.sfxloadloop
 
-		tst.b	SMPS_RAM.v_sfx_fm4_track+SMPS_Track.PlaybackControl(a6) ; Is track playing?
+		tst.b	SMPS_RAM.v_sfx_fm4_track.PlaybackControl(a6) ; Is track playing?
 		bpl.s	.doneoverride			; Branch if not
-		bset	#2,SMPS_RAM.v_spcsfx_fm4_track+SMPS_Track.PlaybackControl(a6) ; Set 'SFX is overriding' bit
+		bset	#2,SMPS_RAM.v_spcsfx_fm4_track.PlaybackControl(a6) ; Set 'SFX is overriding' bit
 
 .doneoverride:
-		tst.b	SMPS_RAM.v_sfx_psg3_track+SMPS_Track.PlaybackControl(a6) ; Is track playing?
+		tst.b	SMPS_RAM.v_sfx_psg3_track.PlaybackControl(a6) ; Is track playing?
 		bpl.s	.locret				; Branch if not
-		bset	#2,SMPS_RAM.v_spcsfx_psg3_track+SMPS_Track.PlaybackControl(a6) ; Set 'SFX is overriding' bit
+		bset	#2,SMPS_RAM.v_spcsfx_psg3_track.PlaybackControl(a6) ; Set 'SFX is overriding' bit
 		ori.b	#$1F,d4				; Command to silence channel
 		move.b	d4,(psg_input).l
 		bchg	#5,d4				; Command to silence noise channel
@@ -1440,7 +1440,7 @@ FadeOutMusic:
 		jsr	StopSpecialSFX(pc)
 		move.b	#3,SMPS_RAM.v_fadeout_delay(a6)		; Set fadeout delay to 3
 		move.b	#$28,SMPS_RAM.v_fadeout_counter(a6)	; Set fadeout counter
-		clr.b	SMPS_RAM.v_music_dac_track+SMPS_Track.PlaybackControl(a6) ; Stop DAC track
+		clr.b	SMPS_RAM.v_music_dac_track.PlaybackControl(a6) ; Stop DAC track
 		clr.b	SMPS_RAM.f_speedup(a6)			; Disable speed shoes tempo
 		rts
 
