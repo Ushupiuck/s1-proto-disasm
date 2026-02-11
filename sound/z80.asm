@@ -265,7 +265,7 @@ zDAC_Timpani:
 	binclude "dac/timpani.dpcm"
 zDAC_Timpani_End:
 
-	if MOMPASS==2
+	if MOMPASS=2
 		if $ > 2000h
 			fatal "The driver is too big	; the maximum size it can take is 2000h. It currently takes \{$}h bytes. You won't be able to use this thing."
 		else
