@@ -261,7 +261,7 @@ invtime:	equ objoff_32	; time left for invincibility
 shoetime:	equ objoff_34	; time left for speed shoes
 angleright:	equ objoff_36	; angle of floor on Sonic's right side
 angleleft:	equ objoff_37	; angle of floor on Sonic's left side
-respawny:	equ objoff_38	; only used twice, Sonic's Y position when he dies (2 bytes)
+respawny:	equ objoff_38	; Sonic's Y position when he dies (2 bytes)
 restartime:	equ objoff_3A	; time left before level restarts after dying (2 bytes)
 jumping:	equ objoff_3C	; flag for when Sonic is jumping
 standonobject:	equ objoff_3D	; object Sonic stands on
