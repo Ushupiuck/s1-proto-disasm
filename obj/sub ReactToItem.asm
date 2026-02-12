@@ -4,7 +4,6 @@
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
-
 TouchObjects:
 		nop
 		moveq	#0,d5
@@ -25,13 +24,13 @@ TouchObjects:
 		move.b	obColType(a1),d0
 		bne.s	.proximity			; if nonzero, branch
 
-	.next:
+.next:
 		lea	object_size(a1),a1		; next object RAM
 		dbf	d6,.loop			; repeat $5F more times
 
 		moveq	#0,d0
 		rts
-; ---------------------------------------------------------------------------
+; ===========================================================================
 .sizes:		;	width, height
 		dc.b  $14, $14				; $01
 		dc.b   $C, $14				; $02
@@ -58,7 +57,7 @@ TouchObjects:
 		dc.b	8,	 8				; $17
 		dc.b	4,	 4				; $18
 		dc.b  $20,	 8				; $19
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 .proximity:
 		andi.w	#$3F,d0
@@ -69,12 +68,12 @@ TouchObjects:
 		move.w	obX(a1),d0
 		sub.w	d1,d0
 		sub.w	d2,d0
-		bcc.s	.outsidex
+		bhs.s	.outsidex
 		add.w	d1,d1
 		add.w	d1,d0
-		bcs.s	.withinx
+		blo.s	.withinx
 		bra.s	.next
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 .outsidex:
 		cmp.w	d4,d0
@@ -86,12 +85,12 @@ TouchObjects:
 		move.w	obY(a1),d0
 		sub.w	d1,d0
 		sub.w	d3,d0
-		bcc.s	.outsidey
+		bhs.s	.outsidey
 		add.w	d1,d1
 		add.w	d0,d1
-		bcs.s	.withiny
+		blo.s	.withiny
 		bra.s	.next
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 .outsidey:
 		cmp.w	d5,d0
@@ -110,12 +109,12 @@ TouchObjects:
 		cmpi.b	#6,d0
 		beq.s	loc_FC2E
 		cmpi.w	#90,flashtime(a0)
-		bcc.w	locret_FC2C
+		bhs.w	locret_FC2C
 		addq.b	#2,obRoutine(a1)
 
 locret_FC2C:
 		rts
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 loc_FC2E:
 		tst.w	obVelY(a0)
@@ -123,14 +122,14 @@ loc_FC2E:
 		move.w	obY(a0),d0
 		subi.w	#$10,d0
 		cmp.w	obY(a1),d0
-		bcs.s	locret_FC68
+		blo.s	locret_FC68
 		neg.w	obVelY(a0)
 		move.w	#-$180,obVelY(a1)
 		tst.b	ob2ndRout(a1)
 		bne.s	locret_FC68
 		addq.b	#4,ob2ndRout(a1)
 		rts
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 loc_FC58:
 		cmpi.b	#2,obAnim(a0)
@@ -140,7 +139,7 @@ loc_FC58:
 
 locret_FC68:
 		rts
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 loc_FC6A:
 		tst.b	(v_invinc).w
@@ -162,7 +161,7 @@ loc_FC78:
 
 locret_FCA0:
 		rts
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 loc_FCA2:
 		bset	#7,obStatus(a1)
@@ -174,20 +173,20 @@ loc_FCA2:
 		bmi.s	loc_FCD0
 		move.w	obY(a0),d0
 		cmp.w	obY(a1),d0
-		bcc.s	loc_FCD8
+		bhs.s	loc_FCD8
 		neg.w	obVelY(a0)
 		rts
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 loc_FCD0:
 		addi.w	#$100,obVelY(a0)
 		rts
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 loc_FCD8:
 		subi.w	#$100,obVelY(a0)
 		rts
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 loc_FCE0:
 		tst.b	(v_invinc).w
@@ -196,7 +195,7 @@ loc_FCE0:
 loc_FCE6:
 		moveq	#-1,d0
 		rts
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 loc_FCEA:
 		nop
@@ -224,13 +223,13 @@ loc_FD18:
 		move.w	#-$200,obVelX(a0)
 		move.w	obX(a0),d0
 		cmp.w	obX(a2),d0
-		bcs.s	loc_FD48
+		blo.s	loc_FD48
 		neg.w	obVelX(a0)
 
 loc_FD48:
 		move.w	#0,obInertia(a0)
 		move.b	#id_Hurt,obAnim(a0)
-		move.w	#600,objoff_30(a0)
+		move.w	#600,flashtime(a0)
 		move.w	#sfx_Death,d0
 		cmpi.b	#id_Spikes,obID(a2)
 		bne.s	loc_FD68
@@ -255,7 +254,7 @@ KillSonic:
 		move.w	#-$700,obVelY(a0)
 		move.w	#0,obVelX(a0)
 		move.w	#0,obInertia(a0)
-		move.w	obY(a0),objoff_38(a0)
+		move.w	obY(a0),respawny(a0)
 		move.b	#id_Death,obAnim(a0)
 		move.w	#sfx_Death,d0
 		cmpi.b	#id_Spikes,obID(a2)
@@ -283,7 +282,7 @@ loc_FDC4:
 loc_FDDA:
 		sub.w	d0,d5
 		cmpi.w	#8,d5
-		bcc.s	loc_FE08
+		bhs.s	loc_FE08
 		move.w	obX(a1),d0
 		subq.w	#4,d0
 		btst	#0,obStatus(a1)
@@ -292,9 +291,9 @@ loc_FDDA:
 
 loc_FDF4:
 		sub.w	d2,d0
-		bcc.s	loc_FE00
+		bhs.s	loc_FE00
 		addi.w	#$18,d0
-		bcs.s	loc_FE04
+		blo.s	loc_FE04
 		bra.s	loc_FE08
 ; ---------------------------------------------------------------------------
 

@@ -224,28 +224,28 @@ SetupValues:	dc.l $8000			; VDP register start number
 		dc.l vdp_control_port		; VDP control
 
 VDPInitValues:
-		dc.b %0100			; VDP $80 - 8-colour mode
-		dc.b %00010100		; VDP $81 - Megadrive mode, DMA enable
-		dc.b vram_fg>>10	; VDP $82 - foreground nametable address
+		dc.b %0100					; VDP $80 - 8-colour mode
+		dc.b %00010100				; VDP $81 - Megadrive mode, DMA enable
+		dc.b vram_fg>>10			; VDP $82 - foreground nametable address
 		dc.b window_plane_prev>>10	; VDP $83 - window nametable address
-		dc.b vram_bg>>13	; VDP $84 - background nametable address
+		dc.b vram_bg>>13			; VDP $84 - background nametable address
 		dc.b vram_sprites_prev>>9	; VDP $85 - sprite table address
-		dc.b 0				; VDP $86 - unused
-		dc.b 0				; VDP $87 - background colour
-		dc.b 0				; VDP $88 - unused
-		dc.b 0				; VDP $89 - unused
-		dc.b 255			; VDP $8A - H_Int register
-		dc.b 0				; VDP $8B - full screen scroll
-		dc.b %10000001		; VDP $8C - 40 cell display
+		dc.b 0						; VDP $86 - unused
+		dc.b 0						; VDP $87 - background colour
+		dc.b 0						; VDP $88 - unused
+		dc.b 0						; VDP $89 - unused
+		dc.b 255					; VDP $8A - H_Int register
+		dc.b 0						; VDP $8B - full screen scroll
+		dc.b %10000001				; VDP $8C - 40 cell display
 		dc.b vram_hscroll_prev>>10	; VDP $8D - hscroll table address
-		dc.b 0				; VDP $8E - unused
-		dc.b %0001			; VDP $8F - VDP increment
-		dc.b %0001			; VDP $90 - 64 cell hscroll size
-		dc.b 0				; VDP $91 - window h position
-		dc.b 0				; VDP $92 - window v position
-		dc.w $FFFF			; VDP $93/94 - DMA length
-		dc.w 0				; VDP $95/96 - DMA source
-		dc.b %10000000		; VDP $97 - DMA fill VRAM
+		dc.b 0						; VDP $8E - unused
+		dc.b 1						; VDP $8F - VDP increment
+		dc.b 1						; VDP $90 - 64 cell hscroll size
+		dc.b 0						; VDP $91 - window h position
+		dc.b 0						; VDP $92 - window v position
+		dc.w $FFFF					; VDP $93/94 - DMA length
+		dc.w 0						; VDP $95/96 - DMA source
+		dc.b %10000000				; VDP $97 - DMA fill VRAM
 VDPInitValues_End:
 
 ; Z80 initalization
