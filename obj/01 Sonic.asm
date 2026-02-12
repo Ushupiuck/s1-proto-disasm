@@ -199,8 +199,8 @@ Sonic_Move:
 		move.w	(v_sonspeedmax).w,d6
 		move.w	(v_sonspeedacc).w,d5
 		move.w	(v_sonspeeddec).w,d4
-		tst.w	locktime(a0)
-		bne.w	Sonic_LookUp
+		tst.w	locktime(a0)	; is Sonic's D-Pad input temporarily locked?
+		bne.w	Sonic_LookUp	; if yes, ignore D-Pad input
 		btst	#bitL,(v_jpadhold2).w ; is left being pressed?
 		beq.s	.notleft	; if not, branch
 		bsr.w	Sonic_MoveLeft
@@ -494,8 +494,8 @@ Sonic_RollSpeed:
 		asr.w	#1,d5
 		move.w	(v_sonspeeddec).w,d4
 		asr.w	#2,d4
-		tst.w	locktime(a0)
-		bne.s	.notright
+		tst.w	locktime(a0)	; is Sonic's D-Pad input temporarily locked?
+		bne.s	.notright	; if yes, ignore D-Pad input
 		btst	#bitL,(v_jpadhold2).w ; is left being pressed?
 		beq.s	.notleft	; if not, branch
 		bsr.w	Sonic_RollLeft
@@ -876,7 +876,7 @@ Sonic_SlopeResist:
 		move.b	obAngle(a0),d0
 		addi.b	#$60,d0
 		cmpi.b	#$C0,d0
-		bcc.s	locret_EFBC
+		bhs.s	locret_EFBC
 		move.b	obAngle(a0),d0
 		jsr	(CalcSine).l
 		muls.w	#32,d0
@@ -909,7 +909,7 @@ Sonic_RollRepel:
 		move.b	obAngle(a0),d0
 		addi.b	#$60,d0
 		cmpi.b	#$C0,d0
-		bcc.s	locret_EFF8
+		bhs.s	locret_EFF8
 		move.b	obAngle(a0),d0
 		jsr	(CalcSine).l
 		muls.w	#80,d0
@@ -1009,8 +1009,11 @@ Sonic_Floor:
 		move.w	obVelX(a0),d1
 		move.w	obVelY(a0),d2
 		jsr	(CalcAngle).l
+;		move.b	d0,(v_sonfloorangle).w
 		subi.b	#$20,d0
+;		move.b	d0,(v_sonfloorangle2).w
 		andi.b	#$C0,d0
+;		move.b	d0,(v_sonfloorangle3).w
 		cmpi.b	#$40,d0
 		beq.w	loc_F104
 		cmpi.b	#$80,d0
@@ -1034,6 +1037,7 @@ loc_F08E:
 
 loc_F0A0:
 		bsr.w	Sonic_HitFloor
+;		move.b	d1,(v_sonfloorangle4).w
 		tst.w	d1
 		bpl.s	locret_F102
 		move.b	obVelY(a0),d0
