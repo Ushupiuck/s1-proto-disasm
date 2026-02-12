@@ -28,7 +28,7 @@ StartOfZ80:
 		di	; disable interrupts
 		di
 		di
-		ld	sp,z80_stack
+		ld	sp,zStack
 		xor	a
 		ld	(zDAC_Status),a
 		ld	a,(zBankStore+1)

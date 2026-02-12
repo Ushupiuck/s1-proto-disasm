@@ -12,7 +12,7 @@ vdp_counter:		equ $C00008
 psg_input:		equ $C00011
 
 	phase	$1FF4
-z80_stack:		ds.w 1
+zStack:			ds.w 1
 zDAC_Update:	ds.b 1
 zVoiceFlag:		ds.b 1
 zVoiceTblAdr:	ds.w 1
