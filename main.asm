@@ -13,31 +13,39 @@ FixBugs	= 0
 ;	| If 1, enables various bugfixes across the game and sound driver
 ;	| See also FixMusicAndSFXDataBugs
 
-ZeroOffsetOptimization = 0
+AllOptimizations = 0
+;	| If 1, enables all optimizations
+ZeroOffsetOptimization = 0|AllOptimizations
 ;	| If 1, makes a handful of zero-offset instructions smaller
+PaddingOptimization = 0|AllOptimizations
+;	| If 1, removes about 64 KB of various superfluous padding
 
 ; ===========================================================================
 ; AS-specific macros and assembler settings
-		cpu 68000
-		include "MacroSetup.asm"
+	cpu 68000
+	include "MacroSetup.asm"
 
 ; ===========================================================================
 ; Simplifying macros and functions
-		include "Constants.asm"
+	include "Macros.asm"
 
 ; ===========================================================================
 ; Equates section - Names for constants
-		include "Macros.asm"
+	include "Constants.asm"
 
 ; ===========================================================================
 ; Equates section - Names for variables
-		include "Variables.asm"
+	include "Variables.asm"
 
 ; ===========================================================================
 ; start of ROM
 
 StartOfROM:
-;Vectors:
+	if * <> 0
+		fatal "StartOfROM was $\{*} but it should be 0"
+	endif
+
+Vectors:
 		dc.l v_systemstack&$FFFFFF	; Initial stack pointer value
 		dc.l EntryPoint			; Start of program
 		dc.l BusError			; Bus error
@@ -5369,7 +5377,9 @@ Art_LivesNums:	binclude "artunc/Lives Counter Numbers.bin"
 		include "_include/LevelHeaders.asm"
 		include "_include/Pattern Load Cues.asm"
 
+	if ~~PaddingOptimization
 		align	$8000
+	endif
 ; ===========================================================================
 ; Unused 8x8 ASCII Art
 ; ===========================================================================
@@ -5389,7 +5399,9 @@ Nem_TitleFg:	binclude "artnem/Title Screen Foreground.nem"
 Nem_TitleSonic:	binclude "artnem/Title Screen Sonic.nem"
 		even
 
+	if ~~PaddingOptimization
 		align	$4000
+	endif
 Map_Sonic:	include "_maps/Sonic.asm"
 SonicDynPLC:	include "_maps/Sonic - Dynamic Gfx Script.asm"
 ; ---------------------------------------------------------------------------
@@ -5410,7 +5422,9 @@ Nem_Warp:	binclude "artnem/Flash.nem"
 Nem_Goggle:	binclude "artnem/Unused - Goggles.nem"
 		even
 
+	if ~~PaddingOptimization
 		align	$400
+	endif
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - GHZ stuff
 ; ---------------------------------------------------------------------------
@@ -5556,7 +5570,9 @@ Nem_Flicky:	binclude "artnem/Animal Flicky.nem"
 Nem_Squirrel:	binclude "artnem/Animal Squirrel.nem"
 		even
 
+	if ~~PaddingOptimization
 		align	$1000
+	endif
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - primary patterns
 ; Blocks are Uncompressed
@@ -5630,7 +5646,9 @@ Demo_MZ:	include "demodata/Intro - MZ.asm"	; Marble's demo
 Demo_SZ:	include "demodata/Intro - SZ.asm"	; Sparkling's demo (?)
 Demo_SS:	include "demodata/Intro - Special Stage.asm" ; Special stage demo
 
+	if ~~PaddingOptimization
 		align	$3000
+	endif
 
 		include "_maps/SS Walls.asm"
 ; ---------------------------------------------------------------------------
@@ -5677,7 +5695,9 @@ Nem_SSUpDown:	binclude "artnem/Special UP-DOWN.nem"
 Nem_SSEmerald:	binclude "artnem/Special Emeralds.nem"
 		even
 
+	if ~~PaddingOptimization
 		align	$4000
+	endif
 ; ---------------------------------------------------------------------------
 ; Collision data
 ; ---------------------------------------------------------------------------
@@ -5795,7 +5815,9 @@ byte_6E3CE:	dc.l 0
 byte_6E3D2:	dc.l 0
 byte_6E3D6:	dc.l 0
 
+	if ~~PaddingOptimization
 		align	$2000
+	endif
 ; ===========================================================================
 ; Object Layout Index
 ; ===========================================================================
@@ -5853,10 +5875,14 @@ ObjPos_CWZ2:	binclude "level/objpos/cwz2.bin"
 ObjPos_CWZ3:	binclude "level/objpos/cwz3.bin"
 ObjPos_Null:	dc.w $FFFF, 0, 0
 
+	if ~~PaddingOptimization
 		align	$2000
+	endif
 
 		include "s1.sounddriver.asm"
 
+	if ~~PaddingOptimization
 		cnop -1,2<<lastbit(*-1)
 		dc.b $FF
+	endif
 EndOfROM:
