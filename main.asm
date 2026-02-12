@@ -969,21 +969,7 @@ DACDriverLoad:
 		dc.b 0
 		dc.b 0
 ; ---------------------------------------------------------------------------
-
-QueueSound1:
-		move.b	d0,(v_snddriver_ram.v_soundqueue0).w
-		rts
-; ---------------------------------------------------------------------------
-
-QueueSound2:
-		move.b	d0,(v_snddriver_ram.v_soundqueue1).w
-		rts
-; ---------------------------------------------------------------------------
-
-QueueSound3:
-		move.b	d0,(v_snddriver_ram.v_soundqueue2).w
-		rts
-; ---------------------------------------------------------------------------
+		include	"_include/Queue Sound Routines.asm"
 		include "_include/PauseGame.asm"
 ; ---------------------------------------------------------------------------
 ; Subroutine to copy a tile map from RAM to VRAM namespace
@@ -1481,128 +1467,11 @@ WaitForVInt:
 		tst.b	(v_vint_routine).w
 		bne.s	.wait
 		rts
-; ---------------------------------------------------------------------------
 
-RandomNumber:
-		move.l	(v_random).w,d1
-		bne.s	.noreset
-		move.l	#$2A6D365A,d1
-
-.noreset:
-		move.l	d1,d0
-		asl.l	#2,d1
-		add.l	d0,d1
-		asl.l	#3,d1
-		add.l	d0,d1
-		move.w	d1,d0
-		swap	d1
-		add.w	d1,d0
-		move.w	d0,d1
-		swap	d1
-		move.l	d1,(v_random).w
-		rts
-; ---------------------------------------------------------------------------
-
-CalcSine:
-		andi.w	#$FF,d0
-		add.w	d0,d0
-		addi.w	#$80,d0
-		move.w	SineTable(pc,d0.w),d1
-		subi.w	#$80,d0
-		move.w	SineTable(pc,d0.w),d0
-		rts
-
-SineTable:	binclude "misc/sinewave.bin"
-; ---------------------------------------------------------------------------
-
-;GetSqrt:						; Leftover in the final game (REV00 only)
-		movem.l	d1-d2,-(sp)
-		move.w	d0,d1
-		swap	d1
-		moveq	#0,d0
-		move.w	d0,d1
-		moveq	#8-1,d2
-
-loc_22F4:
-		rol.l	#2,d1
-		add.w	d0,d0
-		addq.w	#1,d0
-		sub.w	d0,d1
-		bhs.s	loc_230E
-		add.w	d0,d1
-		subq.w	#1,d0
-		dbf	d2,loc_22F4
-		lsr.w	#1,d0
-		movem.l	(sp)+,d1-d2
-		rts
-; ---------------------------------------------------------------------------
-
-loc_230E:
-		addq.w	#1,d0
-		dbf	d2,loc_22F4
-		lsr.w	#1,d0
-		movem.l	(sp)+,d1-d2
-		rts
-; ---------------------------------------------------------------------------
-
-CalcAngle:
-		movem.l	d3-d4,-(sp)
-		moveq	#0,d3
-		moveq	#0,d4
-		move.w	d1,d3
-		move.w	d2,d4
-		or.w	d3,d4
-		beq.s	loc_2378
-		move.w	d2,d4
-		tst.w	d3
-		bpl.w	loc_2336
-		neg.w	d3
-
-loc_2336:
-		tst.w	d4
-		bpl.w	loc_233E
-		neg.w	d4
-
-loc_233E:
-		cmp.w	d3,d4
-		bhs.w	loc_2350
-		lsl.l	#8,d4
-		divu.w	d3,d4
-		moveq	#0,d0
-		move.b	AngleTable(pc,d4.w),d0
-		bra.s	loc_235A
-; ---------------------------------------------------------------------------
-
-loc_2350:
-		lsl.l	#8,d3
-		divu.w	d4,d3
-		moveq	#$40,d0
-		sub.b	AngleTable(pc,d3.w),d0
-
-loc_235A:
-		tst.w	d1
-		bpl.w	loc_2366
-		neg.w	d0
-		addi.w	#$80,d0
-
-loc_2366:
-		tst.w	d2
-		bpl.w	loc_2372
-		neg.w	d0
-		addi.w	#$100,d0
-
-loc_2372:
-		movem.l	(sp)+,d3-d4
-		rts
-; ---------------------------------------------------------------------------
-
-loc_2378:
-		move.w	#$40,d0
-		movem.l	(sp)+,d3-d4
-		rts
-; ---------------------------------------------------------------------------
-AngleTable:	binclude "misc/angles.bin"
-		even
+		include	"obj/sub RandomNumber.asm"
+		include	"obj/sub CalcSine.asm"
+		include	"obj/sub CalcSqrt.asm"
+		include	"obj/sub CalcAngle.asm"
 ; ---------------------------------------------------------------------------
 
 GM_Sega:
