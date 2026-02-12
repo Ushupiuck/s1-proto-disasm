@@ -1404,6 +1404,7 @@ FadeOut_DecColour:
 		addq.w	#2,a0
 		rts
 ; End of function FadeOut_DecColour
+
 ; ---------------------------------------------------------------------------
 
 PalCycSega:

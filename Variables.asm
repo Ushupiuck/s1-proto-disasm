@@ -12,10 +12,10 @@ v_ram_start:
 v_256x256:		ds.b	$52*$200	; 256x256 tile mappings ($A400 bytes)
 v_256x256_end:
 
-layout_size:	= $40
+layout_size	= $40
 
 v_lvllayout:	ds.b	layout_size*$10	; level layout buffer ($400 bytes)
-v_lvllayoutbg:	= v_lvllayout+layout_size
+v_lvllayoutbg	= v_lvllayout+layout_size
 v_lvllayout_end:
 
 v_bgscroll_buffer:	ds.b	$200
@@ -142,7 +142,7 @@ v_levselsound:	ds.w	1		; level select - sound selected (2 bytes)
 			ds.b	$14	; unused
 
 v_plc_buffer:	ds.b	6*16	; pattern load cues buffer (maximum $10 PLCs) ($60 bytes)
-v_plc_buffer_only_end
+v_plc_buffer_only_end:
 v_plc_ptrnemcode:	ds.l	1		; pattern load cues buffer (4 bytes)
 v_plc_repeatcount:	ds.l	1		; pattern load cues buffer (4 bytes)
 v_plc_paletteindex:	ds.l	1		; pattern load cues buffer (4 bytes)

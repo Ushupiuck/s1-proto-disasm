@@ -1,3 +1,7 @@
+; ---------------------------------------------------------------------------
+; Constants
+; ---------------------------------------------------------------------------
+
 Size_of_DAC_driver_guess:	equ $1C5C
 
 ; VDP addressses
@@ -6,6 +10,57 @@ vdp_control_port:	equ $C00004
 vdp_counter:		equ $C00008
 
 psg_input:		equ $C00011
+
+	phase	$1FF4
+z80_stack:		ds.w 1
+zDAC_Update:	ds.b 1
+zVoiceFlag:		ds.b 1
+zVoiceTblAdr:	ds.w 1
+zBankStore:		ds.w 1
+zLoopDataStr:	ds.b 1
+zDAC_Status:	ds.b 1	; Bit 7 set if the driver is not accepting new samples, it is clear otherwise
+zRepeatFlag:	ds.b 1
+zDAC_Sample:	ds.b 1	; Sample to play, the 68k will move into this location whatever sample that's supposed to be played.
+	dephase
+	!org 0
+
+zYM2612_A0:	equ $4000
+zYM2612_D0:	equ $4001
+zYM2612_A1:	equ $4002
+zYM2612_D1:	equ $4003
+zBankRegister:	equ $6000
+zROMWindow:	equ $8000
+
+; Z80 addresses
+z80_ram:		equ $A00000			; start of Z80 RAM
+z80_dac3_pitch:		equ z80_ram+zTimpani_Pitch
+z80_dac_update:		equ z80_ram+zDAC_Update
+z80_dac_voicetbladr:	equ z80_ram+zVoiceTblAdr
+z80_dac_status:		equ z80_ram+zDAC_Status
+z80_dac_sample:		equ z80_ram+zDAC_Sample
+z80_ram_end:		equ $A02000			; end of non-reserved Z80 RAM
+ym2612_a0:		equ z80_ram+zYM2612_A0
+ym2612_d0:		equ z80_ram+zYM2612_D0
+ym2612_a1:		equ z80_ram+zYM2612_A1
+ym2612_d1:		equ z80_ram+zYM2612_D1
+region_ver:		equ $A10001
+ctrl_port_1_data:	equ $A10002
+ctrl_port_1_data_b:	equ $A10003
+ctrl_port_1_ctrl:	equ $A10008
+ctrl_port_1_ctrl_b:	equ $A10009
+ctrl_port_2_ctrl:	equ $A1000A
+ctrl_port_2_ctrl_b:	equ $A1000B
+ctrl_expansion_ctrl:	equ $A1000C
+ctrl_expansion_ctrl_b:	equ $A1000D
+z80_version		= region_ver
+z80_port_1_data	= ctrl_port_1_data
+z80_port_1_control	= ctrl_port_1_ctrl
+z80_port_2_control	= ctrl_port_2_ctrl
+z80_expansion_control	= ctrl_expansion_ctrl
+z80_bus_request:	equ $A11100
+z80_reset:		equ $A11200
+
+security_addr:		equ $A14000
 
 ; VRAM data
 window_plane:	equ $A000	; window plane
@@ -66,24 +121,24 @@ cAqua:		equ cGreen+cBlue	; colour aqua
 cMagenta:	equ cBlue+cRed		; colour magenta
 
 ; Joypad input
-btnStart:	equ %10000000	; Start button ($80)
-btnA:		equ %01000000	; A	($40)
-btnC:		equ %00100000	; C ($20)
-btnB:		equ %00010000	; B ($10)
-btnR:		equ %1000		; Right ($08)
-btnL:		equ %0100		; Left ($04)
-btnDn:		equ %0010		; Down ($02)
-btnUp:		equ %0001		; Up ($01)
-btnDir:		equ %1111		; Any direction ($0F)
-btnABC:		equ %01110000	; A, B or C ($70)
-bitStart:	equ 7
-bitA:		equ 6
-bitC:		equ 5
-bitB:		equ 4
-bitR:		equ 3
-bitL:		equ 2
-bitDn:		equ 1
 bitUp:		equ 0
+bitDn:		equ 1
+bitL:		equ 2
+bitR:		equ 3
+bitB:		equ 4
+bitC:		equ 5
+bitA:		equ 6
+bitStart:	equ 7
+btnUp:		equ 1<<bitUp		; ($01)
+btnDn:		equ 1<<bitDn		; ($02)
+btnL:		equ 1<<bitL			; ($04)
+btnR:		equ 1<<bitR			; ($08)
+btnB:		equ 1<<bitB			; ($10)
+btnC:		equ 1<<bitC			; ($20)
+btnA:		equ 1<<bitA			; ($40)
+btnStart:	equ 1<<bitStart		; ($80)
+btnDir:		equ btnUp|btnDn|btnL|btnR	; ($0F)
+btnABC:		equ btnA|btnB|btnC	; ($70)
 
 ; Object variables
 obj STRUCT DOTS
@@ -138,7 +193,6 @@ off_3C:		ds.b 1
 off_3D:		ds.b 1
 off_3E:		ds.b 1
 off_3F:		ds.b 1
-size:		ds.b 1	; size for each object
 obj ENDSTRUCT
 	!org 0
 
@@ -198,7 +252,7 @@ objoff_3C:	equ obj.off_3C
 objoff_3D:	equ obj.off_3D
 objoff_3E:	equ obj.off_3E
 objoff_3F:	equ obj.off_3F
-object_size:	equ obj.size
+object_size:	equ obj.len
 object_size_bits:	equ 6
 
 ; Object variables used by Sonic
@@ -224,57 +278,6 @@ afRoutine:	equ $FC	; increment routine counter
 afChange:	equ $FD	; run specified animation
 afBack:		equ $FE	; go back (specified number) bytes
 afEnd:		equ $FF	; return to beginning of animation
-
-	phase	$1FF4
-z80_stack:		ds.w 1
-zDAC_Update:	ds.b 1
-zVoiceFlag:		ds.b 1
-zVoiceTblAdr:	ds.w 1
-zBankStore:		ds.w 1
-zLoopDataStr:	ds.b 1
-zDAC_Status:	ds.b 1	; Bit 7 set if the driver is not accepting new samples, it is clear otherwise
-zRepeatFlag:	ds.b 1
-zDAC_Sample:	ds.b 1	; Sample to play, the 68k will move into this location whatever sample that's supposed to be played.
-	dephase
-	!org 0
-
-zYM2612_A0:	equ $4000
-zYM2612_D0:	equ $4001
-zYM2612_A1:	equ $4002
-zYM2612_D1:	equ $4003
-zBankRegister:	equ $6000
-zROMWindow:	equ $8000
-
-; Z80 addresses
-z80_ram:		equ $A00000			; start of Z80 RAM
-z80_dac3_pitch:		equ z80_ram+zTimpani_Pitch
-z80_dac_update:		equ z80_ram+zDAC_Update
-z80_dac_voicetbladr:	equ z80_ram+zVoiceTblAdr
-z80_dac_status:		equ z80_ram+zDAC_Status
-z80_dac_sample:		equ z80_ram+zDAC_Sample
-z80_ram_end:		equ $A02000			; end of non-reserved Z80 RAM
-ym2612_a0:		equ z80_ram+zYM2612_A0
-ym2612_d0:		equ z80_ram+zYM2612_D0
-ym2612_a1:		equ z80_ram+zYM2612_A1
-ym2612_d1:		equ z80_ram+zYM2612_D1
-region_ver:		equ $A10001
-ctrl_port_1_data:	equ $A10002
-ctrl_port_1_data_b:	equ $A10003
-ctrl_port_1_ctrl:	equ $A10008
-ctrl_port_1_ctrl_b:	equ $A10009
-ctrl_port_2_ctrl:	equ $A1000A
-ctrl_port_2_ctrl_b:	equ $A1000B
-ctrl_expansion_ctrl:	equ $A1000C
-ctrl_expansion_ctrl_b:	equ $A1000D
-z80_version		= region_ver
-z80_port_1_data	= ctrl_port_1_data
-z80_port_1_control	= ctrl_port_1_ctrl
-z80_port_2_control	= ctrl_port_2_ctrl
-z80_expansion_control	= ctrl_expansion_ctrl
-z80_bus_request:	equ $A11100
-z80_reset:		equ $A11200
-
-security_addr:		equ $A14000
 
 ; Background music
 bgm__First:	equ $81
