@@ -12,10 +12,7 @@ v_ram_start:
 v_256x256:		ds.b	$52*$200	; 256x256 tile mappings ($A400 bytes)
 v_256x256_end:
 
-layout_size	= $40
-
-v_lvllayout:	ds.b	layout_size*$10	; level layout buffer ($400 bytes)
-v_lvllayoutbg	= v_lvllayout+layout_size
+v_lvllayout:	ds.b	$400	; level layout buffer ($400 bytes)
 v_lvllayout_end:
 
 v_bgscroll_buffer:	ds.b	$200

@@ -6,7 +6,7 @@ LoadTilesAsYouMove_BGOnly:
 		lea	(vdp_data_port).l,a6
 		lea	(v_bg1_scroll_flags).w,a2
 		lea	(v_bgscrposx).w,a3
-		lea	(v_lvllayoutbg).w,a4
+		lea	(v_lvllayout+$40).w,a4
 		move.w	#$6000,d2
 		bsr.w	DrawBGScrollBlock1
 		lea	(v_bg2_scroll_flags).w,a2
@@ -19,7 +19,7 @@ LoadTilesAsYouMove:
 		lea	(vdp_data_port).l,a6
 		lea	(v_bg1_scroll_flags).w,a2
 		lea	(v_bgscrposx).w,a3
-		lea	(v_lvllayoutbg).w,a4
+		lea	(v_lvllayout+$40).w,a4
 		move.w	#$6000,d2
 		bsr.w	DrawBGScrollBlock1
 		lea	(v_bg2_scroll_flags).w,a2
@@ -494,7 +494,7 @@ LoadTilesFromStart:
 		move.w	#$4000,d2
 		bsr.s	DrawChunks
 		lea	(v_bgscrposx).w,a3
-		lea	(v_lvllayoutbg).w,a4
+		lea	(v_lvllayout+$40).w,a4
 		move.w	#$6000,d2
 ; End of function LoadTilesFromStart
 
