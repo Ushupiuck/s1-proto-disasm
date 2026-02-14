@@ -79,6 +79,18 @@ Spik_Upright:
 		bmi.s	Spik_Display
 
 Spik_Hurt:
+	if FixBugs
+		; Exclusive to the Sonic 1 Prototype, Sonic can still be hurt by spikes even when invincible
+		tst.b	(v_invinc).w	; is Sonic invincible?
+		bne.s	Spik_Display	; if yes, branch
+	endif
+
+	if FixBugs
+		; (Proper) Spike Bug Fix
+		; https://info.sonicretro.org/SCHG_How-to:Change_Spike_behavior_in_Sonic_1
+		tst.w	(v_player+flashtime).w	; is Sonic invulnerable?
+		bne.s	Spik_Display		; if yes, branch
+	endif
 		move.l	a0,-(sp)
 		movea.l	a0,a2
 		lea	(v_player).w,a0

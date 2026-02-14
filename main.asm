@@ -1152,6 +1152,8 @@ loc_1404:
 		move.l	d5,(v_plc_dataword).w
 		move.l	d6,(v_plc_shiftvalue).w
 	if FixBugs
+		; Fix a race condition with Pattern Load Cues
+		; https://info.sonicretro.org/SCHG_How-to:Fix_a_race_condition_with_Pattern_Load_Cues
 		move.w	d2,(v_plc_patternsleft).w
 	endif
 
@@ -1268,13 +1270,13 @@ Qplc_Loop:
 		include "_include/Kosinski Decompression.asm"
 		include "_include/PaletteCycle.asm"
 
-Cyc_Title:	binclude "palette/Cycle - Title.bin"
-Cyc_GHZ:	binclude "palette/Cycle - GHZ.bin"
-Cyc_LZ:	binclude "palette/Cycle - LZ (Unused).bin"
-Cyc_MZ:	binclude "palette/Cycle - MZ (Unused).bin"
-Cyc_SLZ:	binclude "palette/Cycle - SLZ.bin"
-Cyc_SZ1:	binclude "palette/Cycle - SZ1.bin"
-Cyc_SZ2:	binclude "palette/Cycle - SZ2.bin"
+Pal_TitleCyc:	binclude "palette/Cycle - Title.bin"
+Pal_GHZCyc:	binclude "palette/Cycle - GHZ.bin"
+Pal_LZCyc:	binclude "palette/Cycle - LZ (Unused).bin"
+Pal_MZCyc:	binclude "palette/Cycle - MZ (Unused).bin"
+Pal_SLZCyc:	binclude "palette/Cycle - SLZ.bin"
+Pal_SZ1Cyc:	binclude "palette/Cycle - SZ1.bin"
+Pal_SZ2Cyc:	binclude "palette/Cycle - SZ2.bin"
 ; ---------------------------------------------------------------------------
 ; Subroutine to fade in from black
 ; ---------------------------------------------------------------------------
@@ -1414,16 +1416,17 @@ FadeOut_DecColour:
 		rts
 ; End of function FadeOut_DecColour
 
-; ===========================================================================
+; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
-PalCycSega:
-		subq.w	#1,(v_pcyc_time).w
-		bpl.s	.return
-		move.w	#3,(v_pcyc_time).w
+PalCycle_Sega:
+		subq.w	#1,(v_pcyc_time).w	; decrement timer
+		bpl.s	.return	; if time remains, branch
+
+		move.w	#3,(v_pcyc_time).w	; reset timer to 3 frames
 		move.w	(v_pcyc_num).w,d0	; get cycle number
 		bmi.s	.return	; if negative, return
-		subq.w	#2,(v_pcyc_num).w	; subtract 2 from cycle number
-		lea	(Cyc_Sega).l,a0
+		subq.w	#2,(v_pcyc_num).w	; decrement cycle number by 2
+		lea	(Pal_SegaCyc).l,a0
 		lea	(v_palette+4).w,a1
 		adda.w	d0,a0
 		move.l	(a0)+,(a1)+
@@ -1435,8 +1438,10 @@ PalCycSega:
 
 .return:
 		rts
+; End of function PalCycle_Sega
+
 ; ===========================================================================
-Cyc_Sega:	binclude "palette/Cycle - Sega.bin"
+Pal_SegaCyc:	binclude "palette/Cycle - Sega.bin"
 ; ===========================================================================
 
 PalLoad1:
@@ -1525,20 +1530,20 @@ GM_Sega:
 		move.w	#40,(v_pcyc_num).w	; set cycle number to 40
 		move.w	#0,(v_pal_buffer+$12).w
 		move.w	#0,(v_pal_buffer+$10).w
-		move.w	#180,(v_generictimer).w	; run sega screen for 3 seconds
+		move.w	#180,(v_generictimer).w	; run Sega screen for 3 seconds
 		enable_display
 
 Sega_MainLoop:
 		move.b	#id_VInt_02,(v_vint_routine).w
 		bsr.w	WaitForVInt
-		bsr.w	PalCycSega
-		tst.w	(v_generictimer).w	; has timer reached zero?
+		bsr.w	PalCycle_Sega
+		tst.w	(v_generictimer).w	; has generic timer reached zero?
 		beq.s	loc_2544	; if so, branch
-		andi.b	#btnStart,(v_jpadpress1).w	; is Start button pressed?
-		beq.s	Sega_MainLoop	; if not, loop
+		andi.b	#btnStart,(v_jpadpress1).w	; check if Start is pressed
+		beq.s	Sega_MainLoop	; if not, branch
 
 loc_2544:
-		move.b	#id_Title,(v_gamemode).w	; go to Title gamemode
+		move.b	#id_Title,(v_gamemode).w	; go to Title screen
 		rts
 ; ===========================================================================
 
@@ -1575,7 +1580,13 @@ loc_25D8:
 
 		lea	(Unc_Title).l,a1
 
+	if FixBugs
+		; Fix title screen position
+		; https://info.sonicretro.org/SCHG_How-to:Fix_the_Title_Screen_position_in_Sonic_1
+		copyUncTilemap	vram_fg+$208,34,22
+	else
 		copyUncTilemap	vram_fg+$206,34,22
+	endif
 
 		move.w	#0,(v_debuguse).w
 		move.w	#0,(f_demo).w
@@ -1623,24 +1634,31 @@ Tit_MainLoop:
 		bsr.w	ExecuteObjects
 		bsr.w	DeformLayers
 		bsr.w	BuildSprites
-		bsr.w	PalCycTitle
+		bsr.w	PalCycle_Title
 		bsr.w	RunPLC
 		move.w	(v_player+obX).w,d0
-		addq.w	#2,d0	; set object scroll right speed
-		move.w	d0,(v_player+obX).w	; move sonic to the right
-		cmpi.w	#$1C00,d0	; has object passed $1C00?
+		addq.w	#2,d0
+		move.w	d0,(v_player+obX).w	; move Sonic to the right
+		cmpi.w	#$1C00,d0	; has Sonic object passed $1C00 on x-axis?
 		blo.s	loc_26E4	; if not, branch
-		move.b	#id_Sega,(v_gamemode).w	; go to Sega Screen
+		move.b	#id_Sega,(v_gamemode).w	; go to Sega screen
 		rts
 ; ===========================================================================
 
 loc_26E4:
-		tst.w	(v_generictimer).w	; has timer reached zero?
+		tst.w	(v_generictimer).w	; has generic timer reached zero?
 		beq.w	GotoDemo	; if so, branch
-		andi.b	#btnStart,(v_jpadpress1).w	; is Start pressed?
+		andi.b	#btnStart,(v_jpadpress1).w	; check if Start is pressed
 		beq.w	Tit_MainLoop	; if not, branch
-		btst	#bitA,(v_jpadhold1).w	; is A held?
-		beq.w	PlayLevel	; if so, start level
+		btst	#bitA,(v_jpadhold1).w	; check if A is held
+		beq.w	PlayLevel	; if not, play level
+
+	if FixBugs
+		; Fix the level selects graphics bug
+		; https://info.sonicretro.org/SCHG_How-to:Fix_the_Level_Select_graphics_bug
+		move.b	#id_VInt_04,(v_vint_routine).w
+		bsr.w	WaitForVInt
+	endif
 
 		moveq	#palid_LevelSel,d0
 		bsr.w	PalLoad2	; load level select palette
@@ -2405,7 +2423,7 @@ SyncEnd:
 SignpostArtLoad:
 		tst.w	(v_debuguse).w
 		bne.w	.exit
-		cmpi.w	#id_MZ<<8+2,(v_zone).w	; are we on Marble Zone Act 3?
+		cmpi.w	#(id_MZ<<8)+2,(v_zone).w	; are we on Marble Zone Act 3?
 		beq.s	.isMZ3	; if so, load the signpost
 		cmpi.b	#2,(v_act).w
 		beq.s	.exit
