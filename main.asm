@@ -140,10 +140,11 @@ ErrorTrap:
 ; This contains an earlier version of ICD_BLK4.PRG
 EntryPoint:
 		tst.l	(ctrl_port_1_ctrl).l
-loc_20C:
+
+BranchToGameProgram:
 		bne.w	GameProgram
 		tst.w	(ctrl_expansion_ctrl).l
-		bne.s	loc_20C
+		bne.s	BranchToGameProgram
 		lea	SetupValues(pc),a5
 		movem.l	(a5)+,d5-a4
 		move.w	region_ver-1-z80_bus_request(a1),d0	; get hardware version (from $A10001)
