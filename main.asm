@@ -2162,7 +2162,7 @@ GM_LevelLoop:
 		bsr.w	WaitForVInt
 		addq.w	#1,(v_framecount).w
 		bsr.w	LZWaterFeatures
-		bsr.w	DemoPlayback
+		bsr.w	MoveSonicInDemo
 		move.w	(v_jpadhold1).w,(v_jpadhold2).w
 		bsr.w	ExecuteObjects
 		tst.w	(v_debuguse).w
@@ -2213,7 +2213,7 @@ loc_2E92:
 loc_2E9E:
 		move.b	#id_VInt_08,(v_vint_routine).w
 		bsr.w	WaitForVInt
-		bsr.w	DemoPlayback
+		bsr.w	MoveSonicInDemo
 		bsr.w	ExecuteObjects
 		bsr.w	BuildSprites
 		bsr.w	ObjPosLoad
@@ -2231,78 +2231,7 @@ loc_2EC8:
 		include	"leftovers/routines/Window Plane Mask.asm"
 
 		include "_include/LZWaterFeatures.asm"
-; ===========================================================================
-
-DemoPlayback:
-		tst.w	(f_demo).w
-		bne.s	loc_30B8
-		rts
-; ===========================================================================
-
-;DemoRecord:
-		lea	(EndOfROM).l,a1
-		move.w	(v_btnpushtime1).w,d0
-		adda.w	d0,a1
-		move.b	(v_jpadhold1).w,d0
-		cmp.b	(a1),d0
-		bne.s	loc_30A2
-		addq.b	#1,1(a1)
-		cmpi.b	#$FF,1(a1)
-		beq.s	loc_30A2
-		rts
-; ===========================================================================
-
-loc_30A2:
-		move.b	d0,2(a1)
-		move.b	#0,3(a1)
-		addq.w	#2,(v_btnpushtime1).w
-		andi.w	#$3FF,(v_btnpushtime1).w
-		rts
-; ===========================================================================
-
-loc_30B8:
-		tst.b	(v_jpadhold1).w
-		bpl.s	loc_30C4
-		move.b	#id_Title,(v_gamemode).w
-
-loc_30C4:
-		lea	(DemoDataPtr).l,a1
-		moveq	#0,d0
-		move.b	(v_zone).w,d0
-		lsl.w	#2,d0
-		movea.l	(a1,d0.w),a1
-		move.w	(v_btnpushtime1).w,d0
-		adda.w	d0,a1
-		move.b	(a1),d0
-		lea	(v_jpadhold1).w,a0
-		move.b	d0,d1
-	if FixBugs
-		move.b	v_jpadhold2-v_jpadhold1(a0),d2
-	else
-		move.b	(a0),d2
-	endif
-		eor.b	d2,d0
-		move.b	d1,(a0)+
-		and.b	d1,d0
-		move.b	d0,(a0)+
-		subq.b	#1,(v_btnpushtime2).w
-		bhs.s	locret_30FE
-		move.b	3(a1),(v_btnpushtime2).w
-		addq.w	#2,(v_btnpushtime1).w
-
-locret_30FE:
-		rts
-; ===========================================================================
-DemoDataPtr:
-		dc.l Demo_MZ
-		dc.l Demo_MZ
-		dc.l Demo_MZ
-		dc.l Demo_GHZ
-		dc.l Demo_SZ
-		dc.l Demo_SZ
-		dc.l Demo_SS
-
-		include	"demodata/Unused.asm"
+		include	"_include/MoveSonicInDemo.asm"
 ; ===========================================================================
 ;sub_314C:
 		cmpi.b	#id_06,(v_zone).w	; are we on Zone 6?
@@ -2547,7 +2476,7 @@ loc_3620:
 		bsr.w	PauseGame
 		move.b	#id_VInt_0A,(v_vint_routine).w
 		bsr.w	WaitForVInt
-		bsr.w	DemoPlayback
+		bsr.w	MoveSonicInDemo
 		move.w	(v_jpadhold1).w,(v_jpadhold2).w
 		bsr.w	ExecuteObjects
 		bsr.w	BuildSprites
