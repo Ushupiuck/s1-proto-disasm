@@ -141,10 +141,10 @@ ErrorTrap:
 EntryPoint:
 		tst.l	(ctrl_port_1_ctrl).l
 
-BranchToGameProgram:
+SkipSetup:
 		bne.w	GameProgram
 		tst.w	(ctrl_expansion_ctrl).l
-		bne.s	BranchToGameProgram
+		bne.s	SkipSetup
 		lea	SetupValues(pc),a5
 		movem.l	(a5)+,d5-a4
 		move.w	region_ver-1-z80_bus_request(a1),d0	; get hardware version (from $A10001)
