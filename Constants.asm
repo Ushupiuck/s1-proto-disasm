@@ -5,11 +5,13 @@
 Size_of_DAC_driver_guess:	equ $1C5C
 
 ; Clocks
-Master_Clock:    equ 53693175
-M68000_Clock:    equ Master_Clock/7
-Z80_Clock:       equ Master_Clock/15
-FM_Sample_Rate:  equ M68000_Clock/(6*6*4)
-PSG_Sample_Rate: equ Z80_Clock/16
+Master_Clock:	equ 53693175
+M68000_Clock:	equ Master_Clock/7
+Z80_Clock:		equ Master_Clock/15
+FM_Sample_Rate:	equ M68000_Clock/(6*6*4)
+PSG_Sample_Rate:	equ Z80_Clock/16
+VDP_Clock:		equ Master_Clock/4
+VDP_Pixel_Clock:	equ VDP_Clock/2
 
 ; VDP addressses
 vdp_data_port:		equ $C00000

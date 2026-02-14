@@ -558,11 +558,13 @@ VInt:
 		beq.s	VInt_Exit
 		move.w	(vdp_control_port).l,d0
 		move.l	#$40000010,(vdp_control_port).l
-		move.l	(v_scrposy_vdp).w,(vdp_data_port).l
+		move.l	(v_scrposy_vdp).w,(vdp_data_port).l ; send screen y-axis pos. to VSRAM
 		btst	#6,(v_megadrive).w	; are we on a PAL machine?
 		beq.s	.notPAL	; if not, branch
+
 		move.w	#17930/10-1,d0	; intentionally lag the control port to move the CRAM dots on PAL machines
-		dbf	d0,*
+.waitPAL:
+		dbf	d0,.waitPAL
 
 .notPAL:
 		move.b	(v_vint_routine).w,d0
