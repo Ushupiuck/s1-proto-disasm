@@ -4,7 +4,7 @@
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
-TouchObjects:
+ReactToItem:
 		nop
 		moveq	#0,d5
 		move.b	obHeight(a0),d5

@@ -52,7 +52,7 @@ Sonic_Control:	; Routine 2
 		move.b	(v_anglebuffer).w,angleright(a0)
 		move.b	(v_anglebuffer2).w,angleleft(a0)
 		bsr.w	Sonic_Animate
-		bsr.w	TouchObjects
+		bsr.w	ReactToItem
 		bsr.w	Sonic_Loops
 		bsr.w	Sonic_LoadGfx
 		rts
