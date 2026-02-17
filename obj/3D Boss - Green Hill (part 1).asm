@@ -99,7 +99,7 @@ loc_B0D2:
 		jsr	(QueueSound2).l	; play boss damage sound
 
 BGHZ_ShipFlash:
-		lea	(v_palette+$22).w,a1 ; load 2nd palette, 2nd entry
+		lea	(v_palette_line_2+2).w,a1 ; load 2nd palette, 2nd entry
 		moveq	#0,d0		; move 0 (black) to d0
 		tst.w	(a1)
 		bne.s	loc_B128

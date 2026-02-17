@@ -1434,7 +1434,7 @@ PalCycle_Sega:
 		bmi.s	.return	; if negative, return
 		subq.w	#2,(v_pcyc_num).w	; decrement cycle number by 2
 		lea	(Pal_SegaCyc).l,a0
-		lea	(v_palette+4).w,a1
+		lea	(v_palette_line_1+4).w,a1
 		adda.w	d0,a0
 		move.l	(a0)+,(a1)+
 		move.l	(a0)+,(a1)+
