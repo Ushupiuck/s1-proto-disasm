@@ -2619,7 +2619,7 @@ loc_3760:
 		bmi.s	loc_37B6
 		lea	(Pal_SSCyc1).l,a1
 		adda.w	d0,a1
-		lea	(v_palette+$4E).w,a2
+		lea	(v_palette_line_3+$E).w,a2
 		move.l	(a1)+,(a2)+
 		move.l	(a1)+,(a2)+
 		move.l	(a1)+,(a2)+
@@ -2641,18 +2641,18 @@ loc_37C2:
 		andi.w	#$7F,d0
 		bclr	#0,d0
 		beq.s	loc_37E6
-		lea	(v_palette+$6E).w,a2
+		lea	(v_palette_line_4+$E).w,a2
 		move.l	(a1),(a2)+
 		move.l	4(a1),(a2)+
 		move.l	8(a1),(a2)+
 
 loc_37E6:
 		adda.w	#$C,a1
-		lea	(v_palette+$5A).w,a2
+		lea	(v_palette_line_3+$1A).w,a2
 		cmpi.w	#$A,d0
 		blo.s	loc_37FC
 		subi.w	#$A,d0
-		lea	(v_palette+$7A).w,a2
+		lea	(v_palette_line_4+$1A).w,a2
 
 loc_37FC:
 		move.w	d0,d1
@@ -2826,10 +2826,11 @@ byte_3A92:	dc.b 6, $30, $30, $30, $28, $18, $18, $18
 byte_3A9A:	dc.b 8, 2, 4, $FF, 2, 3, 8, $FF, 4, 2, 2, 3, 8, $FD, 4
 		dc.b 2, 2, 3, 2, $FF
 		even
-; ===========================================================================
+
 		include "_include/LevelSizeLoad & BgScrollSpeed.asm"
 		include "_include/DeformLayers.asm"
 		include	"_include/Level Drawing.asm"
+
 ; ===========================================================================
 
 LoadLevelData:
@@ -3641,9 +3642,9 @@ BuildSprites:
 		move.w	obY(a0),d2
 		sub.w	4(a1),d2
 		addi.w	#128,d2
-		cmpi.w	#320/2-64,d2
+		cmpi.w	#128-32,d2
 		blo.s	.skipobj
-		cmpi.w	#320+64,d2
+		cmpi.w	#128+224+32,d2
 		bhs.s	.skipobj
 
 .drawobj:
