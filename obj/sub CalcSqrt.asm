@@ -1,5 +1,5 @@
 ; ---------------------------------------------------------------------------
-; Subroutine calculate a square root (only available in the prototype and REV00 and unused)
+; Subroutine calculate a square root (only available in the prototype and REV00, unused)
 
 ; input:
 ;	d0 = number
