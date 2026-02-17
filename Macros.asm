@@ -72,6 +72,9 @@ bytesToWcnt function n,n>>1-1
 bytesToXcnt function n,x,n/x-1
 
 little_endian function x,(x)<<8&$FF00|(x)>>8&$FF
+
+; function to turn a 68k address into a bank byte
+make68kBank function addr,(((addr&$3F8000)/zROMWindow))
 		
 ; ---------------------------------------------------------------------------
 ; Fill portion of RAM with 0
