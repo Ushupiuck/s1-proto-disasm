@@ -4654,7 +4654,7 @@ loc_105B6:
 locret_105BE:
 		rts
 ; ===========================================================================
-		; unused
+; unused
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
 
@@ -4805,7 +4805,7 @@ Sonic_DontRunOnWalls:
 		move.b	#$80,d2
 		bra.w	loc_105A8
 ; ===========================================================================
-		; unused
+; unused
 		move.w	obY(a0),d2
 		move.w	obX(a0),d3
 
@@ -5595,7 +5595,7 @@ Blk256_CWZ:	binclude "level/map256/CWZ.kos"
 		binclude "unknown/5711C.dat"
 		even
 ; ---------------------------------------------------------------------------
-; Compressed graphics - bosses and ending sequence
+; Compressed graphics - bosses
 ; ---------------------------------------------------------------------------
 Nem_Eggman:	binclude "artnem/Boss - Main.nem"
 		even
@@ -5723,7 +5723,7 @@ LayoutArray:	; GHZ
 		dc.w LayoutCWZ2-LayoutArray, byte_6E33C-LayoutArray, byte_6E33C-LayoutArray
 		dc.w LayoutCWZ3-LayoutArray, LayoutCWZ3-LayoutArray, LayoutCWZ3-LayoutArray
 		dc.w byte_6E344-LayoutArray, byte_6E344-LayoutArray, byte_6E344-LayoutArray
-		; Ending
+		; Zone 6
 		dc.w LayoutTest-LayoutArray, byte_6E3CA-LayoutArray, byte_6E3CA-LayoutArray
 		dc.w byte_6E3CE-LayoutArray, byte_6E3CE-LayoutArray, byte_6E3CE-LayoutArray
 		dc.w byte_6E3D2-LayoutArray, byte_6E3D2-LayoutArray, byte_6E3D2-LayoutArray

@@ -288,7 +288,7 @@ afBack:		equ $FE	; go back (specified number) bytes
 afEnd:		equ $FF	; return to beginning of animation
 
 ; Backwards compatibility with older Sonic Retro disassemblies
-obNextAni:	equ obj.PrevAni
+obNextAni:	equ obPrevAni
 
 ; Background music
 bgm__First:	equ $81
