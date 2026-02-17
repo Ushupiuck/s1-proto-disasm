@@ -17,8 +17,10 @@ Debug_Coord_Sprites:
 		lea	object_size(a1),a1	; goto next object RAM slot
 		dbf	d1,.loop	; loop until all digits have been loaded
 		rts
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
+; Format: dc.w $X, $Y
+; Each entry is a digit.
 Debug_Coords_XY_Index:
 		dc.w $158, $148
 		dc.w $160, $148
@@ -32,9 +34,9 @@ Debug_Coords_XY_Index:
 		dc.w $160, $98
 		dc.w $168, $98
 		dc.w $170, $98
-Debug_Coords_XY_Index_End
+Debug_Coords_XY_Index_End:
 
-; ---------------------------------------------------------------------------
+; ===========================================================================
 ; sub_2F24:
 Debug_Coord_B_Sprites:
 		lea	(Debug_Coords_B_XY_Index).l,a0	; get index of x and y positions for the coords
@@ -48,8 +50,10 @@ Debug_Coord_B_Sprites:
 		lea	object_size(a1),a1	; goto next object RAM slot
 		dbf	d1,.loop	; loop until all digits have been loaded
 		rts
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
+; Format: dc.w $X, $Y
+; Each entry is a digit.
 Debug_Coords_B_XY_Index:
 		dc.w $158, $90
 		dc.w $160, $90
@@ -103,4 +107,4 @@ Debug_Coords_B_XY_Index:
 		dc.w $130, $A8
 		dc.w $138, $A8
 		dc.w $140, $A8
-Debug_Coords_B_XY_Index_End
+Debug_Coords_B_XY_Index_End:
