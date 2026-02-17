@@ -30,6 +30,7 @@ Debug_Coords_XY_Index:
 		dc.w $188, $148
 		dc.w $190, $148
 		dc.w $198, $148
+; In earlier builds, this was set to 8 digits instead of 12.
 		dc.w $158, $98
 		dc.w $160, $98
 		dc.w $168, $98
