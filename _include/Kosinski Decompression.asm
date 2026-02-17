@@ -13,7 +13,6 @@
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
-
 KosDec:
 		subq.l	#2,sp				; make space for 2 bytes on the stack
 		move.b	(a0)+,1(sp)

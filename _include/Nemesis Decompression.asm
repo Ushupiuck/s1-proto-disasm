@@ -54,7 +54,6 @@ loc_146A:
 
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
-
 NemDec_ProcessCompressedData:
 		move.w	d6,d7
 		subq.w	#8,d7				; get shift value
@@ -90,9 +89,7 @@ NemPCD_WritePixel:
 		jmp	(a3)				; otherwise, write the row to its destination, by doing a dynamic jump to NemPCD_WriteRowToVDP, NemDec_WriteAndAdvance, NemPCD_WriteRowToVDP_XOR, or NemDec_WriteAndAdvance_XOR
 ; End of function NemDec_ProcessCompressedData
 
-
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
 
 NemPCD_NewRow:
 		moveq	#0,d4				; reset row
@@ -163,7 +160,6 @@ NemPCD_WriteRowToRAM_XOR:
 ; ---------------------------------------------------------------------------
 ; Part of the Nemesis decompressor, builds the code table (in RAM)
 ; ---------------------------------------------------------------------------
-
 
 NemDec_BuildCodeTable:
 		move.b	(a0)+,d0			; read first byte
