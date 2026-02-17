@@ -255,7 +255,7 @@ SourceDriver set ver
 
 songStart set *
 
-	if MOMPASS>1
+	if MOMPASS=1
 		if SMPS2ASMVer < SourceSMPS2ASM
 			message "Song at 0x\{songStart} was made for a newer version of SMPS2ASM (this is version \{SMPS2ASMVer}, but song wants at least version \{SourceSMPS2ASM})."
 		endif
@@ -401,19 +401,20 @@ smpsDetune macro val
 
 ; E2xx - Useless
 smpsNop macro val
-	if SonicDriverVer<3
-		dc.b	$E2,val
+	if (SonicDriverVer>=3) && ((val==$FF) || (val==$29))
+		warning "Values $FF and $29 are reserved in S3K's driver; use a different value or remove this command."
 	endif
+	dc.b	$E2,val
 	endm
 
-; E3xx - Global Modulation (Specific to Sonic 1 Prototype)
+; E3xx - Global Modulation (Specific to the Sonic 1 Prototype)
 smpsGlobalMod macro val
 	dc.b	$E3,val
 	endm
 
 ; Return (used after smpsCall)
 smpsReturn macro val
-		dc.b	$F9
+	dc.b	$F9
 	endm
 
 ; Fade in previous song (ie. 1-Up)
@@ -429,7 +430,8 @@ smpsFade macro val
 			smpsStop
 		endif
 	elseif (SourceDriver>=3) && ("val"<>"") && ("val"<>"$FF")
-		; This is one of those weird S3+ "fades" that we don't need
+		; This is actually a communication byte, not a fade.
+		smpsNop	val
 	else
 		dc.b	$E4
 	endif
@@ -508,6 +510,15 @@ smpsPSGAlterVol macro vol
 	dc.b	$EC,vol
 	endm
 
+smpsPSGAlterVolS2 macro vol
+	; Sonic 2's driver allows the FM command to be used on PSG channels, but others do not.
+	if SonicDriverVer==2
+		smpsAlterVol vol
+	else
+		smpsPSGAlterVol vol
+	endif
+	endm
+
 ; Clears pushing sound flag in S1
 smpsClearPush macro
 	if SonicDriverVer==1
@@ -525,6 +536,11 @@ smpsStopSpecial macro
 		message "Coord. Flag to stop special SFX does not exist in S2 or S3 drivers. Complain to Flamewing to add it. With adequate caution, smpsStop can do this job."
 		smpsStop
 	endif
+	endm
+
+; EExx,yy
+smpsFMICommand macro reg,val
+	dc.b	$EE,reg,val
 	endm
 
 ; EFxx[yy] - Set Voice of FM channel to xx; xx < 0 means yy present
@@ -619,9 +635,16 @@ smpsCall macro loc
 ; ---------------------------------------------------------------------------
 ; Alter Volume
 smpsFMAlterVol macro val1,val2
-	if (SonicDriverVer>=3)&&("val2"<>"")
-		dc.b	$E5,val1,val2
+	if ("val2"<>"")
+		; S3K's nerfed 'PSG & FM volume' command with broken PSG support.
+		; The first value is completely unused, while the second is for FM tracks.
+		if (SonicDriverVer>=3)
+			dc.b	$E5,val1,val2
+		else
+			dc.b	$E6,val2
+		endif
 	else
+		; Normal, sane command.
 		dc.b	$E6,val1
 	endif
 	endm
@@ -653,9 +676,9 @@ smpsSetNote macro val
 	dc.b	$ED,val
 	endm
 
-smpsFMICommand macro reg,val
-	dc.b	$EE,reg,val
-	endm
+;smpsFMICommand macro reg,val
+;	dc.b	$EE,reg,val
+;	endm
 
 ; Set Modulation
 smpsModChange2 macro fmmod,psgmod
@@ -735,13 +758,13 @@ smpsPlayMusic macro index
 ; S1/S2 only coordination flag
 ; Sets D1L to maximum volume (minimum attenuation) and RR to maximum for operators 3 and 4 of FM1
 smpsMaxRelRate macro
-	if SonicDriverVer>=3
-		; Emulate it in S3/S&K/S3D driver
+;	if SonicDriverVer>=3
+;		; Emulate it in S3/S&K/S3D driver
 		smpsFMICommand $88,$0F
 		smpsFMICommand $8C,$0F
-	else
-		dc.b	$F9
-	endif
+;	else
+;		dc.b	$F9
+;	endif
 	endm
 ; ---------------------------------------------------------------------------
 ; Backwards compatibility
@@ -758,7 +781,8 @@ smpsFMFlutter macro
 	endm
 
 smpsWeirdD1LRR macro
-	message "Coord. Flag does not exist in the Sonic 1 Prototype!"
+	smpsFMICommand $88,$0F
+	smpsFMICommand $8C,$0F
 	endm
 
 smpsSetvoice macro
@@ -871,6 +895,16 @@ smpsVcReleaseRate macro op1,op2,op3,op4
 	set vcRR2,op2
 	set vcRR3,op3
 	set vcRR4,op4
+	endm
+
+smpsNotZ80 function cpu,(cpu<>128)&&(cpu<>32988)
+
+smpsDcb macro
+		if smpsNotZ80(MOMCPU)
+			dc.b ALLARGS
+		else
+			db ALLARGS
+		endif
 	endm
 
 ; Voices - Total Level
