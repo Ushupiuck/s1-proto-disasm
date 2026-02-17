@@ -959,11 +959,12 @@ DACDriverLoad:
 		deassertZ80Reset
 		lea	(DACDriver).l,a0
 		lea	(z80_ram).l,a1
-		move.w	#DACDriver_End-DACDriver-1,d0
+		move.w	#(DACDriver_End-DACDriver)-1,d0
 
 .loadDAC:
 		move.b	(a0)+,(a1)+
 		dbf	d0,.loadDAC
+
 		moveq	#0,d0
 		lea	(z80_dac_voicetbladr).l,a1
 		move.b	d0,(a1)+	; Write 0 to 1FF8
@@ -1289,7 +1290,7 @@ Pal_SZ2Cyc:	binclude "palette/Cycle - SZ2.bin"
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
-PaletteWhiteIn:
+PaletteFadeIn:
 		move.w	#$3F,(v_pfade_start).w ; set start position = 0; size = $40
 
 PalFadeIn_Alt:
@@ -1632,7 +1633,7 @@ loc_25D8:
 		moveq	#plcid_Main,d0
 		bsr.w	NewPLC
 		enable_display
-		bsr.w	PaletteWhiteIn
+		bsr.w	PaletteFadeIn
 
 Tit_MainLoop:
 		move.b	#id_VInt_04,(v_vint_routine).w
@@ -2494,7 +2495,7 @@ GM_Special:
 		subq.b	#1,(v_btnpushtime2).w
 		move.w	#1800,(v_generictimer).w
 		enable_display
-		bsr.w	PaletteWhiteIn
+		bsr.w	PaletteFadeIn
 
 loc_3620:
 		bsr.w	PauseGame
