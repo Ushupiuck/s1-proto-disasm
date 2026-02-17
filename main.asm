@@ -117,10 +117,10 @@ Vectors:
 		dc.b "GM 00000000-00"			; Serial\version number
 Checksum:	dc.w 0					; Checksum
 		dc.b "J               "			; I\O support
-RomStartLoc:	dc.l StartOfROM				; Start address of ROM
-RomEndLoc:		dc.l EndOfROM-1				; End address of ROM
-RamStartLoc:	dc.l v_ram_start&$FFFFFF	; Start address of RAM
-RamEndLoc:		dc.l (v_ram_end-1)&$FFFFFF	; End address of RAM
+ROMStartLoc:	dc.l StartOfROM				; Start address of ROM
+ROMEndLoc:		dc.l EndOfROM-1				; End address of ROM
+RAMStartLoc:	dc.l v_ram_start&$FFFFFF	; Start address of RAM
+RAMEndLoc:		dc.l (v_ram_end-1)&$FFFFFF	; End address of RAM
 		dc.l $20202020				; SRAM (none)
 		dc.l $20202020				; SRAM start ($200001)
 		dc.l $20202020				; SRAM end ($20xxxx)
@@ -302,7 +302,7 @@ GameProgram:
 
 CheckSumCheck:
 		movea.l	#EndOfHeader,a0	; start checking bytes after the header ($200)
-		movea.l	#RomEndLoc,a1	; stop at end of ROM
+		movea.l	#ROMEndLoc,a1	; stop at end of ROM
 		move.l	(a1),d0
 		moveq	#0,d1
 
