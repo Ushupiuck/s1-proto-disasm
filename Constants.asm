@@ -168,7 +168,7 @@ Priority:	ds.b 1	; sprite stack priority -- 0 is front
 Frame:		ds.b 1	; current frame displayed
 AniFrame:	ds.b 1	; current frame in animation script
 Anim:		ds.b 1	; current animation
-NextAni:	ds.b 1	; next animation
+PrevAni:	ds.b 1	; previous animation
 TimeFrame:	ds.b 1	; time to next frame
 DelayAni:	ds.b 1	; time to delay animation
 ColType:	ds.b 1	; collision response type
@@ -223,8 +223,7 @@ obPriority:	equ obj.Priority
 obFrame:	equ obj.Frame
 obAniFrame:	equ obj.AniFrame
 obAnim:		equ obj.Anim
-obNextAni:	equ obj.NextAni
-obPrevAni:	equ obj.NextAni
+obPrevAni:	equ obj.PrevAni
 obTimeFrame:	equ obj.TimeFrame
 obDelayAni:	equ obj.DelayAni
 obColType:	equ obj.ColType
@@ -287,6 +286,9 @@ afRoutine:	equ $FC	; increment routine counter
 afChange:	equ $FD	; run specified animation
 afBack:		equ $FE	; go back (specified number) bytes
 afEnd:		equ $FF	; return to beginning of animation
+
+; Backwards compatibility with older Sonic Retro disassemblies
+obNextAni:	equ obj.PrevAni
 
 ; Background music
 bgm__First:	equ $81
