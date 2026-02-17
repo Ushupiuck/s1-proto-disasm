@@ -71,6 +71,7 @@ v_endcardtime	= v_endcard+object_size*4	; object variable space for the level re
 v_endcardring	= v_endcard+object_size*5	; object variable space for the level results card ring bonus tally ($40 bytes)
 v_endcardoval	= v_endcard+object_size*6	; object variable space for the level results card oval ($40 bytes)
 
+; This has an issue where inertia overwrites v_endcard.
 v_debugnumbers1	=	v_objspace+object_size*16	; object variable space for the unused debug numbers ($300 bytes)
 v_debugnumxpos	=	v_debugnumbers1+object_size*0	; object variable space for the x position of the unused debug numbers ($100 bytes)
 v_debugnumypos	=	v_debugnumbers1+object_size*4	; object variable space for the y position of the unused debug numbers ($100 bytes)
