@@ -44,7 +44,7 @@ PCycGHZ_Go:
 		addq.w	#1,(v_pcyc_num).w ; increment cycle number
 		andi.w	#3,d0		; if cycle > 3, reset to 0
 		lsl.w	#3,d0
-		lea	(v_palette+$50).w,a1
+		lea	(v_palette_line_3+$10).w,a1
 		move.l	(a0,d0.w),(a1)+
 		move.l	4(a0,d0.w),(a1)	; copy palette data to RAM
 
@@ -67,7 +67,7 @@ PalCycle_LZ:
 		lsl.w	#3,d0
 		lea	(Pal_LZCyc).l,a0
 		adda.w	d0,a0
-		lea	(v_palette+$6E).w,a1
+		lea	(v_palette_line_4+$E).w,a1
 		move.w	(a0)+,(a1)+
 		addq.w	#8,a1
 		move.w	(a0)+,(a1)+
@@ -99,7 +99,7 @@ loc_17D6:
 		add.w	d1,d0
 		add.w	d0,d0
 		lea	(Pal_SLZCyc).l,a0
-		lea	(v_palette+$56).w,a1
+		lea	(v_palette_line_3+$16).w,a1
 		move.w	(a0,d0.w),(a1)
 		move.l	2(a0,d0.w),4(a1)
 
@@ -119,7 +119,7 @@ PalCycle_SZ:
 		andi.w	#3,d0
 		lsl.w	#3,d0
 		lea	(Pal_SZ1Cyc).l,a0
-		lea	(v_palette+$6E).w,a1
+		lea	(v_palette_line_4+$E).w,a1
 		move.l	(a0,d0.w),(a1)+
 		move.l	4(a0,d0.w),(a1)
 		andi.w	#3,d1
@@ -128,7 +128,7 @@ PalCycle_SZ:
 		add.w	d0,d1
 		add.w	d1,d1
 		lea	(Pal_SZ2Cyc).l,a0
-		lea	(v_palette+$76).w,a1
+		lea	(v_palette_line_4+$16).w,a1
 		move.l	(a0,d1.w),(a1)
 		move.w	4(a0,d1.w),6(a1)
 
