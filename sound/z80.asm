@@ -27,12 +27,12 @@ zHighAdr:	equ	1		; data high address
 zSizeLow:	equ	2		; data size (low byte)
 zSizeHigh:	equ	3		; data size	(high byte)
 zLoopFlag:	equ	4		; loop flag
-zPriority:	equ	5		; priority
+zPriority:	equ	5		; priority flag
 zLoopLow:	equ	6		; loop low byte
 zLoopHigh:	equ	7		; loop high byte
-zEndLow:	equ	8		; end low byte
-zEndHigh:	equ	9		; end high byte
-zDelay:	equ	11		; delay
+zLoopSizeLow:	equ	8		; loop size low byte
+zLoopSizeHigh:	equ	9		; loop size high byte
+zSampleRate:	equ	11		; sample rate
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -142,7 +142,7 @@ zPlayPCMLoop:
 		ld	c,a	; 4
 		ld	a,80h	; 7
 		ld	(zDAC_Status),a	; 13
-		ld	b,(iy+zDelay)	; 19
+		ld	b,(iy+zSampleRate)	; 19
 
 .loop1:
 		bit	7,(hl)	; 12
@@ -165,7 +165,7 @@ zPlayPCMLoop:
 		ld	c,a	; 4
 		ld	a,80h	; 7
 		ld	(zDAC_Status),a	; 13
-		ld	b,(iy+zDelay)	; 19
+		ld	b,(iy+zSampleRate)	; 19
 
 .loop2:
 		bit	7,(hl)	; 12
@@ -222,8 +222,8 @@ loc_10C:
 loc_133:
 		ld	c,(ix+0)
 		exx
-		ld	c,(iy+zEndLow)
-		ld	b,(iy+zEndHigh)
+		ld	c,(iy+zLoopSizeLow)
+		ld	b,(iy+zLoopSizeHigh)
 		ld	l,(iy+zSizeLow)
 		ld	h,(iy+zSizeHigh)
 		ld	e,(iy+zLowAdr)
@@ -247,23 +247,35 @@ loc_153:
 
 ; ===========================================================================
 
-zPCMMetadata macro label,sampleRate
+zPCMMetadata macro label,loopFlag,priority,loopLabel,sampleRate
 	dw	label	; Start
 	dw	label_End-label	; Length
-	db	0	; Loop Flag
-	db	0	; Priority
-	dw	0	; Loop Start
-	dw	0	; Loop Length
+	if loopFlag
+		db	80h	; Loop Flag
+	else
+		db	0	; Loop Flag
+	endif
+	if priority
+		db	80h	; Priority
+	else
+		db	0	; Priority
+	endif
+	if loopLabel
+		dw	loopLabel	; Loop Start
+		dw	loopLabel_End-loopLabel	; Loop Length
+	else
+		ds	4
+	endif
 	db	0	; Padding
 	db	dpcmLoopCounter(sampleRate)	; Pitch
 	endm
 
 ; DPCM metadata
 zPCM_Table:
-	zPCMMetadata zDAC_Kick,7750
-	zPCMMetadata zDAC_Snare,16500
-zTimpani_Pitch = $+0Bh
-	zPCMMetadata zDAC_Timpani,6500
+	zPCMMetadata zDAC_Kick,0,0,0,7750
+	zPCMMetadata zDAC_Snare,0,0,0,16500
+zTimpani_Pitch = $+zSampleRate
+	zPCMMetadata zDAC_Timpani,0,0,0,6500
 
 ; DPCM data
 zDAC_Kick:
