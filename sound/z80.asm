@@ -250,7 +250,11 @@ loc_153:
 zPCMMetadata macro label,sampleRate
 	dw	label	; Start
 	dw	label_End-label	; Length
-	ds	7	; Padding
+	db	0	; Loop Flag
+	db	0	; Priority
+	dw	0	; Loop Start
+	dw	0	; Loop Length
+	db	0	; Padding
 	db	dpcmLoopCounter(sampleRate)	; Pitch
 	endm
 
