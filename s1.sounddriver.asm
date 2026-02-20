@@ -286,8 +286,7 @@ DACUpdateTrack:
 .noupdate:
 		rts
 ; ===========================================================================
-; Note: this only defines rates for samples $88-$8D, meaning $8E-$8F are invalid.
-; Also, $8C-$8D are so slow you may want to skip them.
+; Note: $8C-$8F are so slow you may want to skip them.
 
 DAC_sample_rate:
 		dc.b dpcmLoopCounter(8250)
