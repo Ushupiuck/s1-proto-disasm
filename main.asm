@@ -1142,7 +1142,7 @@ RunPLC:
 
 loc_1404:
 		andi.w	#$7FFF,d2
-	if ~~FixBugs
+	if FixBugs=0
 		move.w	d2,(v_plc_patternsleft).w
 	endif
 		bsr.w	NemDec_BuildCodeTable

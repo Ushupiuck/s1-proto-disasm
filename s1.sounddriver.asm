@@ -436,7 +436,7 @@ NoteTimeoutUpdate:
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 DoModulation:
-	if ~~FixBugs
+	if FixBugs=0
 		addq.w	#4,sp		; Do not return to caller (but see below)
 	endif
 		btst	#3,SMPS_Track.PlaybackControl(a5)	; Is modulation active?
@@ -485,7 +485,7 @@ DoModulation:
 		add.w	SMPS_Track.ModulationVal(a5),d6		; Add cumulative modulation change
 		move.w	d6,SMPS_Track.ModulationVal(a5)		; Store it
 		add.w	SMPS_Track.Freq(a5),d6			; Add note frequency to it
-	if ~~FixBugs
+	if FixBugs=0
 		subq.w	#4,sp					; In this case, we want to return to caller after all
 	endif
 
