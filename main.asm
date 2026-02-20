@@ -970,7 +970,7 @@ DACDriverLoad:
 		move.b	d0,(a1)+	; Write 0 to 1FF8
 		move.b	#$80,(a1)+	; Write $80 to 1FF9 (zVoiceTblAdr = 8000h)
 		move.b	#make68kBank($38000),(a1)+	; Write unknown bank address $38000 (7) to 1FFA
-		move.b	#$80,(a1)+	; Write $80 to 1FFB (zBankStore = 8007h)
+		move.b	#$80,(a1)+	; Write $80 to 1FFB (zBank = 8007h)
 		move.b	d0,(a1)+	; Write 0 to 1FFC
 		move.b	d0,(a1)+	; Write 0 to 1FFD
 		move.b	d0,(a1)+	; Write 0 to 1FFE

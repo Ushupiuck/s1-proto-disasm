@@ -25,7 +25,8 @@ zStack:			ds.w 1
 zDAC_Update:	ds.b 1
 zVoiceFlag:		ds.b 1
 zVoiceTblAdr:	ds.w 1
-zBankStore:		ds.w 1
+zBankLow:		ds.b 1
+zBankHigh:		ds.b 1
 zLoopDataStr:	ds.b 1
 zDAC_Status:	ds.b 1	; Bit 7 set if the driver is not accepting new samples, it is clear otherwise
 zRepeatFlag:	ds.b 1
