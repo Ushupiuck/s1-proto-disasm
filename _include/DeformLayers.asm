@@ -481,9 +481,7 @@ loc_418C:
 loc_4192:
 		cmpi.w	#$60,(v_lookshift).w
 		bne.s	loc_41AC
-	if FixBugs=0
-		; Bug: The camera delays when rolling down or up a slope very quickly
-	else
+	if FixBugs
 		move.w	(v_player+obInertia).w,d1
 		bpl.s	loc_666C
 		neg.w	d1
@@ -491,6 +489,8 @@ loc_4192:
 loc_666C:
 		cmpi.w	#$800,d1
 		bhs.s	loc_41BE
+	else
+		; Bug: The camera delays when rolling down or up a slope very quickly
 	endif
 		move.w	#$600,d1
 		cmpi.w	#6,d0
@@ -541,9 +541,7 @@ loc_41E8:
 loc_41F4:
 		cmp.w	(v_limittop2).w,d1
 		bgt.s	loc_4214
-	if FixBugs=0
-		; Bug: If the player is going too fast vertically, they can die due to the camera's slowness.
-	else
+	if FixBugs
 		cmpi.w	#-$100,d1
 		bgt.s	loc_66F0
 		andi.w	#$7FF,d1
@@ -553,6 +551,8 @@ loc_41F4:
 		bra.s	loc_4214
 
 loc_66F0:
+	else
+		; Bug: If the player is going too fast vertically, they can die due to the camera's slowness.
 	endif
 		move.w	(v_limittop2).w,d1
 		bra.s	loc_4214
@@ -567,9 +567,7 @@ loc_4200:
 loc_420A:
 		cmp.w	(v_limitbtm2).w,d1
 		blt.s	loc_4214
-	if FixBugs=0
-		; Bug: If the player is going too fast vertically, they can die due to the camera's slowness.
-	else
+	if FixBugs
 		subi.w	#$800,d1
 		bcs.s	loc_6720
 		andi.w	#$7FF,(v_player+obY).w
@@ -578,6 +576,8 @@ loc_420A:
 		bra.s	loc_4214
 
 loc_6720:
+	else
+		; Bug: If the player is going too fast vertically, they can die due to the camera's slowness.
 	endif
 		move.w	(v_limitbtm2).w,d1
 
