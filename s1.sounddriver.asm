@@ -291,8 +291,8 @@ DACUpdateTrack:
 
 DAC_sample_rate:
 		dc.b dpcmLoopCounter(8250)
-		dc.b dpcmLoopCounter(7600)
-		dc.b dpcmLoopCounter(6400)
+		dc.b dpcmLoopCounter(7550)
+		dc.b dpcmLoopCounter(6350)
 		dc.b dpcmLoopCounter(6250)
 		dc.b $FF, $FF, $FF, $FF
 		even
