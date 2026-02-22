@@ -164,7 +164,7 @@ Mus87_Invincibility_Voices:
 	smpsVcDecayRate2	$00, $00, $00, $00
 	smpsVcDecayLevel	$00, $01, $0F, $01
 	smpsVcReleaseRate	$0F, $0F, $0F, $0F
-	smpsVcTotalLevel	$80, $27, $28, $18
+	smpsVcTotalLevel	$00, $27, $28, $18
 
 ;	Voice $01
 ;	$3A
@@ -182,4 +182,4 @@ Mus87_Invincibility_Voices:
 	smpsVcDecayRate2	$00, $03, $01, $03
 	smpsVcDecayLevel	$0A, $00, $00, $01
 	smpsVcReleaseRate	$0F, $0F, $0F, $0F
-	smpsVcTotalLevel	$80, $31, $47, $21
+	smpsVcTotalLevel	$00, $31, $47, $21
