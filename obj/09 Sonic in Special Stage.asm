@@ -505,12 +505,12 @@ Obj09_UPblock:
 		move.b	#30,objoff_36(a0)
 		btst	#6,(v_ssrotate+1).w
 		beq.s	loc_111A2
-		asl	(v_ssrotate).w
+		asl.w	(v_ssrotate).w
 		rts
 ; ===========================================================================
 
 loc_111A2:
-		asr	(v_ssrotate).w
+		asr.w	(v_ssrotate).w
 		rts
 ; ===========================================================================
 

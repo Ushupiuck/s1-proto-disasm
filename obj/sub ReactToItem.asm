@@ -152,8 +152,8 @@ loc_FC78:
 		beq.s	loc_FCA2
 		neg.w	obVelX(a0)
 		neg.w	obVelY(a0)
-		asr	obVelX(a0)
-		asr	obVelY(a0)
+		asr.w	obVelX(a0)
+		asr.w	obVelY(a0)
 		move.b	#0,obColType(a1)
 		subq.b	#1,obColProp(a1)
 		bne.s	locret_FCA0

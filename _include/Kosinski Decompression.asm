@@ -22,7 +22,7 @@ KosDec:
 
 Kos_Loop:
 		lsr.w	#1,d5				; shift bit into the c flag
-		move	sr,d6
+		move.w	sr,d6
 		dbf	d4,.chkbit
 		move.b	(a0)+,1(sp)
 		move.b	(a0)+,(sp)
@@ -30,7 +30,7 @@ Kos_Loop:
 		moveq	#$F,d4
 
 .chkbit:
-		move	d6,ccr				; was the bit set?
+		move.w	d6,ccr				; was the bit set?
 		bcc.s	Kos_RLE				; if not, branch
 
 		move.b	(a0)+,(a1)+			; copy byte as-is
@@ -40,7 +40,7 @@ Kos_Loop:
 Kos_RLE:
 		moveq	#0,d3
 		lsr.w	#1,d5				; get next bit
-		move	sr,d6
+		move.w	sr,d6
 		dbf	d4,.chkbit
 		move.b	(a0)+,1(sp)
 		move.b	(a0)+,(sp)
@@ -48,7 +48,7 @@ Kos_RLE:
 		moveq	#$F,d4
 
 .chkbit:
-		move	d6,ccr				; was the bit set?
+		move.w	d6,ccr				; was the bit set?
 		bcs.s	Kos_SeparateRLE			; if yes, branch
 
 		lsr.w	#1,d5				; shift bit into the x flag
