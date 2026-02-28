@@ -53,23 +53,22 @@ ym2612_a0:		equ z80_ram+zYM2612_A0
 ym2612_d0:		equ z80_ram+zYM2612_D0
 ym2612_a1:		equ z80_ram+zYM2612_A1
 ym2612_d1:		equ z80_ram+zYM2612_D1
-region_ver:		equ $A10001
-ctrl_port_1_data:	equ $A10002
-ctrl_port_1_data_b:	equ $A10003
-ctrl_port_1_ctrl:	equ $A10008
-ctrl_port_1_ctrl_b:	equ $A10009
-ctrl_port_2_ctrl:	equ $A1000A
-ctrl_port_2_ctrl_b:	equ $A1000B
-ctrl_expansion_ctrl:	equ $A1000C
-ctrl_expansion_ctrl_b:	equ $A1000D
-z80_version		= region_ver
-z80_port_1_data	= ctrl_port_1_data
-z80_port_1_control	= ctrl_port_1_ctrl
-z80_port_2_control	= ctrl_port_2_ctrl
-z80_expansion_control	= ctrl_expansion_ctrl
+console_version:	equ $A10001
+port_1_data_hi:	equ $A10002
+port_1_data:	equ $A10003
+port_2_data_hi:		equ $A10004
+port_2_data:		equ $A10005
+port_1_control_hi:	equ $A10008
+port_1_control:		equ $A10009
+port_2_control_hi:	equ $A1000A
+port_2_control:		equ $A1000B
+expansion_control_hi:	equ $A1000C
+expansion_control:	equ $A1000D
 z80_bus_request:	equ $A11100
 z80_reset:		equ $A11200
 
+; Misc addresses
+sram_port:		equ $A130F1
 security_addr:		equ $A14000
 
 ; VRAM data
@@ -80,8 +79,10 @@ vram_bg:	equ $E000	; plane B (background namespace)
 vram_sonic:	equ $F000	; Sonic graphics
 vram_sprites:	equ $F800	; sprite table
 vram_hscroll:	equ $FC00	; horizontal scroll table
-tile_size:	equ 8*8/2
-plane_size_64x32:	equ 64*32*2
+
+tile_size:	equ 8*8/2	; size of a single 8x8 tile
+chunk_size:	equ $200	; size of a single 256x256 chunk
+plane_size_64x32: equ 64*32*2	; size of plane in 512x256 mode
 
 ; VRAM data from ICD_BLK4
 vram_sprites_prev:	equ $D800	; sprite table

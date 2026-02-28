@@ -7,9 +7,11 @@ ramaddr function x,(-(x&$80000000)<<1)|x
 ; Variables (v) and Flags (f)
 
 	phase ramaddr($FFFF0000)
-v_ram_start:
+v_ram_start_def:
+v_ram_start	= v_ram_start_def&$FFFFFF	; 24-bit addressing
 
-v_256x256:		ds.b	$52*$200	; 256x256 tile mappings ($A400 bytes)
+v_256x256_def:	ds.b	$52*chunk_size	; 256x256 tile mappings ($A400 bytes)
+v_256x256	=	v_256x256_def&$FFFFFF	; 24-bit addressing
 v_256x256_end:
 
 v_lvllayout:	ds.b	$400	; level layout buffer ($400 bytes)
@@ -357,11 +359,11 @@ v_ram_end:
 	dephase
 
 ; Special Stage Variables
-v_ssbuffer1		= v_ram_start&$FFFFFF
+v_ssbuffer1		= v_ram_start
 v_ssblockbuffer	= v_ssbuffer1+$1020 ; ($2000 bytes)
 v_ssblockbuffer_end	= v_ssblockbuffer+$80*$40
-v_sslayout		= v_ram_start&$FFFFFF+$172E ; ($510 bytes)
-v_ssbuffer2		= v_ram_start&$FFFFFF+$4000
+v_sslayout		= v_ram_start+$172E ; ($510 bytes)
+v_ssbuffer2		= v_ram_start+$4000
 v_ssblocktypes	= v_ssbuffer2
 v_ssitembuffer	= v_ssbuffer2+$400 ; ($100 bytes)
 v_ssitembuffer_end	= v_ssitembuffer+$100

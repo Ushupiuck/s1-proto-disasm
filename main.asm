@@ -119,7 +119,7 @@ Checksum:	dc.w 0					; Checksum
 		dc.b "J               "			; I\O support
 ROMStartLoc:	dc.l StartOfROM				; Start address of ROM
 ROMEndLoc:		dc.l EndOfROM-1				; End address of ROM
-RAMStartLoc:	dc.l v_ram_start&$FFFFFF	; Start address of RAM
+RAMStartLoc:	dc.l v_ram_start	; Start address of RAM
 RAMEndLoc:		dc.l (v_ram_end-1)&$FFFFFF	; End address of RAM
 		dc.l $20202020				; SRAM (none)
 		dc.l $20202020				; SRAM start ($200001)
@@ -139,15 +139,15 @@ ErrorTrap:
 
 ; This contains an earlier version of ICD_BLK4.PRG
 EntryPoint:
-		tst.l	(ctrl_port_1_ctrl).l
+		tst.l	(port_1_control_hi).l
 
 SkipSetup:
 		bne.w	GameProgram
-		tst.w	(ctrl_expansion_ctrl).l
+		tst.w	(expansion_control_hi).l
 		bne.s	SkipSetup
 		lea	SetupValues(pc),a5
 		movem.l	(a5)+,d5-a4
-		move.w	region_ver-1-z80_bus_request(a1),d0	; get hardware version (from $A10001)
+		move.w	console_version-1-z80_bus_request(a1),d0	; get hardware version (from $A10001)
 		andi.w	#$F00,d0
 		beq.s	SkipSecurity
 		move.l	#"SEGA",security_addr-z80_bus_request(a1)
@@ -215,7 +215,7 @@ PSGInitLoop:
 		bra.s	GameProgram
 ; ===========================================================================
 SetupValues:	dc.l $8000			; VDP register start number
-		dc.l bytesToLcnt(v_ram_end-v_ram_start)		; size of RAM divided by 4
+		dc.l bytesToLcnt(v_ram_end-v_ram_start_def)		; size of RAM divided by 4
 		dc.l $100					; VDP register diff
 
 		dc.l z80_ram				; start of Z80 RAM
@@ -295,7 +295,7 @@ PSGInitValues_End:
 ; ===========================================================================
 
 GameProgram:
-		btst	#6,(ctrl_expansion_ctrl_b).l
+		btst	#6,(expansion_control).l
 		beq.s	CheckSumCheck
 		cmpi.l	#"init",(v_init).w ; has checksum routine already run?
 		beq.w	GameInit	; if yes, branch
@@ -326,16 +326,16 @@ CheckSumCheck:
 		move.l	d7,(a6)+
 		dbf	d6,.clrRAM	; clear RAM ($FE00-$FFFF)
 
-		move.b	(region_ver).l,d0	; get region version
+		move.b	(console_version).l,d0	; get region version
 		andi.b	#%11000000,d0		; AND the value so it only gets the japanese bit and clock speed bit
 		move.b	d0,(v_megadrive).w	; move the region values into 68K memory for later use
 		move.w	#1,(v_unused12).w	; set an unused flag to 1
 		move.l	#"init",(v_init).w	; set flag so checksum won't run again
 
 GameInit:
-		lea	(v_ram_start&$FFFFFF).l,a6
+		lea	(v_ram_start).l,a6
 		moveq	#0,d7
-		move.w	#bytesToLcnt(v_crossresetram-v_ram_start),d6
+		move.w	#bytesToLcnt(v_crossresetram-v_ram_start_def),d6
 
 .clrRAM:
 		move.l	d7,(a6)+
@@ -829,9 +829,9 @@ JoypadInit:
 		stopZ80
 		waitZ80
 		moveq	#$40,d0
-		move.b	d0,(ctrl_port_1_ctrl_b).l	; init port 1 (joypad 1)
-		move.b	d0,(ctrl_port_2_ctrl_b).l	; init port 2 (joypad 2)
-		move.b	d0,(ctrl_expansion_ctrl_b).l	; init port 3 (expansion/extra)
+		move.b	d0,(port_1_control).l	; init port 1 (joypad 1)
+		move.b	d0,(port_2_control).l	; init port 2 (joypad 2)
+		move.b	d0,(expansion_control).l	; init port 3 (expansion/extra)
 		startZ80
 		rts
 ; End of function JoypadInit
@@ -846,7 +846,7 @@ ReadJoypads:
 		stopZ80
 		waitZ80
 		lea	(v_jpadhold1).w,a0 ; address where joypad states are written
-		lea	(ctrl_port_1_data_b).l,a1	; first joypad port
+		lea	(port_1_data).l,a1	; first joypad port
 		bsr.s	.read		; do the first joypad
 		addq.w	#2,a1		; do the second joypad
 		bsr.s	.read
@@ -1525,12 +1525,12 @@ GM_Sega:
 		locVRAM ArtTile_Sega_Tiles*tile_size
 		lea	(Nem_SegaLogo).l,a0
 		bsr.w	NemDec
-		lea	(v_ram_start&$FFFFFF).l,a1
+		lea	(v_ram_start).l,a1
 		lea	(Eni_SegaLogo).l,a0
 		move.w	#make_art_tile(ArtTile_Sega_Tiles,0,FALSE),d0
 		bsr.w	EniDec
 
-		copyTilemap	v_ram_start&$FFFFFF,vram_fg+$61C,12,4
+		copyTilemap	v_ram_start,vram_fg+$61C,12,4
 
 		moveq	#palid_SegaBG,d0
 		bsr.w	PalLoad2
@@ -1611,7 +1611,7 @@ loc_25D8:
 		move.l	(a0)+,(a4)+
 		dbf	d0,.loadblocks
 		lea	(Blk256_GHZ).l,a0
-		lea	(v_256x256&$FFFFFF).l,a1
+		lea	(v_256x256).l,a1
 		bsr.w	KosDec
 		bsr.w	LevelLayoutLoad
 		lea	(vdp_control_port).l,a5
@@ -2262,9 +2262,9 @@ loc_2EC8:
 		cmpi.b	#id_06,(v_zone).w	; are we on Zone 6?
 		bne.s	locret_3176	; if not, branch
 		bsr.w	sub_3178
-		lea	(v_256x256&$FFFFFF+$900).l,a1
+		lea	(v_256x256+$900).l,a1
 		bsr.s	sub_3166
-		lea	(v_256x256&$FFFFFF+$3380).l,a1
+		lea	(v_256x256+$3380).l,a1
 
 sub_3166:
 		lea	(Anim256Unk1).l,a0
@@ -2279,7 +2279,7 @@ locret_3176:
 ; ===========================================================================
 
 sub_3178:
-		lea	(v_256x256&$FFFFFF).l,a1
+		lea	(v_256x256).l,a1
 		lea	(Anim256Unk2).l,a0
 		move.w	#bytesToWcnt(Anim256Unk2_End-Anim256Unk2),d1
 
@@ -2524,12 +2524,12 @@ loc_3662:
 ; ===========================================================================
 
 SS_BGLoad:
-		lea	(v_ram_start&$FFFFFF).l,a1
+		lea	(v_ram_start).l,a1
 		lea	(Eni_SSBg1).l,a0
 		move.w	#make_art_tile(ArtTile_SS_Background_Fish,2,FALSE),d0
 		bsr.w	EniDec
 		move.l	#$50000001,d3
-		lea	(v_ram_start&$FFFFFF+$80).l,a2
+		lea	(v_ram_start+$80).l,a2
 		moveq	#6,d7
 
 loc_368C:
@@ -2549,7 +2549,7 @@ loc_369C:
 		bne.s	loc_36B0
 		cmpi.w	#6,d7
 		bne.s	loc_36C0
-		lea	(v_ram_start&$FFFFFF).l,a1
+		lea	(v_ram_start).l,a1
 
 loc_36B0:
 		movem.l	d0-d4,-(sp)
@@ -2573,12 +2573,12 @@ loc_36C0:
 loc_36EA:
 		adda.w	#$80,a2
 		dbf	d7,loc_368C
-		lea	(v_ram_start&$FFFFFF).l,a1
+		lea	(v_ram_start).l,a1
 		lea	(Eni_SSBg2).l,a0
 		move.w	#make_art_tile(ArtTile_SS_Background_Clouds,2,FALSE),d0
 		bsr.w	EniDec
-		copyTilemap	v_ram_start&$FFFFFF,vram_fg,64,32
-		copyTilemap	v_ram_start&$FFFFFF,vram_fg+$1000,64,64
+		copyTilemap	v_ram_start,vram_fg,64,32
+		copyTilemap	v_ram_start,vram_fg+$1000,64,64
 		rts
 ; ===========================================================================
 
@@ -2849,7 +2849,7 @@ LoadLevelData:
 		move.l	(a0)+,(a4)+
 		dbf	d0,.loadblocks
 		movea.l	(a2)+,a0
-		lea	(v_256x256&$FFFFFF).l,a1
+		lea	(v_256x256).l,a1
 		bsr.w	KosDec
 		bsr.w	LevelLayoutLoad
 		move.w	(a2)+,d0
