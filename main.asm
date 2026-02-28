@@ -4533,7 +4533,6 @@ ConvertCollisionArray:
 
 .pixelNotSolid1:
 		dbf	d1,.processColumnLoop1
-
 		bra.s	.columnProcessed
 ; ===========================================================================
 
@@ -4550,7 +4549,6 @@ ConvertCollisionArray:
 
 .pixelNotSolid2:
 		dbf	d1,.processColumnLoop2
-
 		bra.s	.columnProcessed
 ; ===========================================================================
 
@@ -4563,7 +4561,6 @@ ConvertCollisionArray:
 .columnProcessed:
 		move.b	d2,(a2)+		; Store column collision height
 		dbf	d3,.processLoop
-
 		rts
 ; End of function ConvertCollisionArray
 ; ===========================================================================
@@ -5239,7 +5236,6 @@ SS_Load:
 
 loc_10B7A:
 		clr.l	(a1)+
-
 		dbf	d0,loc_10B7A
 
 		lea	(v_sslayout).l,a1
@@ -5251,7 +5247,6 @@ loc_10B8E:
 
 loc_10B90:
 		move.l	(a0)+,(a1)+
-
 		dbf	d2,loc_10B90
 
 		lea	$5C(a1),a1
@@ -5273,7 +5268,6 @@ loc_10BAC:
 
 loc_10BC8:
 		clr.l	(a1)+
-
 		dbf	d1,loc_10BC8
 
 		rts
@@ -5325,7 +5319,7 @@ AddPoints:
 .locret_11678:
 		rts
 
-		include	"_include/HUD_Update.asm"
+		include	"_include/HUD Update.asm"
 
 Art_Hud:	binclude "artunc/HUD Numbers.bin"
 Art_LivesNums:	binclude "artunc/Lives Counter Numbers.bin"
