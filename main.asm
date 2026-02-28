@@ -5243,10 +5243,10 @@ loc_10B7A:
 
 		lea	(v_sslayout).l,a1
 		lea	(SS_1).l,a0
-		moveq	#bytesToXcnt(SS_1_End-SS_1,$24),d1
+		moveq	#bytesToXcnt(SS_1_End-SS_1,36),d1	; 36 bytes per row
 
 loc_10B8E:
-		moveq	#bytesToLcnt($24),d2
+		moveq	#bytesToLcnt(36),d2
 
 loc_10B90:
 		move.l	(a0)+,(a1)+
@@ -5286,21 +5286,7 @@ Map_SS_Goal:	include	"_maps/SS UP Block.asm"
 Map_SS_Down:
 Map_SS_Goal_R:	include	"_maps/SS DOWN Block.asm"
 
-; unused
-;sub_10C98:
-		lea	(v_ssblockbuffer).l,a1
-		lea	(SS_1).l,a0
-		moveq	#bytesToXcnt($1000,$40),d1
-
-loc_10CA6:
-		moveq	#bytesToLcnt($40),d2
-
-loc_10CA8:
-		move.l	(a0)+,(a1)+
-		dbf	d2,loc_10CA8
-		lea	$40(a1),a1
-		dbf	d1,loc_10CA6
-		rts
+		include	"leftovers/routines/Special Stage Layout Load.asm"
 
 		include "obj/09 Sonic in Special Stage.asm"
 		include "obj/10 Sonic Animation Test.asm"
