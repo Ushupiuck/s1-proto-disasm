@@ -5565,7 +5565,7 @@ Nem_MZ:	binclude "artnem/8x8 - MZ.nem"
 Blk256_MZ:	binclude "level/map256/MZ.kos"
 		even
 ;0x3DA48
-; end chunk data
+; duplicate cut-off chunk data from MZ
 		dc.w $F0, 0, 0, 0, 0, 0, 0, 0
 ;0x3DA58
 		binclude "leftovers/level/map256/Chunk Data.kos"
@@ -5593,7 +5593,7 @@ Blk256_CWZ:	binclude "level/map256/CWZ.kos"
 		dc.w $FFF8, $FCAA, $AAFF, $F8FC, $FFF8, $FCFF, $F8FC, $FFF8
 		dc.w $FC00, $F001, $FFF8, $FCFF, $F8FC, $FFF8, $FC02, $FF
 		dc.w $F89F, $F0, 0, 0, 0, 0, 0, 0
-; and a duplicate of a duplicate end of chunk data pointer
+; and another duplicate of cut-off chunk data from CWZ
 		dc.w $F89F, $F0, 0, 0, 0, 0, 0, 0
 
 ;0x5711C
