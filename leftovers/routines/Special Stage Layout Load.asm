@@ -8,7 +8,7 @@
 ; Width: 64 bytes per row
 ; Height: 64 bytes
 ; Format: 64x64
-; Size of Special Stage: 4096 bytes
+; Size of Special Stage: 4096 bytes (4KB)
 ; ---------------------------------------------------------------------------
 
 SS_1_size_prev:	= 64*64
