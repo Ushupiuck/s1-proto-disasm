@@ -19,6 +19,7 @@ vdp_control_port:	equ $C00004
 vdp_counter:		equ $C00008
 
 psg_input:		equ $C00011
+debug_reg:		equ $C0001C
 
 	phase	$1FF4
 zStack:			ds.w 1
