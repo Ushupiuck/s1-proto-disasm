@@ -5239,6 +5239,7 @@ SS_Load:
 
 loc_10B7A:
 		clr.l	(a1)+
+
 		dbf	d0,loc_10B7A
 
 		lea	(v_sslayout).l,a1
@@ -5250,6 +5251,7 @@ loc_10B8E:
 
 loc_10B90:
 		move.l	(a0)+,(a1)+
+
 		dbf	d2,loc_10B90
 
 		lea	$5C(a1),a1
@@ -5270,8 +5272,8 @@ loc_10BAC:
 		move.w	#bytesToLcnt(v_ssitembuffer_end-v_ssitembuffer),d1
 
 loc_10BC8:
-
 		clr.l	(a1)+
+
 		dbf	d1,loc_10BC8
 
 		rts
