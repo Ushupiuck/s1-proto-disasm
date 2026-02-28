@@ -14,7 +14,7 @@
 SS_1_size_prev:	= 64*64
 
 SS_Load_Prev:
-		lea	(v_ssblockbuffer).l,a1
+		lea	(v_sslayout_prev).l,a1
 		lea	(SS_1).l,a0
 		moveq	#bytesToXcnt(SS_1_size_prev,64),d1	; 64 bytes per row
 

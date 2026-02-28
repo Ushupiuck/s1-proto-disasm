@@ -361,6 +361,7 @@ v_ram_end:
 ; Special Stage Variables
 v_ssbuffer1		= v_ram_start
 v_ssblockbuffer	= v_ssbuffer1+$1020 ; ($2000 bytes)
+v_sslayout_prev	= v_ssblockbuffer
 v_ssblockbuffer_end	= v_ssblockbuffer+$80*$40
 v_sslayout		= v_ram_start+$172E ; ($510 bytes)
 v_ssbuffer2		= v_ram_start+$4000
