@@ -5353,8 +5353,7 @@ Art_LivesNums:	binclude "artunc/Lives Counter Numbers.bin"
 ; ===========================================================================
 ; Unused 8x8 ASCII Art
 ; ===========================================================================
-;byte_18000:
-		binclude "leftovers/artnem/8x8 ASCII.nem"
+byte_18000:	binclude "leftovers/artnem/8x8 ASCII.nem"
 		even
 ; ===========================================================================
 ; Sega Screen/Title Screen Art and Mappings
@@ -5466,15 +5465,13 @@ Nem_SyzSpike1:	binclude "artnem/SZ Large Spikeball.nem"
 ; ---------------------------------------------------------------------------
 ; Compressed graphics - enemies
 ; ---------------------------------------------------------------------------
-;Nem_BallHog:
-		binclude "artnem/Unused - Enemy Ball Hog.nem"
+Nem_BallHog:	binclude "artnem/Unused - Enemy Ball Hog.nem"
 		even
 Nem_Crabmeat:	binclude "artnem/Enemy Crabmeat.nem"
 		even
 Nem_Buzz:	binclude "artnem/Enemy Buzz Bomber.nem"
 		even
-;Nem_Ball_Explosion:
-		binclude "artnem/Unused - Ball Hog's Ball Explosion.nem"
+Nem_Ball_Explosion:	binclude "artnem/Unused - Ball Hog's Ball Explosion.nem"
 		even
 Nem_Burrobot:	binclude "artnem/Enemy Burrobot.nem"
 		even
@@ -5482,8 +5479,7 @@ Nem_Chopper:	binclude "artnem/Enemy Chopper.nem"
 		even
 Nem_Jaws:	binclude "artnem/Enemy Jaws.nem"
 		even
-;Nem_BallHog_Ball:
-		binclude "artnem/Unused - Ball Hog's Ball.nem"
+Nem_BallHog_Ball:	binclude "artnem/Unused - Ball Hog's Ball.nem"
 		even
 Nem_Roller:	binclude "artnem/Enemy Roller.nem"
 		even
@@ -5544,8 +5540,7 @@ Nem_Squirrel:	binclude "artnem/Animal Squirrel.nem"
 		align	$1000
 	endif
 ; ---------------------------------------------------------------------------
-; Compressed graphics - primary patterns
-; Blocks are Uncompressed
+; Level Data
 ; ---------------------------------------------------------------------------
 Blk16_GHZ:	binclude "level/map16/GHZ.bin"
 Nem_GHZ_1st:	binclude "artnem/8x8 - GHZ1.nem"
@@ -5565,9 +5560,10 @@ Nem_MZ:	binclude "artnem/8x8 - MZ.nem"
 Blk256_MZ:	binclude "level/map256/MZ.kos"
 		even
 ;0x3DA48
-; duplicate cut-off chunk data from MZ
+; Duplicate cut-off chunk data from MZ.
 		dc.w $F0, 0, 0, 0, 0, 0, 0, 0
 ;0x3DA58
+; Cut-off chunk data.
 		binclude "leftovers/level/map256/Chunk Data.kos"
 		even
 ;0x3DB78
@@ -5589,11 +5585,11 @@ Nem_CWZ:	binclude "artnem/8x8 - CWZ.nem"
 Blk256_CWZ:	binclude "level/map256/CWZ.kos"
 		even
 ;0x570DC
-; duplicate cut-off chunk data from CWZ
+; Duplicate cut-off chunk data from CWZ.
 		dc.w $FFF8, $FCAA, $AAFF, $F8FC, $FFF8, $FCFF, $F8FC, $FFF8
 		dc.w $FC00, $F001, $FFF8, $FCFF, $F8FC, $FFF8, $FC02, $FF
 		dc.w $F89F, $F0, 0, 0, 0, 0, 0, 0
-; and another duplicate of cut-off chunk data from CWZ
+; And another duplicate of cut-off chunk data from CWZ.
 		dc.w $F89F, $F0, 0, 0, 0, 0, 0, 0
 
 ;0x5711C
