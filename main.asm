@@ -110,22 +110,26 @@ Vectors:
 		dc.l ErrorTrap			; Unused (reserved)
 		dc.l ErrorTrap			; Unused (reserved)
 		dc.l ErrorTrap			; Unused (reserved)
-		dc.b "SEGA MEGA DRIVE "			; Hardware system ID (Console name)
-		dc.b "(C)SEGA 1989.JAN"			; Copyright holder and release date (generally year)
-		dc.b "                                                " ; Domestic name (blank)
-		dc.b "                                                " ; International name (blank)
-		dc.b "GM 00000000-00"			; Serial\version number
+		dc.b "SEGA MEGA DRIVE "		; Hardware system ID (Console name)
+		dc.b "(C)SEGA 1989.JAN"		; Copyright holder and release date (generally year)
+		dc.b "                " 	; Domestic name (blank)
+		dc.b "                "
+		dc.b "                "
+		dc.b "                " 	; International name (blank)
+		dc.b "                "
+		dc.b "                "
+		dc.b "GM 00000000-00"		; Serial\version number
 Checksum:	dc.w 0					; Checksum
-		dc.b "J               "			; I\O support
-ROMStartLoc:	dc.l StartOfROM				; Start address of ROM
-ROMEndLoc:		dc.l EndOfROM-1				; End address of ROM
+		dc.b "J               "		; I\O support
+ROMStartLoc:	dc.l StartOfROM		; Start address of ROM
+ROMEndLoc:		dc.l EndOfROM-1		; End address of ROM
 RAMStartLoc:	dc.l v_ram_start	; Start address of RAM
 RAMEndLoc:		dc.l (v_ram_end-1)&$FFFFFF	; End address of RAM
 		dc.l $20202020				; SRAM (none)
 		dc.l $20202020				; SRAM start ($200001)
 		dc.l $20202020				; SRAM end ($20xxxx)
 Notes:	dc.b "                                                    " ; Notes (unused, anything can be put in this space, but it has to be 52 bytes.)
-		dc.b "JU              "			; Region (Country code)
+		dc.b "JU              "		; Region (Country code)
 EndOfHeader:
 
 ; ===========================================================================
@@ -1995,14 +1999,14 @@ LevSel_CharOk:
 
 LevelSelectText:
 		charset ' ', $FF
-		charset '0', "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09"
+		charset '0','9',$00
 		charset '$', $0A
 		charset '-', $0B
 		charset '=', $0C
 		charset '>', $0D
-		;charset '>', $0E ; there are two identical right arrows back-to-back in the menutext font, for some reason
-		charset 'Y', "\x0F\x10" ; Y and Z come before A-X
-		charset 'A', "\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x20\x21\x22\x23\x24\x25\x26\x27\x28"
+		;charset '>', $0E ; there are two right arrows in the font for some reason
+		charset 'Y','Z',$0F ; Y and Z come before A-X
+		charset 'A','X',$11
 
 		dc.b "GREEN HILL ZONE STAGE 1 "
 		dc.b "                STAGE 2 "
@@ -5234,9 +5238,9 @@ SS_Load:
 		lea	(v_ssbuffer1).l,a1
 		move.w	#bytesToLcnt(v_ssbuffer2-v_ssbuffer1),d0
 
-loc_10B7A:
+.clrRAM:
 		clr.l	(a1)+
-		dbf	d0,loc_10B7A
+		dbf	d0,.clrRAM
 
 		lea	(v_sslayout).l,a1
 		lea	(SS_1).l,a0
@@ -5245,9 +5249,9 @@ loc_10B7A:
 loc_10B8E:
 		moveq	#bytesToLcnt(36),d2
 
-loc_10B90:
+.loadlayout:
 		move.l	(a0)+,(a1)+
-		dbf	d2,loc_10B90
+		dbf	d2,.loadlayout
 
 		lea	$5C(a1),a1
 		dbf	d1,loc_10B8E
@@ -5256,19 +5260,19 @@ loc_10B90:
 		lea	(SS_MapIndex).l,a0
 		moveq	#bytesToXcnt(SS_MapIndex_End-SS_MapIndex,6),d1
 
-loc_10BAC:
+.loadmaps:
 		move.l	(a0)+,(a1)+
 		move.w	#0,(a1)+
 		move.b	-4(a0),-1(a1)
 		move.w	(a0)+,(a1)+
-		dbf	d1,loc_10BAC
+		dbf	d1,.loadmaps
 
 		lea	(v_ssitembuffer).l,a1
 		move.w	#bytesToLcnt(v_ssitembuffer_end-v_ssitembuffer),d1
 
-loc_10BC8:
+.clritembuffer:
 		clr.l	(a1)+
-		dbf	d1,loc_10BC8
+		dbf	d1,.clritembuffer
 
 		rts
 ; ===========================================================================
