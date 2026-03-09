@@ -1,195 +1,114 @@
 ; ---------------------------------------------------------------------------
 ; Object pointers
 ; ---------------------------------------------------------------------------
-ptr_SonicPlayer:	dc.l SonicPlayer	; 01
-ptr_Obj02:	dc.l Obj02	; 02
-ptr_Obj03:	dc.l Obj03	; 03
-ptr_Obj04:	dc.l Obj04	; 04
-ptr_Obj05:	dc.l Obj05	; 05
-ptr_Obj06:	dc.l Obj06	; 06
-ptr_Obj07:	dc.l Obj07	; 07
-ptr_Obj08:	dc.l NullObject	; 08
-ptr_SonicSpecial:	dc.l SonicSpecial	; 09
-ptr_Obj0A:	dc.l NullObject	; 0A
-ptr_Obj0B:	dc.l NullObject	; 0B
-ptr_Obj0C:	dc.l NullObject	; 0C
-ptr_Signpost:	dc.l Signpost	; 0D
-ptr_TitleSonic:	dc.l TitleSonic	; 0E
-ptr_PSBTM:	dc.l PSB	; 0F
-ptr_Obj10:	dc.l Obj10	; 10
-ptr_Bridge:	dc.l Bridge	; 11
-ptr_SpinningLight:	dc.l SpinningLight	; 12
-ptr_LavaMaker:	dc.l LavaMaker	; 13
-ptr_LavaBall:	dc.l LavaBall	; 14
-ptr_SwingingPlatform:	dc.l SwingingPlatform	; 15
-ptr_Obj16:	dc.l NullObject	; 16
-ptr_Helix:	dc.l Helix	; 17
-ptr_BasicPlatform:	dc.l BasicPlatform	; 18
-ptr_GBall:	dc.l GBall	; 19
-ptr_CollapseLedge:	dc.l CollapseLedge	; 1A
-ptr_Obj1B:	dc.l Obj1B	; 1B
-ptr_Scenery:	dc.l Scenery	; 1C
-ptr_MagicSwitch:	dc.l MagicSwitch	; 1D
-ptr_BallHog:	dc.l BallHog	; 1E
-ptr_Crabmeat:	dc.l Crabmeat	; 1F
-ptr_Cannonball:	dc.l Cannonball	; 20
-ptr_HUD:	dc.l HUD	; 21
-ptr_BuzzBomber:	dc.l BuzzBomber	; 22
-ptr_Missile:	dc.l Missile	; 23
-ptr_MissileDissolve:	dc.l MissileDissolve	; 24
-ptr_Rings:	dc.l Rings	; 25
-ptr_Monitor:	dc.l Monitor	; 26
-ptr_ExplosionItem:	dc.l ExplosionItem	; 27
-ptr_Animals:	dc.l Animals	; 28
-ptr_Points:	dc.l Points	; 29
-ptr_Obj2A:	dc.l Obj2A	; 2A
-ptr_Chopper:	dc.l Chopper	; 2B
-ptr_Jaws:	dc.l Jaws	; 2C
-ptr_Burrobot:	dc.l Burrobot	; 2D
-ptr_PowerUp:	dc.l PowerUp	; 2E
-ptr_LargeGrass:	dc.l LargeGrass	; 2F
-ptr_GlassBlock:	dc.l GlassBlock	; 30
-ptr_ChainStomp:	dc.l ChainStomp	; 31
-ptr_Button:	dc.l Button	; 32
-ptr_PushBlock:	dc.l PushBlock	; 33
-ptr_TitleCard:	dc.l TitleCard	; 34
-ptr_GrassFire:	dc.l GrassFire	; 35
-ptr_Spikes:	dc.l Spikes	; 36
-ptr_RingLoss:	dc.l RingLoss	; 37
-ptr_ShieldItem:	dc.l ShieldItem	; 38
-ptr_GameOverCard:	dc.l GameOverCard	; 39
-ptr_GotThroughCard:	dc.l GotThroughCard	; 3A
-ptr_PurpleRock:	dc.l PurpleRock	; 3B
-ptr_SmashWall:	dc.l SmashWall	; 3C
-ptr_BossGreenHill:	dc.l BossGreenHill	; 3D
-ptr_Prison:	dc.l Prison	; 3E
-ptr_ExplosionBomb:	dc.l ExplosionBomb	; 3F
-ptr_MotoBug:	dc.l MotoBug	; 40
-ptr_Springs:	dc.l Springs	; 41
-ptr_Newtron:	dc.l Newtron	; 42
-ptr_Roller:	dc.l Roller	; 43
-ptr_EdgeWalls:	dc.l EdgeWalls	; 44
-ptr_SideStomp:	dc.l SideStomp	; 45
-ptr_MarbleBrick:	dc.l MarbleBrick	; 46
-ptr_Bumper:	dc.l Bumper	; 47
-ptr_BossBall:	dc.l BossBall	; 48
-ptr_WaterSound:	dc.l WaterSound	; 49
-ptr_VanishSonic:	dc.l VanishSonic	; 4A
-ptr_GiantRing:	dc.l GiantRing	; 4B
-ptr_GeyserMaker:	dc.l GeyserMaker	; 4C
-ptr_LavaGeyser:	dc.l LavaGeyser	; 4D
-ptr_LavaWall:	dc.l LavaWall	; 4E
-ptr_Splats:	dc.l Splats	; 4F
-ptr_Yadrin:	dc.l Yadrin	; 50
-ptr_SmashBlock:	dc.l SmashBlock	; 51
-ptr_MovingBlock:	dc.l MovingBlock	; 52
-ptr_CollapseFloor:	dc.l CollapseFloor	; 53
-ptr_LavaTag:	dc.l LavaTag	; 54
-ptr_Basaran:	dc.l Basaran	; 55
-ptr_FloatingBlock:	dc.l FloatingBlock	; 56
-ptr_SpikeBall:	dc.l SpikeBall	; 57
-ptr_BigSpikeBall:	dc.l BigSpikeBall	; 58
-ptr_Elevator:	dc.l Elevator	; 59
-ptr_CirclingPlatform:	dc.l CirclingPlatform	; 5A
-ptr_Staircase:	dc.l Staircase	; 5B
-ptr_Pylon:	dc.l Pylon	; 5C
-ptr_Fan:	dc.l Fan	; 5D
-ptr_Seesaw:	dc.l Seesaw	; 5E
+
+objptr:	macro objectpointer,{INTLABEL},{GLOBALSYMBOLS}
+__LABEL__: = ((*-Obj_Index)/4)+1
+	dc.l	objectpointer
+	endm
+
+; ---------------------------------------------------------------------------
+; ID label:	non-zero index byte (see ID value)
+; Object label:	main label to the actual object source
+
+; ID label			Object label		  ID value
+
+id_SonicPlayer:	objptr	SonicPlayer	; 01
+id_Obj02:	objptr	Obj02	; 02
+id_Obj03:	objptr	Obj03	; 03
+id_Obj04:	objptr	Obj04	; 04
+id_Obj05:	objptr	Obj05	; 05
+id_Obj06:	objptr	Obj06	; 06
+id_Obj07:	objptr	Obj07	; 07
+id_Obj08:	objptr	NullObject	; 08
+id_SonicSpecial:	objptr	SonicSpecial	; 09
+id_Obj0A:	objptr	NullObject	; 0A
+id_Obj0B:	objptr	NullObject	; 0B
+id_Obj0C:	objptr	NullObject	; 0C
+id_Signpost:	objptr	Signpost	; 0D
+id_TitleSonic:	objptr	TitleSonic	; 0E
+id_PSBTM:	objptr	PSB	; 0F
+id_Obj10:	objptr	Obj10	; 10
+id_Bridge:	objptr	Bridge	; 11
+id_SpinningLight:	objptr	SpinningLight	; 12
+id_LavaMaker:	objptr	LavaMaker	; 13
+id_LavaBall:	objptr	LavaBall	; 14
+id_SwingingPlatform:	objptr	SwingingPlatform	; 15
+id_Obj16:	objptr	NullObject	; 16
+id_Helix:	objptr	Helix	; 17
+id_BasicPlatform:	objptr	BasicPlatform	; 18
+id_GBall:	objptr	GBall	; 19
+id_CollapseLedge:	objptr	CollapseLedge	; 1A
+id_Obj1B:	objptr	Obj1B	; 1B
+id_Scenery:	objptr	Scenery	; 1C
+id_MagicSwitch:	objptr	MagicSwitch	; 1D
+id_BallHog:	objptr	BallHog	; 1E
+id_Crabmeat:	objptr	Crabmeat	; 1F
+id_Cannonball:	objptr	Cannonball	; 20
+id_HUD:	objptr	HUD	; 21
+id_BuzzBomber:	objptr	BuzzBomber	; 22
+id_Missile:	objptr	Missile	; 23
+id_MissileDissolve:	objptr	MissileDissolve	; 24
+id_Rings:	objptr	Rings	; 25
+id_Monitor:	objptr	Monitor	; 26
+id_ExplosionItem:	objptr	ExplosionItem	; 27
+id_Animals:	objptr	Animals	; 28
+id_Points:	objptr	Points	; 29
+id_Obj2A:	objptr	Obj2A	; 2A
+id_Chopper:	objptr	Chopper	; 2B
+id_Jaws:	objptr	Jaws	; 2C
+id_Burrobot:	objptr	Burrobot	; 2D
+id_PowerUp:	objptr	PowerUp	; 2E
+id_LargeGrass:	objptr	LargeGrass	; 2F
+id_GlassBlock:	objptr	GlassBlock	; 30
+id_ChainStomp:	objptr	ChainStomp	; 31
+id_Button:	objptr	Button	; 32
+id_PushBlock:	objptr	PushBlock	; 33
+id_TitleCard:	objptr	TitleCard	; 34
+id_GrassFire:	objptr	GrassFire	; 35
+id_Spikes:	objptr	Spikes	; 36
+id_RingLoss:	objptr	RingLoss	; 37
+id_ShieldItem:	objptr	ShieldItem	; 38
+id_GameOverCard:	objptr	GameOverCard	; 39
+id_GotThroughCard:	objptr	GotThroughCard	; 3A
+id_PurpleRock:	objptr	PurpleRock	; 3B
+id_SmashWall:	objptr	SmashWall	; 3C
+id_BossGreenHill:	objptr	BossGreenHill	; 3D
+id_Prison:	objptr	Prison	; 3E
+id_ExplosionBomb:	objptr	ExplosionBomb	; 3F
+id_MotoBug:	objptr	MotoBug	; 40
+id_Springs:	objptr	Springs	; 41
+id_Newtron:	objptr	Newtron	; 42
+id_Roller:	objptr	Roller	; 43
+id_EdgeWalls:	objptr	EdgeWalls	; 44
+id_SideStomp:	objptr	SideStomp	; 45
+id_MarbleBrick:	objptr	MarbleBrick	; 46
+id_Bumper:	objptr	Bumper	; 47
+id_BossBall:	objptr	BossBall	; 48
+id_WaterSound:	objptr	WaterSound	; 49
+id_VanishSonic:	objptr	VanishSonic	; 4A
+id_GiantRing:	objptr	GiantRing	; 4B
+id_GeyserMaker:	objptr	GeyserMaker	; 4C
+id_LavaGeyser:	objptr	LavaGeyser	; 4D
+id_LavaWall:	objptr	LavaWall	; 4E
+id_Splats:	objptr	Splats	; 4F
+id_Yadrin:	objptr	Yadrin	; 50
+id_SmashBlock:	objptr	SmashBlock	; 51
+id_MovingBlock:	objptr	MovingBlock	; 52
+id_CollapseFloor:	objptr	CollapseFloor	; 53
+id_LavaTag:	objptr	LavaTag	; 54
+id_Basaran:	objptr	Basaran	; 55
+id_FloatingBlock:	objptr	FloatingBlock	; 56
+id_SpikeBall:	objptr	SpikeBall	; 57
+id_BigSpikeBall:	objptr	BigSpikeBall	; 58
+id_Elevator:	objptr	Elevator	; 59
+id_CirclingPlatform:	objptr	CirclingPlatform	; 5A
+id_Staircase:	objptr	Staircase	; 5B
+id_Pylon:	objptr	Pylon	; 5C
+id_Fan:	objptr	Fan	; 5D
+id_Seesaw:	objptr	Seesaw	; 5E
 
 NullObject:
-		;bra.w	DeleteObject	; It would be safer to have this instruction here, but instead it just falls through to ObjectFall
-
-id_SonicPlayer:	equ ((ptr_SonicPlayer-Obj_Index)/4)+1 ; $01
-id_Obj02:	equ ((ptr_Obj02-Obj_Index)/4)+1
-id_Obj03:	equ ((ptr_Obj03-Obj_Index)/4)+1
-id_Obj04:	equ ((ptr_Obj04-Obj_Index)/4)+1
-id_Obj05:	equ ((ptr_Obj05-Obj_Index)/4)+1
-id_Obj06:	equ ((ptr_Obj06-Obj_Index)/4)+1
-id_Obj07:	equ ((ptr_Obj07-Obj_Index)/4)+1
-id_Obj08:	equ ((ptr_Obj08-Obj_Index)/4)+1	; $08
-id_SonicSpecial:	equ ((ptr_SonicSpecial-Obj_Index)/4)+1
-id_Obj0A:	equ ((ptr_Obj0A-Obj_Index)/4)+1
-id_Obj0B:	equ ((ptr_Obj0B-Obj_Index)/4)+1
-id_Obj0C:	equ ((ptr_Obj0C-Obj_Index)/4)+1
-id_Signpost:	equ ((ptr_Signpost-Obj_Index)/4)+1
-id_TitleSonic:	equ ((ptr_TitleSonic-Obj_Index)/4)+1
-id_PSBTM:	equ ((ptr_PSBTM-Obj_Index)/4)+1
-id_Obj10:	equ ((ptr_Obj10-Obj_Index)/4)+1	; $10
-id_Bridge:	equ ((ptr_Bridge-Obj_Index)/4)+1
-id_SpinningLight:	equ ((ptr_SpinningLight-Obj_Index)/4)+1
-id_LavaMaker:	equ ((ptr_LavaMaker-Obj_Index)/4)+1
-id_LavaBall:	equ ((ptr_LavaBall-Obj_Index)/4)+1
-id_SwingingPlatform:	equ ((ptr_SwingingPlatform-Obj_Index)/4)+1
-id_Obj16:	equ ((ptr_Obj16-Obj_Index)/4)+1
-id_Helix:	equ ((ptr_Helix-Obj_Index)/4)+1
-id_BasicPlatform:	equ ((ptr_BasicPlatform-Obj_Index)/4)+1 ; $18
-id_GBall:	equ ((ptr_GBall-Obj_Index)/4)+1
-id_CollapseLedge:	equ ((ptr_CollapseLedge-Obj_Index)/4)+1
-id_Obj1B:	equ ((ptr_Obj1B-Obj_Index)/4)+1
-id_Scenery:	equ ((ptr_Scenery-Obj_Index)/4)+1
-id_MagicSwitch:	equ ((ptr_MagicSwitch-Obj_Index)/4)+1
-id_BallHog:	equ ((ptr_BallHog-Obj_Index)/4)+1
-id_Crabmeat:	equ ((ptr_Crabmeat-Obj_Index)/4)+1
-id_Cannonball:	equ ((ptr_Cannonball-Obj_Index)/4)+1 ; $20
-id_HUD:	equ ((ptr_HUD-Obj_Index)/4)+1
-id_BuzzBomber:	equ ((ptr_BuzzBomber-Obj_Index)/4)+1
-id_Missile:	equ ((ptr_Missile-Obj_Index)/4)+1
-id_MissileDissolve:	equ ((ptr_MissileDissolve-Obj_Index)/4)+1
-id_Rings:	equ ((ptr_Rings-Obj_Index)/4)+1
-id_Monitor:	equ ((ptr_Monitor-Obj_Index)/4)+1
-id_ExplosionItem:	equ ((ptr_ExplosionItem-Obj_Index)/4)+1
-id_Animals:	equ ((ptr_Animals-Obj_Index)/4)+1 ; $28
-id_Points:	equ ((ptr_Points-Obj_Index)/4)+1
-id_Obj2A:	equ ((ptr_Obj2A-Obj_Index)/4)+1
-id_Chopper:	equ ((ptr_Chopper-Obj_Index)/4)+1
-id_Jaws:	equ ((ptr_Jaws-Obj_Index)/4)+1
-id_Burrobot:	equ ((ptr_Burrobot-Obj_Index)/4)+1
-id_PowerUp:	equ ((ptr_PowerUp-Obj_Index)/4)+1
-id_LargeGrass:	equ ((ptr_LargeGrass-Obj_Index)/4)+1
-id_GlassBlock:	equ ((ptr_GlassBlock-Obj_Index)/4)+1 ; $30
-id_ChainStomp:	equ ((ptr_ChainStomp-Obj_Index)/4)+1
-id_Button:	equ ((ptr_Button-Obj_Index)/4)+1
-id_PushBlock:	equ ((ptr_PushBlock-Obj_Index)/4)+1
-id_TitleCard:	equ ((ptr_TitleCard-Obj_Index)/4)+1
-id_GrassFire:	equ ((ptr_GrassFire-Obj_Index)/4)+1
-id_Spikes:	equ ((ptr_Spikes-Obj_Index)/4)+1
-id_RingLoss:	equ ((ptr_RingLoss-Obj_Index)/4)+1
-id_ShieldItem:	equ ((ptr_ShieldItem-Obj_Index)/4)+1 ; $38
-id_GameOverCard:	equ ((ptr_GameOverCard-Obj_Index)/4)+1
-id_GotThroughCard:	equ ((ptr_GotThroughCard-Obj_Index)/4)+1
-id_PurpleRock:	equ ((ptr_PurpleRock-Obj_Index)/4)+1
-id_SmashWall:	equ ((ptr_SmashWall-Obj_Index)/4)+1
-id_BossGreenHill:	equ ((ptr_BossGreenHill-Obj_Index)/4)+1
-id_Prison:	equ ((ptr_Prison-Obj_Index)/4)+1
-id_ExplosionBomb:	equ ((ptr_ExplosionBomb-Obj_Index)/4)+1
-id_MotoBug:	equ ((ptr_MotoBug-Obj_Index)/4)+1 ; $40
-id_Springs:	equ ((ptr_Springs-Obj_Index)/4)+1
-id_Newtron:	equ ((ptr_Newtron-Obj_Index)/4)+1
-id_Roller:	equ ((ptr_Roller-Obj_Index)/4)+1
-id_EdgeWalls:	equ ((ptr_EdgeWalls-Obj_Index)/4)+1
-id_SideStomp:	equ ((ptr_SideStomp-Obj_Index)/4)+1
-id_MarbleBrick:	equ ((ptr_MarbleBrick-Obj_Index)/4)+1
-id_Bumper:	equ ((ptr_Bumper-Obj_Index)/4)+1
-id_BossBall:	equ ((ptr_BossBall-Obj_Index)/4)+1 ; $48
-id_WaterSound:	equ ((ptr_WaterSound-Obj_Index)/4)+1
-id_VanishSonic:	equ ((ptr_VanishSonic-Obj_Index)/4)+1
-id_GiantRing:	equ ((ptr_GiantRing-Obj_Index)/4)+1
-id_GeyserMaker:	equ ((ptr_GeyserMaker-Obj_Index)/4)+1
-id_LavaGeyser:	equ ((ptr_LavaGeyser-Obj_Index)/4)+1
-id_LavaWall:	equ ((ptr_LavaWall-Obj_Index)/4)+1
-id_Splats:	equ ((ptr_Splats-Obj_Index)/4)+1
-id_Yadrin:	equ ((ptr_Yadrin-Obj_Index)/4)+1 ; $50
-id_SmashBlock:	equ ((ptr_SmashBlock-Obj_Index)/4)+1
-id_MovingBlock:	equ ((ptr_MovingBlock-Obj_Index)/4)+1
-id_CollapseFloor:	equ ((ptr_CollapseFloor-Obj_Index)/4)+1
-id_LavaTag:	equ ((ptr_LavaTag-Obj_Index)/4)+1
-id_Basaran:	equ ((ptr_Basaran-Obj_Index)/4)+1
-id_FloatingBlock:	equ ((ptr_FloatingBlock-Obj_Index)/4)+1
-id_SpikeBall:	equ ((ptr_SpikeBall-Obj_Index)/4)+1
-id_BigSpikeBall:	equ ((ptr_BigSpikeBall-Obj_Index)/4)+1 ; $58
-id_Elevator:	equ ((ptr_Elevator-Obj_Index)/4)+1
-id_CirclingPlatform:	equ ((ptr_CirclingPlatform-Obj_Index)/4)+1
-id_Staircase:	equ ((ptr_Staircase-Obj_Index)/4)+1
-id_Pylon:	equ ((ptr_Pylon-Obj_Index)/4)+1
-id_Fan:	equ ((ptr_Fan-Obj_Index)/4)+1
-id_Seesaw:	equ ((ptr_Seesaw-Obj_Index)/4)+1
+	if FixBugs
+		bra.w	DeleteObject	; It would be safer to have this instruction here, but instead it just falls through to ObjectFall
+	endif
