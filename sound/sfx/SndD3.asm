@@ -23,5 +23,5 @@ SndD3_Jump00:
 ; Unreachable
 	smpsStop
 
-; Song seems to not use any FM voices
+; Sound seems to not use any FM voices
 SndD3_Voices:

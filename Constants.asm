@@ -1,215 +1,17 @@
+; ---------------------------------------------------------------------------
+; Constants
+; ---------------------------------------------------------------------------
+
 Size_of_DAC_driver_guess:	equ $1C5C
 
-; VRAM data
-window_plane:	equ $A000	; window plane
-vram_fg:	equ $C000	; plane A (foreground namespace)
-vram_special:	equ $D000	; plane A (foreground namespace)
-vram_bg:	equ $E000	; plane B (background namespace)
-vram_sonic:	equ $F000	; Sonic graphics
-vram_sprites:	equ $F800	; sprite table
-vram_hscroll:	equ $FC00	; horizontal scroll table
-tile_size:	equ 8*8/2
-plane_size_64x32:	equ 64*32*2
-
-; VRAM data from ICD_BLK4
-vram_sprites_prev:	equ $D800	; sprite table
-vram_hscroll_prev:	equ $DC00	; horizontal scroll table
-window_plane_prev:	equ $F000	; window plane
-vram_sprite1:	equ $F200
-vram_sprite2:	equ $F400
-vram_sprite3:	equ $F600
-vram_sprite4:	equ $F800
-
-; Game modes
-id_Sega:	equ ptr_GM_Sega-GameModeArray		; $00
-id_Title:	equ ptr_GM_Title-GameModeArray		; $04
-id_Demo:	equ ptr_GM_Demo-GameModeArray		; $08
-id_Level:	equ ptr_GM_Level-GameModeArray		; $0C
-id_Special:	equ ptr_GM_Special-GameModeArray	; $10
-
-; Levels
-id_GHZ:		equ 0
-id_LZ:		equ 1
-id_MZ:		equ 2
-id_SLZ:		equ 3
-id_SZ:		equ 4
-id_CWZ:		equ 5
-id_06:		equ 6
-id_SS:		equ 7
-
-; Colours
-cBlack:		equ $000					; colour black
-cWhite:		equ $EEE					; colour white
-cBlue:		equ $E00					; colour blue
-cGreen:		equ $0E0					; colour green
-cRed:		equ $00E					; colour red
-cYellow:	equ cGreen+cRed				; colour yellow
-cAqua:		equ cGreen+cBlue			; colour aqua
-cMagenta:	equ cBlue+cRed				; colour magenta
-
-; Joypad input
-btnStart:	equ %10000000				; Start button ($80)
-btnA:		equ %01000000				; A	($40)
-btnC:		equ %00100000				; C ($20)
-btnB:		equ %00010000				; B ($10)
-btnR:		equ %1000				; Right ($08)
-btnL:		equ %0100				; Left ($04)
-btnDn:		equ %0010				; Down ($02)
-btnUp:		equ %0001				; Up ($01)
-btnDir:		equ %1111				; Any direction ($0F)
-btnABC:		equ %01110000				; A, B or C ($70)
-bitStart:	equ 7
-bitA:		equ 6
-bitC:		equ 5
-bitB:		equ 4
-bitR:		equ 3
-bitL:		equ 2
-bitDn:		equ 1
-bitUp:		equ 0
-
-; Object variables
-obj STRUCT DOTS
-ID:			ds.b 1		; id of object (this is put here for readability, this actually makes routines slower by 4 cycles)
-Render:		ds.b 1		; bitfield for x/y flip, display mode
-Gfx:		ds.w 1		; palette line & VRAM setting (2 bytes)
-Map:		ds.l 1		; mappings address (4 bytes)
-X:			ds.w 1		; x-axis position (2-4 bytes)
-ScreenY:	ds.w 1		; y-axis position for screen-fixed items (2 bytes)
-Y:			ds.w 1		; y-axis position (2-4 bytes)
-ScreenX:	ds.w 1		; x-axis position for screen-fixed items (2 bytes)
-VelX:		ds.w 1		; x-axis velocity (2 bytes)
-VelY:		ds.w 1		; y-axis velocity (2 bytes)
-Inertia:	ds.w 1		; potential speed (2 bytes)
-Height:		ds.b 1		; height/2
-Width:		ds.b 1		; width/2
-ActWid:		ds.b 1		; action width
-Priority:	ds.b 1		; sprite stack priority -- 0 is front
-Frame:		ds.b 1		; current frame displayed
-AniFrame:	ds.b 1		; current frame in animation script
-Anim:		ds.b 1		; current animation
-NextAni:	ds.b 1		; next animation
-TimeFrame:	ds.b 1		; time to next frame
-DelayAni:	ds.b 1		; time to delay animation
-ColType:	ds.b 1		; collision response type
-ColProp:	ds.b 1		; collision extra property
-Status:		ds.b 1		; orientation or mode
-RespawnNo:	ds.b 1		; respawn list index number
-Routine:	ds.b 1		; routine number
-2ndRout:				; secondary routine number
-Solid:		ds.b 1		; solid status flag
-Angle:		ds.w 1		; angle
-Subtype:	ds.b 1		; object subtype
-Off_29		ds.b 1
-Off_2A		ds.b 1
-Off_2B		ds.b 1
-Off_2C		ds.b 1
-Off_2D		ds.b 1
-Off_2E		ds.b 1
-Off_2F		ds.b 1
-BossX
-Off_30		ds.b 1
-Off_31		ds.b 1
-Off_32		ds.b 1
-Off_33		ds.b 1
-Off_34		ds.b 1
-Off_35		ds.b 1
-Off_36		ds.b 1
-Off_37		ds.b 1
-BossY
-Off_38		ds.b 1
-Off_39		ds.b 1
-Off_3A		ds.b 1
-Off_3B		ds.b 1
-Off_3C		ds.b 1
-Off_3D		ds.b 1
-Off_3E		ds.b 1
-Off_3F		ds.b 1
-Size		ds.b 1					; size for each object
-obj ENDSTRUCT
-	!org 0
-
-; Object variables used by Sonic
-flashtime:	equ obj.Off_30				; time between flashes after getting hit
-invtime:	equ obj.Off_32				; time left for invincibility
-shoetime:	equ obj.Off_34				; time left for speed shoes
-jumpflag:	equ obj.Off_3C				; flag for when sonic is jumping
-standonobject:	equ obj.Off_3D				; object Sonic stands on
-ctrllock:	equ obj.Off_3E				; lock left and right controls (2 bytes)
-; Object status bits used by Sonic
-status_in_air:	equ 1	; %0001
-
-; Object variables used by the title card
-card_mainX:	equ obj.Off_30				; position for card to display on
-card_finalX:	equ obj.Off_32				; position for card to finish on
-
-; Compatibility constants with Sonic Retro's Sonic 1 disassembly
-obID:		equ obj.ID
-obRender:	equ obj.Render
-obGfx:		equ obj.Gfx
-obMap:		equ obj.Map
-obX:		equ obj.X
-obScreenY:	equ obj.ScreenY
-obY:		equ obj.Y
-obScreenX:	equ obj.ScreenX
-obVelX:		equ obj.VelX
-obVelY:		equ obj.VelY
-obInertia:	equ obj.Inertia
-obHeight:	equ obj.Height
-obWidth:	equ obj.Width
-obActWid:	equ obj.ActWid
-obPriority:	equ obj.Priority
-obFrame:	equ obj.Frame
-obAniFrame:	equ obj.AniFrame
-obAnim:		equ obj.Anim
-obNextAni:	equ obj.NextAni
-obTimeFrame:	equ obj.TimeFrame
-obDelayAni:	equ obj.DelayAni
-obColType:	equ obj.ColType
-obColProp:	equ obj.ColProp
-obStatus:	equ obj.Status
-obRespawnNo:	equ obj.RespawnNo
-obRoutine:	equ obj.Routine
-ob2ndRout:	equ obj.2ndRout
-obAngle:	equ obj.Angle
-obSubtype:	equ obj.Subtype
-obSolid:	equ obj.Solid
-objoff_25:	equ obj.Solid
-objoff_26:	equ obj.Angle
-objoff_29:	equ obj.Off_29
-objoff_2A:	equ obj.Off_2A
-objoff_2B:	equ obj.Off_2B
-objoff_2C:	equ obj.Off_2C
-objoff_2E:	equ obj.Off_2E
-objoff_2F:	equ obj.Off_2F
-obBossX:	equ obj.BossX
-objoff_30:	equ obj.Off_30
-objoff_32:	equ obj.Off_32
-objoff_33:	equ obj.Off_33
-objoff_34:	equ obj.Off_34
-objoff_35:	equ obj.Off_35
-objoff_36:	equ obj.Off_36
-objoff_37:	equ obj.Off_37
-obBossY:	equ obj.BossY
-objoff_38:	equ obj.Off_38
-objoff_39:	equ obj.Off_39
-objoff_3A:	equ obj.Off_3A
-objoff_3B:	equ obj.Off_3B
-objoff_3C:	equ obj.Off_3C
-objoff_3D:	equ obj.Off_3D
-objoff_3E:	equ obj.Off_3E
-objoff_3F:	equ obj.Off_3F
-object_size:	equ obj.Size
-object_size_bits:	equ 6
-
-; Animation flags
-afEnd:		equ $FF					; return to beginning of animation
-afBack:		equ $FE					; go back (specified number) bytes
-afChange:	equ $FD					; run specified animation
-afRoutine:	equ $FC					; increment routine counter
-afReset:	equ $FB					; reset animation and 2nd object routine counter
-af2ndRoutine:	equ $FA				; increment 2nd routine counter
-
-; ---------------------------------------------------------------------------
+; Clocks
+Master_Clock:	equ 53693175
+M68000_Clock:	equ Master_Clock/7
+Z80_Clock:		equ Master_Clock/15
+FM_Sample_Rate:	equ M68000_Clock/(6*6*4)
+PSG_Sample_Rate:	equ Z80_Clock/16
+VDP_Clock:		equ Master_Clock/4
+VDP_Pixel_Clock:	equ VDP_Clock/2
 
 ; VDP addressses
 vdp_data_port:		equ $C00000
@@ -217,17 +19,19 @@ vdp_control_port:	equ $C00004
 vdp_counter:		equ $C00008
 
 psg_input:		equ $C00011
+debug_reg:		equ $C0001C
 
 	phase	$1FF4
-z80_stack:	ds.w 1
+zStack:			ds.w 1
 zDAC_Update:	ds.b 1
-zVoiceFlag:	ds.b 1
+zVoiceFlag:		ds.b 1
 zVoiceTblAdr:	ds.w 1
-zBankStore:	ds.w 1
+zBankLow:		ds.b 1
+zBankHigh:		ds.b 1
 zLoopDataStr:	ds.b 1
-zDAC_Status:	ds.b 1					; Bit 7 set if the driver is not accepting new samples, it is clear otherwise
+zDAC_Status:	ds.b 1	; Bit 7 set if the driver is not accepting new samples, it is clear otherwise
 zRepeatFlag:	ds.b 1
-zDAC_Sample:	ds.b 1					; Sample to play, the 68k will move into this locatiton whatever sample that's supposed to be played.
+zDAC_Sample:	ds.b 1	; Sample to play, the 68k will move into this location whatever sample that's supposed to be played.
 	dephase
 	!org 0
 
@@ -250,15 +54,244 @@ ym2612_a0:		equ z80_ram+zYM2612_A0
 ym2612_d0:		equ z80_ram+zYM2612_D0
 ym2612_a1:		equ z80_ram+zYM2612_A1
 ym2612_d1:		equ z80_ram+zYM2612_D1
-z80_version:		equ $A10001
-z80_port_1_data:	equ $A10002
-z80_port_1_control:	equ $A10008
-z80_port_2_control:	equ $A1000A
-z80_expansion_control:	equ $A1000C
+console_version:	equ $A10001
+port_1_data_hi:	equ $A10002
+port_1_data:	equ $A10003
+port_2_data_hi:		equ $A10004
+port_2_data:		equ $A10005
+port_1_control_hi:	equ $A10008
+port_1_control:		equ $A10009
+port_2_control_hi:	equ $A1000A
+port_2_control:		equ $A1000B
+expansion_control_hi:	equ $A1000C
+expansion_control:	equ $A1000D
 z80_bus_request:	equ $A11100
 z80_reset:		equ $A11200
 
+; Misc addresses
+sram_port:		equ $A130F1
 security_addr:		equ $A14000
+
+; VRAM data
+window_plane:	equ $A000	; window plane
+vram_fg:	equ $C000	; plane A (foreground namespace)
+vram_special:	equ $D000	; plane A (foreground namespace)
+vram_bg:	equ $E000	; plane B (background namespace)
+vram_sonic:	equ $F000	; Sonic graphics
+vram_sprites:	equ $F800	; sprite table
+vram_hscroll:	equ $FC00	; horizontal scroll table
+
+tile_size:	equ 8*8/2	; size of a single 8x8 tile
+chunk_size:	equ $200	; size of a single 256x256 chunk
+plane_size_64x32: equ 64*32*2	; size of plane in 512x256 mode
+
+; VRAM data from ICD_BLK4
+vram_sprites_prev:	equ $D800	; sprite table
+vram_hscroll_prev:	equ $DC00	; horizontal scroll table
+window_plane_prev:	equ $F000	; window plane
+
+; CRAM equates
+palette_size:	equ $80
+
+; Game modes
+id_Sega:	equ ptr_GM_Sega-GameModeArray		; $00
+id_Title:	equ ptr_GM_Title-GameModeArray		; $04
+id_Demo:	equ ptr_GM_Demo-GameModeArray		; $08
+id_Level:	equ ptr_GM_Level-GameModeArray		; $0C
+id_Special:	equ ptr_GM_Special-GameModeArray	; $10
+
+; Vertical interrupt modes
+id_VInt_00:	equ ptr_VInt_00-VInt_Index	; $00
+id_VInt_02:	equ ptr_VInt_02-VInt_Index	; $02
+id_VInt_04:	equ ptr_VInt_04-VInt_Index	; $04
+id_VInt_06:	equ ptr_VInt_06-VInt_Index	; $06
+id_VInt_08:	equ ptr_VInt_08-VInt_Index	; $08
+id_VInt_0A:	equ ptr_VInt_0A-VInt_Index	; $0A
+id_VInt_0C:	equ ptr_VInt_0C-VInt_Index	; $0C
+id_VInt_0E:	equ ptr_VInt_0E-VInt_Index	; $0E
+id_VInt_10:	equ ptr_VInt_10-VInt_Index	; $10
+id_VInt_12:	equ ptr_VInt_12-VInt_Index	; $12
+
+; Levels
+id_GHZ:		equ 0
+id_LZ:		equ 1
+id_MZ:		equ 2
+id_SLZ:		equ 3
+id_SZ:		equ 4
+id_CWZ:		equ 5
+id_06:		equ 6
+id_SS:		equ 7
+
+; Colours
+cBlack:		equ $000			; colour black
+cWhite:		equ $EEE			; colour white
+cBlue:		equ $E00			; colour blue
+cGreen:		equ $0E0			; colour green
+cRed:		equ $00E			; colour red
+cYellow:	equ cGreen+cRed		; colour yellow
+cAqua:		equ cGreen+cBlue	; colour aqua
+cMagenta:	equ cBlue+cRed		; colour magenta
+
+; Joypad input
+bitUp:		equ 0
+bitDn:		equ 1
+bitL:		equ 2
+bitR:		equ 3
+bitB:		equ 4
+bitC:		equ 5
+bitA:		equ 6
+bitStart:	equ 7
+btnUp:		equ 1<<bitUp		; ($01)
+btnDn:		equ 1<<bitDn		; ($02)
+btnL:		equ 1<<bitL			; ($04)
+btnR:		equ 1<<bitR			; ($08)
+btnB:		equ 1<<bitB			; ($10)
+btnC:		equ 1<<bitC			; ($20)
+btnA:		equ 1<<bitA			; ($40)
+btnStart:	equ 1<<bitStart		; ($80)
+btnDir:		equ btnUp|btnDn|btnL|btnR	; ($0F)
+btnABC:		equ btnA|btnB|btnC	; ($70)
+
+; Object variables
+obj STRUCT DOTS
+ID:			ds.b 1	; id of object (this is put here for readability, this actually makes routines slower by 4 cycles)
+Render:		ds.b 1	; bitfield for x/y flip, display mode
+Gfx:		ds.w 1	; palette line & VRAM setting (2 bytes)
+Map:		ds.l 1	; mappings address (4 bytes)
+X:			ds.w 1	; x-axis position (2-4 bytes)
+ScreenY:	ds.w 1	; y-axis position for screen-fixed items (2 bytes)
+Y:			ds.l 1	; y-axis position (2-4 bytes)
+VelX:		ds.w 1	; x-axis velocity (2 bytes)
+VelY:		ds.w 1	; y-axis velocity (2 bytes)
+Inertia:	ds.w 1	; potential speed (2 bytes)
+Height:		ds.b 1	; height/2
+Width:		ds.b 1	; width/2
+ActWid:		ds.b 1	; action width
+Priority:	ds.b 1	; sprite stack priority -- 0 is front
+Frame:		ds.b 1	; current frame displayed
+AniFrame:	ds.b 1	; current frame in animation script
+Anim:		ds.b 1	; current animation
+PrevAni:	ds.b 1	; previous animation
+TimeFrame:	ds.b 1	; time to next frame
+DelayAni:	ds.b 1	; time to delay animation
+ColType:	ds.b 1	; collision response type
+ColProp:	ds.b 1	; collision extra property
+Status:		ds.b 1	; orientation or mode
+RespawnNo:	ds.b 1	; respawn list index number
+Routine:	ds.b 1	; routine number
+Solid:		ds.b 1	; solid status flag, and also secondary routine number
+Angle:		ds.w 1	; angle
+Subtype:	ds.b 1	; object subtype
+off_29:		ds.b 1
+off_2A:		ds.b 1
+off_2B:		ds.b 1
+off_2C:		ds.b 1
+off_2D:		ds.b 1
+off_2E:		ds.b 1
+off_2F:		ds.b 1
+off_30:		ds.b 1
+off_31:		ds.b 1
+off_32:		ds.b 1
+off_33:		ds.b 1
+off_34:		ds.b 1
+off_35:		ds.b 1
+off_36:		ds.b 1
+off_37:		ds.b 1
+off_38:		ds.b 1
+off_39:		ds.b 1
+off_3A:		ds.b 1
+off_3B:		ds.b 1
+off_3C:		ds.b 1
+off_3D:		ds.b 1
+off_3E:		ds.b 1
+off_3F:		ds.b 1
+obj ENDSTRUCT
+	!org 0
+
+; Compatibility constants with Sonic Retro's Sonic 1 disassembly
+obID:		equ obj.ID
+obRender:	equ obj.Render
+obGfx:		equ obj.Gfx
+obMap:		equ obj.Map
+obX:		equ obj.X
+obScreenY:	equ obj.ScreenY
+obY:		equ obj.Y
+obVelX:		equ obj.VelX
+obVelY:		equ obj.VelY
+obInertia:	equ obj.Inertia
+obHeight:	equ obj.Height
+obWidth:	equ obj.Width
+obActWid:	equ obj.ActWid
+obPriority:	equ obj.Priority
+obFrame:	equ obj.Frame
+obAniFrame:	equ obj.AniFrame
+obAnim:		equ obj.Anim
+obPrevAni:	equ obj.PrevAni
+obTimeFrame:	equ obj.TimeFrame
+obDelayAni:	equ obj.DelayAni
+obColType:	equ obj.ColType
+obColProp:	equ obj.ColProp
+obStatus:	equ obj.Status
+obRespawnNo:	equ obj.RespawnNo
+obRoutine:	equ obj.Routine
+ob2ndRout:	equ obj.Solid
+obAngle:	equ obj.Angle
+obSubtype:	equ obj.Subtype
+obSolid:	equ obj.Solid
+objoff_25:	equ obj.Solid
+objoff_26:	equ obj.Angle
+objoff_29:	equ obj.off_29
+objoff_2A:	equ obj.off_2A
+objoff_2B:	equ obj.off_2B
+objoff_2C:	equ obj.off_2C
+objoff_2E:	equ obj.off_2E
+objoff_2F:	equ obj.off_2F
+obBossX:	equ obj.off_30
+objoff_30:	equ obj.off_30
+objoff_32:	equ obj.off_32
+objoff_33:	equ obj.off_33
+objoff_34:	equ obj.off_34
+objoff_35:	equ obj.off_35
+objoff_36:	equ obj.off_36
+objoff_37:	equ obj.off_37
+obBossY:	equ obj.off_38
+objoff_38:	equ obj.off_38
+objoff_39:	equ obj.off_39
+objoff_3A:	equ obj.off_3A
+objoff_3B:	equ obj.off_3B
+objoff_3C:	equ obj.off_3C
+objoff_3D:	equ obj.off_3D
+objoff_3E:	equ obj.off_3E
+objoff_3F:	equ obj.off_3F
+object_size:	equ obj.len
+object_size_bits:	equ 6
+
+; Object variables used by Sonic
+flashtime:	equ objoff_30	; time between flashes after getting hit
+invtime:	equ objoff_32	; time left for invincibility
+shoetime:	equ objoff_34	; time left for speed shoes
+angleright:	equ objoff_36	; angle of floor on Sonic's right side
+angleleft:	equ objoff_37	; angle of floor on Sonic's left side
+respawny:	equ objoff_38	; Sonic's Y position when he dies (2 bytes)
+restartime:	equ objoff_3A	; time left before level restarts after dying (2 bytes)
+jumping:	equ objoff_3C	; flag for when Sonic is jumping
+standonobject:	equ objoff_3D	; object Sonic stands on
+locktime:	equ objoff_3E	; temporary D-Pad control lock timer (2 bytes)
+
+; Object variables used by the title card
+card_mainX:	equ objoff_30	; position for card to display on
+card_finalX:	equ objoff_32	; position for card to finish on
+
+; Animation flags
+af2ndRoutine:	equ $FA	; increment 2nd routine counter
+afReset:	equ $FB	; reset animation and 2nd object routine counter
+afRoutine:	equ $FC	; increment routine counter
+afChange:	equ $FD	; run specified animation
+afBack:		equ $FE	; go back (specified number) bytes
+afEnd:		equ $FF	; return to beginning of animation
+
+; Backwards compatibility with older Sonic Retro disassemblies
+obNextAni:	equ obPrevAni
 
 ; Background music
 bgm__First:	equ $81
@@ -348,11 +381,20 @@ bgm_Slowdown:	equ ((ptr_flgE3-Sound_ExIndex)/4)+flg__First
 bgm_StopSpec:	equ ((ptr_flgE4-Sound_ExIndex)/4)+flg__First
 flg__Last:	equ ((ptr_flgend-Sound_ExIndex-4)/4)+flg__First
 
+;=======================================;
+; PSG envelope commands
+;=======================================;
+TBREPT:	equ	$80		; table repeat sign
+TBSTAY:	equ	$81		; table staying sign
+TBEND:	equ	$83		; table end sign
+TBADD:	equ	$84		; after this command
+				; data=([table data]-0)*[add data]
+TBBAK:	equ	$85		; table pointer set next data
+
 ; Tile VRAM Locations
 
 ; Shared
 ArtTile_GHZ_MZ_Swing:	equ $380
-ArtTile_MZ_SYZ_Caterkiller:	equ $4FF
 ArtTile_GHZ_SLZ_Smashable_Wall:	equ $50F
 
 ; Green Hill Zone
@@ -403,6 +445,7 @@ ArtTile_Burrobot:		equ $39C
 ArtTile_Ball_Hog:		equ $400
 ArtTile_Bomb:			equ $400
 ArtTile_Crabmeat:		equ $400
+ArtTile_Cannonball:		equ $418
 ArtTile_Missile_Disolve:	equ $41C ; Unused
 ArtTile_Buzz_Bomber:	equ $444
 ArtTile_Chopper:		equ $47B
@@ -411,6 +454,7 @@ ArtTile_Jaws:			equ $47B
 ArtTile_Newtron:		equ $49B
 ArtTile_Basaran:		equ $4B8
 ArtTile_Roller:			equ $4B8
+ArtTile_Jaws_2:			equ $4CE
 ArtTile_Splats:			equ $4E4
 ArtTile_Moto_Bug:		equ $4F0
 ArtTile_Button:			equ $50F
@@ -428,25 +472,18 @@ ArtTile_Monitor:		equ $680
 ArtTile_HUD:			equ $6CA
 ArtTile_Sonic:			equ $780
 ArtTile_Points:			equ $797
-ArtTile_Lamppost:		equ $7A0
+ArtTile_Smoke:			equ $7A0
 ArtTile_Ring:			equ $7B2
 ArtTile_Lives_Counter:	equ $7D4
 
 ; Eggman
 ArtTile_Eggman:			equ $400
 ArtTile_Eggman_Weapons:	equ $46C
-ArtTile_Eggman_Button:	equ $4A4
-ArtTile_Eggman_Spikeball:	equ $518
-ArtTile_Eggman_Trap_Floor:	equ $518
-ArtTile_Eggman_Exhaust:	equ ArtTile_Eggman+$12A
 
 ; End of Level
-ArtTile_Giant_Ring:		equ $400
-ArtTile_Giant_Ring_Flash:	equ $462
 ArtTile_Prison_Capsule:	equ $49D
-ArtTile_Hidden_Points:	equ $4B6
+ArtTile_Giant_Ring:		equ $4EC
 ArtTile_Warp:			equ $541
-ArtTile_Mini_Sonic:		equ $551
 ArtTile_Bonuses:		equ $570
 ArtTile_Signpost:		equ $680
 
@@ -480,3 +517,8 @@ ArtTile_SS_Plane_6:		equ $700
 
 ; Error Handler
 ArtTile_Error_Handler_Font:	equ $7C0
+
+; Early VRAM locations
+ArtTile_Debug_Numbers:	equ $4F0	; Note: This overwrites the Moto Bug graphics.
+
+ArtTile_Early_Lives_Icon:	equ	$579

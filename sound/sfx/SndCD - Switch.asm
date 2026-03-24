@@ -11,5 +11,5 @@ SndCD_Switch_PSG3:
 	dc.b	nBb4, $02
 	smpsStop
 
-; Song seems to not use any FM voices
+; Sound seems to not use any FM voices
 SndCD_Switch_Voices:

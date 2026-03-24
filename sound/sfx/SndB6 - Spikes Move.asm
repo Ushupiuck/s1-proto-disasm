@@ -18,5 +18,5 @@ SndB6_Spikes_Move_Loop00:
 	smpsLoop			$00, $0C, SndB6_Spikes_Move_Loop00
 	smpsStop
 
-; Song seems to not use any FM voices
+; Sound seems to not use any FM voices
 SndB6_Spikes_Move_Voices:

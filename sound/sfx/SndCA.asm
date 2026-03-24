@@ -17,5 +17,5 @@ SndCA_Loop00:
 	smpsLoop			$00, $06, SndCA_Loop00
 	smpsStop
 
-; Song seems to not use any FM voices
+; Sound seems to not use any FM voices
 SndCA_Voices:

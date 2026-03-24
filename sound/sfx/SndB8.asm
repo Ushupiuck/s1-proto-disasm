@@ -18,5 +18,5 @@ SndB8_Loop00:
 	smpsLoop			$00, $03, SndB8_Loop00
 	smpsStop
 
-; Song seems to not use any FM voices
+; Sound seems to not use any FM voices
 SndB8_Voices:

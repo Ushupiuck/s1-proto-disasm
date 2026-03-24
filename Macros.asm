@@ -70,6 +70,11 @@ bytesToWcnt function n,n>>1-1
 ; calculates initial loop counter value for a dbf loop
 ; that writes n bytes total at x bytes per iteration
 bytesToXcnt function n,x,n/x-1
+
+little_endian function x,(x)<<8&$FF00|(x)>>8&$FF
+
+; function to turn a 68k address into a bank byte
+make68kBank function addr,(((addr&$3F8000)/zROMWindow))
 		
 ; ---------------------------------------------------------------------------
 ; Fill portion of RAM with 0
@@ -113,7 +118,7 @@ copyTilemap:	macro source,destination,width,height
 		endm
 
 copyUncTilemap:	macro destination,width,height
-		move.l	#$40000000+(((destination)&$3FFF)<<16)+(((destination)&$C000)>>14),d0
+		locVRAM	destination,d0
 		moveq	#(width)-1,d1
 		moveq	#(height)-1,d2
 		bsr.w	TilemapToVRAM
@@ -146,11 +151,11 @@ waitZ80:	macro
 ; reset the Z80
 ; ---------------------------------------------------------------------------
 
-resetZ80:	macro
+deassertZ80Reset:	macro
 		move.w	#$100,(z80_reset).l
 		endm
 
-resetZ80a:	macro
+assertZ80Reset:	macro
 		move.w	#0,(z80_reset).l
 		endm
 
@@ -159,7 +164,7 @@ resetZ80a:	macro
 ; ---------------------------------------------------------------------------
 
 disable_ints:	macro
-		move	#$2700,sr
+		move.w	#$2700,sr
 		endm
 
 ; ---------------------------------------------------------------------------
@@ -167,9 +172,29 @@ disable_ints:	macro
 ; ---------------------------------------------------------------------------
 
 enable_ints:	macro
-		move	#$2300,sr
+		move.w	#$2300,sr
 		endm
-		
+
+; ---------------------------------------------------------------------------
+; disable display
+; ---------------------------------------------------------------------------
+
+disable_display:	macro
+		move.w	(v_vdp_buffer1).w,d0		; get buffered copy of VDP register $81
+		andi.b	#%10111111,d0			; clear bit 6 (disable display; fill with background color)
+		move.w	d0,(vdp_control_port).l		; write to VDP
+		endm
+
+; ---------------------------------------------------------------------------
+; enable display
+; ---------------------------------------------------------------------------
+
+enable_display:	macro
+		move.w	(v_vdp_buffer1).w,d0		; get buffered copy of VDP register $81
+		ori.b	#%01000000,d0			; set bit 6 (enable display)
+		move.w	d0,(vdp_control_port).l		; write to VDP
+		endm
+
 ; ---------------------------------------------------------------------------
 ; check if object moves out of range
 ; input: location to jump to if out of range, x-axis pos (obX(a0) by default)
@@ -182,7 +207,7 @@ out_of_range:	macro exit,pos
 		move.w	obX(a0),d0			; get object position
 		endif
 		andi.w	#-$80,d0			; round down to nearest $80
-		move.w	(v_screenposx).w,d1		; get screen position
+		move.w	(v_scrposx).w,d1		; get screen position
 		subi.w	#128,d1
 		andi.w	#-$80,d1
 		sub.w	d1,d0				; approx distance between object and screen
@@ -202,7 +227,7 @@ out_of_range_rememberstate:	macro exit,pos
 		move.w	obX(a0),d0			; get object position
 		endif
 		andi.w	#-$80,d0			; round down to nearest $80
-		move.w	(v_screenposx).w,d1		; get screen position
+		move.w	(v_scrposx).w,d1		; get screen position
 		subi.w	#128,d1
 		andi.w	#-$80,d1
 		sub.w	d1,d0				; approx distance between object and screen

@@ -27,5 +27,5 @@ SndA4_Skid_Loop00:
 	smpsLoop			$00, $0B, SndA4_Skid_Loop00
 	smpsStop
 
-; Song seems to not use any FM voices
+; Sound seems to not use any FM voices
 SndA4_Skid_Voices:

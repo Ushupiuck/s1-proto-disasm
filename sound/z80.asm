@@ -15,33 +15,45 @@ startpad := $
 endpad := $
 		if endpad-startpad>=1h
 							; warn because otherwise you'd have no clue why you're running out of space so fast
-			message "had to insert \{endpad-startpad}h   bytes of padding before improperly located data at 0\{startpad}h in Z80 code"
+			message "had to insert \{endpad-startpad}h bytes of padding before improperly located data at 0\{startpad}h in Z80 code"
 		endif
 		endif
 	endif
 	endm
 
-; =============== S U B R O U T I N E =======================================
+; Data offset equates
+zLowAdr:	equ	0		; data low address
+zHighAdr:	equ	1		; data high address
+zSizeLow:	equ	2		; data size (low byte)
+zSizeHigh:	equ	3		; data size	(high byte)
+zLoopFlag:	equ	4		; loop flag
+zPriority:	equ	5		; priority flag
+zLoopLow:	equ	6		; loop low byte
+zLoopHigh:	equ	7		; loop high byte
+zLoopSizeLow:	equ	8		; loop size low byte
+zLoopSizeHigh:	equ	9		; loop size high byte
+zSampleRate:	equ	11		; sample rate
 
+; =============== S U B R O U T I N E =======================================
 
 StartOfZ80:
 		di	; disable interrupts
 		di
 		di
-		ld	sp,z80_stack
+		ld	sp,zStack
 		xor	a
 		ld	(zDAC_Status),a
-		ld	a,(zBankStore+1)
+		ld	a,(zBankHigh)
 		rlca
 		ld	(zBankRegister),a
 		ld	b,8
-		ld	a,(zBankStore)
+		ld	a,(zBankLow)
 
-loc_16:
+zBankLoop:
 		ld	(zBankRegister),a
 		rrca
-		djnz	loc_16
-		jr	loc_2E
+		djnz	zBankLoop
+		jr	zStart
 ; ===========================================================================
 ; JMan2050's DAC decode lookup table
 ; ===========================================================================
@@ -49,9 +61,9 @@ loc_16:
 zDACDecodeTbl:
 	db	   0,	 1,   2,   4,   8,  10h,  20h,  40h
 	db	 80h,	-1,  -2,  -4,  -8, -10h, -20h, -40h
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
-loc_2E:
+zStart:
 		ld	hl,zDAC_Sample
 
 loc_31:
@@ -96,8 +108,8 @@ loc_73:
 		ld	c,a
 		ld	b,0
 		add	iy,bc
-		ld	e,(iy+0)
-		ld	d,(iy+1)
+		ld	e,(iy+zLowAdr)
+		ld	d,(iy+zHighAdr)
 		ld	a,(zVoiceFlag)
 		or	a
 		jp	m,loc_8F
@@ -106,9 +118,9 @@ loc_73:
 		ex	de,hl
 
 loc_8F:
-		ld	c,(iy+2)
-		ld	b,(iy+3)
-		ld	a,(iy+4)
+		ld	c,(iy+zSizeLow)
+		ld	b,(iy+zSizeHigh)
+		ld	a,(iy+zLoopFlag)
 		ld	(zRepeatFlag),a
 		exx
 		ld	c,80h
@@ -130,19 +142,17 @@ zPlayPCMLoop:
 		ld	c,a	; 4
 		ld	a,80h	; 7
 		ld	(zDAC_Status),a	; 13
-		ld	b,(iy+0Bh)	; 19
+		ld	b,(iy+zSampleRate)	; 19
 
-loc_B8:
+.loop1:
 		bit	7,(hl)	; 12
-		jr	nz,loc_B8	; 12
+		jr	nz,.loop1	; 12
 		ld	(hl),2Ah	; 10
 		inc	hl	; 6
 		xor	a	; 4
 		ld	(hl),c	; 7
 		ld	(zDAC_Status),a	; 13
 		dec	hl	; 6
-
-loc_C5:
 		djnz	$	; 8
 		exx	; 4
 		ld	a,(de)	; 7
@@ -155,22 +165,20 @@ loc_C5:
 		ld	c,a	; 4
 		ld	a,80h	; 7
 		ld	(zDAC_Status),a	; 13
-		ld	b,(iy+0Bh)	; 19
+		ld	b,(iy+zSampleRate)	; 19
 
-loc_DA:
+.loop2:
 		bit	7,(hl)	; 12
-		jr	nz,loc_DA	; 12
+		jr	nz,.loop2	; 12
 		ld	(hl),2Ah	; 10
 		inc	hl	; 6
 		xor	a	; 4
 		ld	(hl),c	; 7
 		ld	(zDAC_Status),a	; 13
 		dec	hl	; 6
-
-loc_E7:
 		djnz	$	; 8
 		exx	; 4
-		bit	7,(iy+5)	; 20
+		bit	7,(iy+zPriority)	; 20
 		jr	nz,loc_F5	; 12
 		bit	7,(hl)	; 12
 		jp	nz,loc_31	; 10
@@ -196,63 +204,78 @@ loc_10C:
 		jr	z,loc_133
 		ld	c,(ix+0)
 		exx
-		ld	l,(iy+6)
-		ld	h,(iy+7)
+		ld	l,(iy+zLoopLow)
+		ld	h,(iy+zLoopHigh)
 		ld	b,h
 		ld	c,l
-		ld	e,(iy+0)
-		ld	d,(iy+1)
+		ld	e,(iy+zLowAdr)
+		ld	d,(iy+zHighAdr)
 		ld	hl,(zVoiceTblAdr)
 		add	hl,de
-		ld	e,(iy+2)
-		ld	d,(iy+3)
+		ld	e,(iy+zSizeLow)
+		ld	d,(iy+zSizeHigh)
 		add	hl,de
 		ex	de,hl
 		jp	zPlayPCMLoop
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 loc_133:
 		ld	c,(ix+0)
 		exx
-		ld	c,(iy+8)
-		ld	b,(iy+9)
-		ld	l,(iy+2)
-		ld	h,(iy+3)
-		ld	e,(iy+0)
-		ld	d,(iy+1)
+		ld	c,(iy+zLoopSizeLow)
+		ld	b,(iy+zLoopSizeHigh)
+		ld	l,(iy+zSizeLow)
+		ld	h,(iy+zSizeHigh)
+		ld	e,(iy+zLowAdr)
+		ld	d,(iy+zHighAdr)
 		add	hl,de
 		ld	de,(zVoiceTblAdr)
 		add	hl,de
 		ex	de,hl
 		jp	zPlayPCMLoop
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
 loc_153:
 		ld	hl,zDAC_Update
 		ld	a,(hl)
 		or	a
-		jp	m,loc_2E
+		jp	m,zStart
 		xor	a
 		ld	(hl),a
-		jp	loc_2E
+		jp	zStart
 ; End of function StartOfZ80
 
-; ---------------------------------------------------------------------------
-zPCMMetadata macro label,sampleRate
+; ===========================================================================
+
+zPCMMetadata macro label,loopFlag,priority,loopLabel,sampleRate
 	dw	label	; Start
 	dw	label_End-label	; Length
-	rept	7
+	if loopFlag
+		db	80h	; Loop Flag
+	else
+		db	0	; Loop Flag
+	endif
+	if priority
+		db	80h	; Priority
+	else
+		db	0	; Priority
+	endif
+	if loopLabel
+		dw	loopLabel	; Loop Start
+		dw	loopLabel_End-loopLabel	; Loop Length
+	else
+		ds	4
+	endif
 	db	0	; Padding
-	endm
 	db	dpcmLoopCounter(sampleRate)	; Pitch
 	endm
 
 ; DPCM metadata
 zPCM_Table:
-	zPCMMetadata zDAC_Kick,7750
-	zPCMMetadata zDAC_Snare,16500
-zTimpani_Pitch = $+0Bh
-	zPCMMetadata zDAC_Timpani,6500
+	zPCMMetadata zDAC_Kick,0,0,0,7750
+	zPCMMetadata zDAC_Snare,0,0,0,16500
+zTimpani_Pitch = $+zSampleRate
+	zPCMMetadata zDAC_Timpani,0,0,0,6500
 
 ; DPCM data
 zDAC_Kick:
@@ -267,7 +290,7 @@ zDAC_Timpani:
 	binclude "dac/timpani.dpcm"
 zDAC_Timpani_End:
 
-	if MOMPASS==2
+	if MOMPASS=2
 		if $ > 2000h
 			fatal "The driver is too big	; the maximum size it can take is 2000h. It currently takes \{$}h bytes. You won't be able to use this thing."
 		else

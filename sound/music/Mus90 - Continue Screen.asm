@@ -105,7 +105,7 @@ Mus90_Continue_Screen_Voices:
 	smpsVcDecayRate2	$02, $00, $00, $00
 	smpsVcDecayLevel	$01, $00, $00, $00
 	smpsVcReleaseRate	$0F, $0F, $0F, $0F
-	smpsVcTotalLevel	$81, $22, $24, $18
+	smpsVcTotalLevel	$01, $22, $24, $18
 
 ;	Voice $01
 ;	$3B
@@ -123,7 +123,7 @@ Mus90_Continue_Screen_Voices:
 	smpsVcDecayRate2	$01, $00, $00, $00
 	smpsVcDecayLevel	$03, $05, $00, $04
 	smpsVcReleaseRate	$0F, $0F, $0F, $0F
-	smpsVcTotalLevel	$80, $2D, $18, $1E
+	smpsVcTotalLevel	$00, $2D, $18, $1E
 
 ;	Voice $02
 ;	$3A
@@ -141,7 +141,7 @@ Mus90_Continue_Screen_Voices:
 	smpsVcDecayRate2	$00, $03, $01, $03
 	smpsVcDecayLevel	$0A, $00, $00, $01
 	smpsVcReleaseRate	$0F, $0F, $0F, $0F
-	smpsVcTotalLevel	$80, $31, $47, $21
+	smpsVcTotalLevel	$00, $31, $47, $21
 
 ;	Voice $03
 ;	$1C
@@ -159,4 +159,4 @@ Mus90_Continue_Screen_Voices:
 	smpsVcDecayRate2	$00, $0B, $0A, $08
 	smpsVcDecayLevel	$0F, $0F, $08, $08
 	smpsVcReleaseRate	$0F, $0F, $0F, $0F
-	smpsVcTotalLevel	$80, $26, $8D, $18
+	smpsVcTotalLevel	$00, $26, $0D, $18

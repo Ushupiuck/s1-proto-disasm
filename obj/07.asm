@@ -1,25 +1,27 @@
 ; ---------------------------------------------------------------------------
+; Object 07 - Unknown removed object
+; ---------------------------------------------------------------------------
 
 Obj07:
 		moveq	#0,d0
 		move.b	obRoutine(a0),d0
-		move.w	off_4E42(pc,d0.w),d1
-		jmp	off_4E42(pc,d1.w)
-; ---------------------------------------------------------------------------
+		move.w	Obj07_Index(pc,d0.w),d1
+		jmp	Obj07_Index(pc,d1.w)
+; ===========================================================================
+Obj07_Index:
+		dc.w Obj07_Init-Obj07_Index
+		dc.w Obj07_Main-Obj07_Index
+		dc.w Obj07_Delete-Obj07_Index
+		dc.w Obj07_Delete-Obj07_Index
+; ===========================================================================
 
-off_4E42:	dc.w loc_4E4A-off_4E42
-		dc.w locret_4E4E-off_4E42
-		dc.w Obj07_Delete-off_4E42
-		dc.w Obj07_Delete-off_4E42
-; ---------------------------------------------------------------------------
+Obj07_Init:	; Routine 0
+		addq.b	#2,obRoutine(a0)	; this increments the routine value by 2, but does nothing
 
-loc_4E4A:
-		addq.b	#2,obRoutine(a0)	; this just jumps to the locret underneath
-
-locret_4E4E:
+Obj07_Main:	; Routine 2
 		rts
-; ---------------------------------------------------------------------------
+; ===========================================================================
 
-Obj07_Delete:
+Obj07_Delete:	; Routine 4, 6
 		bsr.w	DeleteObject
 		rts
