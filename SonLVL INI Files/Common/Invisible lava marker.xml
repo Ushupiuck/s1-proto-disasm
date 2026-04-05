@@ -3,15 +3,15 @@
   <Images>
     <ImageFromMappings id="img1">
       <ArtFile filename="../artnem/Monitors.nem" />
-      <MapFile type="Binary" filename="Common/Invisible lava marker map.bin" frame="0" startpal="0" />
+      <MapFile type="ASM" filename="../_maps/Lava Tag.asm" frame="0" startpal="0" />
     </ImageFromMappings>
     <ImageFromMappings id="img2">
       <ArtFile filename="../artnem/Monitors.nem" />
-      <MapFile type="Binary" filename="Common/Invisible lava marker map.bin" frame="1" startpal="0" />
+      <MapFile type="ASM" filename="../_maps/Lava Tag.asm" frame="1" startpal="0" />
     </ImageFromMappings>
     <ImageFromMappings id="img3">
       <ArtFile filename="../artnem/Monitors.nem" />
-      <MapFile type="Binary" filename="Common/Invisible lava marker map.bin" frame="2" startpal="0" />
+      <MapFile type="ASM" filename="../_maps/Lava Tag.asm" frame="2" startpal="0" />
     </ImageFromMappings>
   </Images>
   <Subtypes>

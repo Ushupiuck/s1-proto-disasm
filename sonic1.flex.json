@@ -1,32 +1,40 @@
 {
     "Flex": 2,
     "name": "",
-    "node": "f90e0e0e-748d-4fb1-bb0c-ae0496f521ee",
+    "node": "a114933f-e59f-4b3d-bea7-c8c46beaa41d",
     "objects": [
         {
-            "format": "Sonic 1.js",
-            "name": "Sonic Object",
-            "palettes": [
+            "name": "Common",
+            "children": [
                 {
-                    "path": "palette\\Sonic.bin",
-                    "length": 1
+                    "format": "Sonic 1.js",
+                    "name": "Sonic",
+                    "palettes": [
+                        {
+                            "path": "palette\\Sonic.bin",
+                            "length": 1
+                        }
+                    ],
+                    "art": {
+                        "path": "artunc\\Sonic.bin",
+                        "compression": "Uncompressed",
+                        "offset": 0
+                    },
+                    "mappings": {
+                        "path": "_maps\\Sonic.asm",
+                        "label": ""
+                    },
+                    "dplcs": {
+                        "enabled": true,
+                        "path": "_maps\\Sonic - Dynamic Gfx Script.asm",
+                        "label": ""
+                    },
+                    "uuid": "a114933f-e59f-4b3d-bea7-c8c46beaa41d"
                 }
             ],
-            "art": {
-                "path": "artunc\\Sonic.bin",
-                "compression": "Uncompressed",
-                "offset": 0
-            },
-            "mappings": {
-                "path": "_maps\\Sonic.asm",
-                "label": ""
-            },
-            "dplcs": {
-                "enabled": true,
-                "path": "_maps\\Sonic - Dynamic Gfx Script.asm",
-                "label": ""
-            },
-            "uuid": "f90e0e0e-748d-4fb1-bb0c-ae0496f521ee"
+            "isDirectory": true,
+            "expanded": true,
+            "uuid": "cbf6da53-36c4-4717-ae7b-3598cf3e0a57"
         }
     ]
 }

@@ -3,7 +3,6 @@
 ; ---------------------------------------------------------------------------
 
 makePalEntry:	macro paletteLabel,paletteRAMaddress,paletteSize,{INTLABEL},{GLOBALSYMBOLS}
-
 __LABEL__: = (*-Pal_Index)/8
 	dc.l paletteLabel
 	dc.w paletteRAMaddress,bytesToWcnt(paletteSize)

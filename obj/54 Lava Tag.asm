@@ -28,6 +28,9 @@ LTag_Main:	; Routine 0
 		move.b	obSubtype(a0),obFrame(a0)
 
 LTag_ChkDel:	; Routine 2
+	if FixBugs=0
+		; Objects shouldn't call DisplaySprite and DeleteObject on
+		; the same frame, or else cause a null-pointer dereference.
 		tst.w	(v_debuguse).w	; is debug mode being used?
 		beq.s	.debugoff	; if not, branch
 		bsr.w	DisplaySprite
@@ -35,9 +38,10 @@ LTag_ChkDel:	; Routine 2
 .debugoff:
 		cmpi.b	#6,(v_player+obRoutine).w	; has sonic died?
 		bhs.s	.playerdead			; if so, branch
-		bset	#7,obRender(a0)
+		bset	#7,obRender(a0)		; set as visible
 
 .playerdead:
+	endif
 		move.w	obX(a0),d0
 		andi.w	#-$80,d0
 		move.w	(v_scrposx).w,d1
@@ -47,4 +51,17 @@ LTag_ChkDel:	; Routine 2
 		bmi.w	DeleteObject
 		cmpi.w	#$280,d0
 		bhi.w	DeleteObject
+
+	if FixBugs
+		cmpi.b	#6,(v_player+obRoutine).w	; has sonic died?
+		bhs.s	.playerdead			; if so, branch
+		bset	#7,obRender(a0)		; set as visible
+
+.playerdead:
+		tst.w	(v_debuguse).w	; is debug mode being used?
+		beq.s	.debugoff	; if not, branch
+		bra.w	DisplaySprite
+
+.debugoff:
+	endif
 		rts

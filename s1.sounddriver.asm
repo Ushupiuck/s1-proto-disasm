@@ -47,6 +47,7 @@ ModulationIndex:
 		dc.b 1, 1, 1, 4	; 2
 		dc.b 2, 1, 2, 4	; 3
 		dc.b 8, 1, 6, 4	; 4
+		even
 		; Warning: If the set value for the global modulation is beyond 4, it will use the speed up index as part of the index!
 
 ; ---------------------------------------------------------------------------
