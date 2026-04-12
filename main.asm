@@ -118,7 +118,7 @@ Vectors:
 		dc.b "                " 	; International name (blank)
 		dc.b "                "
 		dc.b "                "
-		dc.b "GM 00000000-00"		; Serial\version number
+		dc.b "GM 00000000-00"		; Serial/version number
 Checksum:	dc.w 0					; Checksum
 		dc.b "J               "		; I\O support
 ROMStartLoc:	dc.l StartOfROM		; Start address of ROM
@@ -141,7 +141,7 @@ ErrorTrap:
 		bra.s	ErrorTrap
 ; ===========================================================================
 
-; This contains an earlier version of ICD_BLK4.PRG
+; This contains an earlier version of ICD_BLK4.PRG, which can be seen in other early Mega Drive titles.
 EntryPoint:
 		tst.l	(port_1_control_hi).l
 
@@ -593,7 +593,7 @@ VInt_00:
 		rts
 ; ===========================================================================
 VInt_Index:
-ptr_VInt_00:	dc.w VInt_00-VInt_Index	; return to caller
+ptr_VInt_00:	dc.w VInt_00-VInt_Index	; Return to caller
 ptr_VInt_02:	dc.w VInt_02-VInt_Index	; Sega Screen
 ptr_VInt_04:	dc.w VInt_04-VInt_Index	; Title Screen
 ptr_VInt_06:	dc.w VInt_06-VInt_Index	; (unused)
