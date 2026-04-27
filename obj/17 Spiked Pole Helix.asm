@@ -43,11 +43,7 @@ Hel_Main:	; Routine 0
 		moveq	#0,d6
 
 Hel_Build:
-	if FixBugs
 		bsr.w	FindNextFreeObj
-	else
-		bsr.w	FindFreeObj
-	endif
 		bne.s	Hel_Action
 		addq.b	#1,obSubtype(a0)
 		move.w	a1,d5
@@ -70,7 +66,6 @@ Hel_Build:
 		addi.w	#$10,d3
 		cmp.w	obX(a0),d3	; is this spike in the centre?
 		bne.s	Hel_NotCentre	; if not, branch
-
 		move.b	d6,hel_frame(a0) ; set parent spike frame
 		addq.b	#1,d6
 		andi.b	#7,d6
@@ -82,9 +77,6 @@ Hel_NotCentre:
 
 Hel_Action:	; Routine 2, 4
 		bsr.w	Hel_RotateSpikes
-	if ~~FixBugs
-		bsr.w	DisplaySprite
-	endif
 		bra.w	Hel_ChkDel
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
@@ -106,11 +98,7 @@ locret_587E:
 
 Hel_ChkDel:
 		out_of_range.w	Hel_DelAll
-	if FixBugs
 		bra.w	DisplaySprite
-	else
-		rts
-	endif
 ; ===========================================================================
 
 Hel_DelAll:

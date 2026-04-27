@@ -8,7 +8,8 @@ GBall:
 		move.w	.index(pc,d0.w),d1
 		jmp	.index(pc,d1.w)
 ; ===========================================================================
-.index:	dc.w .main-.index
+.index:
+		dc.w .main-.index
 		dc.w GBall_Roll-.index
 		dc.w GBall_InAir-.index
 		dc.w GBall_Delete-.index
@@ -23,7 +24,7 @@ GBall:
 		tst.w	d1
 		bpl.s	.floornotfound
 		add.w	d1,obY(a0)
-		move.w	#0,obVelY(a0)
+		clr.w	obVelY(a0)
 		move.b	#8,obRoutine(a0)
 		move.l	#Map_GBall,obMap(a0)
 		move.w	#make_art_tile(ArtTile_GHZ_Giant_Ball,2,0),obGfx(a0)
@@ -31,16 +32,16 @@ GBall:
 		move.b	#3,obPriority(a0)
 		move.b	#$18,obActWid(a0)
 		move.b	#1,obDelayAni(a0)
-		bsr.w	GBall_Animate
+		bra.w	GBall_Animate
 
 .floornotfound:
 		rts
 ; ===========================================================================
 
 GBall_ChkPush:	; Routine 8
-		move.w	#$23,d1
-		move.w	#$18,d2
-		move.w	#$18,d3
+		moveq	#$23,d1
+		moveq	#$18,d2
+		moveq	#$18,d3
 		move.w	obX(a0),d4
 		bsr.w	SolidObject
 		btst	#5,obStatus(a0)	; is the ball being pushed?
@@ -55,9 +56,6 @@ GBall_ChkPush:	; Routine 8
 
 .notouch:
 		bsr.w	GBall_Animate
-	if ~~FixBugs
-		bsr.w	DisplaySprite
-	endif
 		bra.w	GBall_ChkDel
 ; ===========================================================================
 
@@ -67,9 +65,9 @@ GBall_Roll:	; Routine 2
 		bsr.w	GBall_Animate
 		bsr.w	sub_5E50
 		bsr.w	SpeedToPos
-		move.w	#$23,d1
-		move.w	#$18,d2
-		move.w	#$18,d3
+		moveq	#$23,d1
+		moveq	#$18,d2
+		moveq	#$18,d3
 		move.w	obX(a0),d4
 		bsr.w	SolidObject
 		jsr	(Sonic_AnglePos).l
@@ -79,48 +77,33 @@ GBall_Roll:	; Routine 2
 		move.w	#$400,obInertia(a0)
 
 .faster:
-		btst	#1,obStatus(a0)	; is the ball in the air?
-		beq.s	.notinair	; if not, branch
+		btst	#1,obStatus(a0)		; is the ball in the air?
+		beq.s	+			; if not, branch
 		move.w	#-$400,obVelY(a0)	; set ball to bounce upwards
-
-.notinair:
-	if ~~FixBugs
-		bsr.w	DisplaySprite
-	endif
-		bra.w	GBall_ChkDel
++		bra.w	GBall_ChkDel
 ; ===========================================================================
 
 GBall_InAir:	; Routine 4
 		bsr.w	GBall_Animate
 		bsr.w	SpeedToPos
-		move.w	#$23,d1
-		move.w	#$18,d2
-		move.w	#$18,d3
+		moveq	#$23,d1
+		moveq	#$18,d2
+		moveq	#$18,d3
 		move.w	obX(a0),d4
 		bsr.w	SolidObject
 		jsr	(Sonic_Floor).l
 		btst	#1,obStatus(a0)	; is the ball in the air?
-		beq.s	.notinair	; if not, branch
+		beq.s	+		; if not, branch
 		move.w	obVelY(a0),d0
 		addi.w	#$28,d0
 		move.w	d0,obVelY(a0)
-		bra.s	.display
-; ===========================================================================
-
-.notinair:
-		nop
-
-.display:
-	if ~~FixBugs
-		bsr.w	DisplaySprite
-	endif
-		bra.w	GBall_ChkDel
++		bra.w	GBall_ChkDel
 ; ===========================================================================
 
 GBall_Animate:
 		tst.b	obFrame(a0)
 		beq.s	.evenframes
-		move.b	#0,obFrame(a0)	; every odd frame, set to frame 0
+		clr.b	obFrame(a0)	; every odd frame, set to frame 0
 		rts
 ; ===========================================================================
 
@@ -167,21 +150,17 @@ loc_5E16:
 
 loc_5E24:
 		move.b	d0,obDelayAni(a0)
-		bra.s	loc_5E02
+		move.b	obDelayAni(a0),obFrame(a0)
+		rts
 ; ===========================================================================
 
 GBall_ChkDel:
 		out_of_range.w	DeleteObject
-	if FixBugs
 		bra.w	DisplaySprite
-	else
-		rts
-	endif
 ; ===========================================================================
 
 GBall_Delete:	; Routine 6
-		bsr.w	DeleteObject
-		rts
+		bra.w	DeleteObject
 ; ===========================================================================
 
 sub_5E50:

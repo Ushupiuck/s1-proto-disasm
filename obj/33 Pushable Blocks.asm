@@ -67,14 +67,8 @@ loc_9F84:	; Routine 2
 		bset	#7,obSubtype(a0)
 
 loc_9FD4:
-	if FixBugs
 		out_of_range.s	loc_9FF6
 		bra.w	DisplaySprite
-	else
-		bsr.w	DisplaySprite
-		out_of_range.s	loc_9FF6
-		rts
-	endif
 ; ===========================================================================
 
 loc_9FF6:
