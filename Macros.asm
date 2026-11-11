@@ -58,18 +58,6 @@ fillVRAM:	macro byte,start,end
 		bne.s	.wait
 		move.w	#$8F02,(a5) ; Set increment back to 2, since the VDP usually operates on words
 		endm
-		
-; calculates initial loop counter value for a dbf loop
-; that writes n bytes total at 4 bytes per iteration
-bytesToLcnt function n,n>>2-1
-
-; calculates initial loop counter value for a dbf loop
-; that writes n bytes total at 2 bytes per iteration
-bytesToWcnt function n,n>>1-1
-
-; calculates initial loop counter value for a dbf loop
-; that writes n bytes total at x bytes per iteration
-bytesToXcnt function n,x,n/x-1
 
 little_endian function x,(x)<<8&$FF00|(x)>>8&$FF
 
@@ -89,7 +77,7 @@ clearRAM:	macro startAddress,endAddress
 	endif
 		lea	(startAddress).w,a1
 		moveq	#0,d0
-		move.w	#bytesToLcnt(.length),d1
+		move.w	#(.length)/4-1,d1
 
 .loop:
 		move.l	d0,(a1)+
@@ -111,13 +99,6 @@ clearRAM:	macro startAddress,endAddress
 
 copyTilemap:	macro source,destination,width,height
 		lea	(source).l,a1
-		locVRAM	destination,d0
-		moveq	#(width)-1,d1
-		moveq	#(height)-1,d2
-		bsr.w	TilemapToVRAM
-		endm
-
-copyUncTilemap:	macro destination,width,height
 		locVRAM	destination,d0
 		moveq	#(width)-1,d1
 		moveq	#(height)-1,d2
@@ -197,10 +178,10 @@ enable_display:	macro
 
 ; ---------------------------------------------------------------------------
 ; check if object moves out of range
-; input: location to jump to if out of range, x-axis pos (obX(a0) by default)
+; input: location to jump to if out of range, x-axis pos (obX(a0) by default), optional bmi exit
 ; ---------------------------------------------------------------------------
 
-out_of_range:	macro exit,pos
+out_of_range:	macro exit,pos,bmicheck
 		if ("pos"<>"")
 		move.w	pos,d0				; get object position (if specified as not obX)
 		else
@@ -211,36 +192,47 @@ out_of_range:	macro exit,pos
 		subi.w	#128,d1
 		andi.w	#-$80,d1
 		sub.w	d1,d0				; approx distance between object and screen
+	if ("bmicheck"<>"")
+		; This bmi is in a few out_of_range calls (albeit redundant)
+		bmi.w	exit
+	endif
 		cmpi.w	#128+320+192,d0
 		bhi.ATTRIBUTE	exit
 		endm
-		
+
 ; ---------------------------------------------------------------------------
-; check if object moves out of range
-; input: location to jump to if out of range, x-axis pos (obX(a0) by default)
+; macro to emit a linear range of bytes [first..last] inclusive
+; input: start, end, increment, (optional) repeat each single step
 ; ---------------------------------------------------------------------------
 
-out_of_range_rememberstate:	macro exit,pos
-		if ("pos"<>"")
-		move.w	pos,d0				; get object position (if specified as not obX)
-		else
-		move.w	obX(a0),d0			; get object position
-		endif
-		andi.w	#-$80,d0			; round down to nearest $80
-		move.w	(v_scrposx).w,d1		; get screen position
-		subi.w	#128,d1
-		andi.w	#-$80,d1
-		sub.w	d1,d0				; approx distance between object and screen
-		bmi.ATTRIBUTE	exit
-		cmpi.w	#128+320+192,d0
-		bhi.ATTRIBUTE	exit
-		endm
+range: macro first,last,step,repeat
+	set .rep, 1
+	if "repeat"<>""
+		set .rep, repeat
+	endif
+
+	set .val, first
+	rept 1+(abs(first-last)/abs(step))
+		rept .rep
+			dc.b .val
+		endr
+		set .val, .val+(step)
+	endr
+	endm
 
 ; ---------------------------------------------------------------------------
 ; produce a packed art-tile
 ; ---------------------------------------------------------------------------
 
 make_art_tile function addr,pal,pri,((pri&1)<<15)|((pal&3)<<13)|addr
+
+; ---------------------------------------------------------------------------
+; incbin compatibility macro for AS
+; ---------------------------------------------------------------------------
+
+incbin:		macro path
+		binclude path
+		endm
 		
 ; ---------------------------------------------------------------------------
 ; turn a sample rate into a djnz loop counter
@@ -248,3 +240,13 @@ make_art_tile function addr,pal,pri,((pri&1)<<15)|((pal&3)<<13)|addr
 
 pcmLoopCounter function sampleRate,baseCycles, 1+(53693175/15/(sampleRate)-(baseCycles)+(13/2))/13
 dpcmLoopCounter function sampleRate, pcmLoopCounter(sampleRate,420/2) ; 420 is the number of cycles zPlayPCMLoop takes.
+
+; ---------------------------------------------------------------------------
+; Macro to binclude something with an end marker
+; ---------------------------------------------------------------------------
+
+bincludeEndMarker macro path,{INTLABEL}
+__LABEL__:	label	 *
+		binclude path
+__LABEL___end:	label	 *
+		endm
